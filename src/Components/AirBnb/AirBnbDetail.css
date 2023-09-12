@@ -1,0 +1,459 @@
+.body-detail {
+    width: 60%;
+    /* height: 111px; */
+    margin: 0 auto;
+}
+
+.svg-title {
+    height: 25px;
+    width: 25px;
+    margin: 0px 15px;
+    cursor: pointer;
+}
+
+.svg-title:hover {
+    scale: 1.2;
+    filter: brightness(1.5)
+}
+
+.title {
+    text-align: left;
+}
+
+.review {
+    display: flex;
+    justify-content: space-between;
+}
+
+.text {
+    margin: 5px;
+    padding: 10px 5px;
+    cursor: pointer;
+}
+
+.text:hover {
+    background: #91919129;
+    border-radius: 15px;
+}
+
+.image-house-detail {
+    display: flex;
+    width: 100%;
+}
+
+.img0 {
+    width: 50%;
+}
+
+.img0 img {
+    height: 559px;
+    width: 559px;
+    padding: 4px 0px;
+    cursor: pointer;
+    border-radius: 30px 0px 0px 30px;
+}
+
+.img0 img:hover {
+    filter: brightness(0.8);
+}
+
+.imgs {
+    width: 50%;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.imgs img {
+    width: 270px;
+    height: 272px;
+    padding: 5px 5px;
+    cursor: pointer;
+}
+
+.imgs img:hover {
+    filter: brightness(0.8);
+}
+
+.btn-show-imgs {
+    position: relative;
+    right: -229%;
+    top: -158%;
+    border-radius: 15px;
+    padding: 10px 10px;
+    background: white;
+    cursor: pointer;
+}
+
+.btn-show-imgs:hover {
+    background: rgb(238, 238, 238);
+}
+
+.details {
+    width: 100%;
+}
+
+.details-container {
+    width: 70%;
+    height: 500px;
+}
+
+.hr {
+    width: 95%;
+}
+
+.main {
+    margin: 0 20px;
+}
+
+.information-house {
+    display: flex;
+}
+
+.avatar {
+    width: 5%;
+    height: 10%;
+    position: absolute;
+    margin: 17px 171px;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+.avatar2 {
+    height: 30px !important;
+    width: 30px !important;
+    position: absolute;
+    /* margin: 44px 248px; */
+    padding: 81px 231px;
+    cursor: pointer;
+}
+
+.description {
+    line-height: 1.6;
+}
+
+.btn-show-description {
+    background: transparent;
+    border: none;
+    text-decoration: underline;
+    font-size: 22px;
+    font-weight: bolder;
+    cursor: pointer;
+}
+
+.overlay2 {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(78, 78, 78, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    text-align: left;
+}
+
+.appearing-div {
+    background: #fff;
+    padding: 20px;
+    border-radius: 20px;
+    max-height: 90%;
+    width: 730px;
+    
+    
+}
+.appearing-div.active {
+    animation: toTop 0.2s ease-in-out;
+}
+
+
+@keyframes toTop{
+    0%{
+        transform: translateY(100%);
+    }
+    100%{
+        transform: translateY(0%);
+    }
+}
+
+.close-description{
+    cursor: pointer;
+    font-size: 30px;
+    border-radius: 50%;
+    padding: 6px 10px;
+    
+}
+.close-description:hover{
+    background: lightgrey;
+    font-size: 30px;
+    border-radius: 50%;
+    padding: 6px 10px;
+}
+
+.d-none{
+    display: none;
+}
+
+.container-comfortable{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.container-description-details{
+    max-height: 800px;
+    overflow: auto;
+}
+
+.comfortable{
+    width: 50%;
+    display: flex;
+    height: 20%;
+    align-items: center;
+}
+
+.comfortable-icon{
+    width: 15%;
+    height: 30%;
+}
+
+.btn-show-all-comfortable{
+    background: white;
+    padding: 15px 13px;
+    cursor: pointer;
+    border-radius: 10px;
+    font-weight: bolder;
+    font-size: 18px;
+    margin: 10px 0px;
+}
+.btn-show-all-comfortable:hover{
+    background: #F7F7F7;
+}
+
+.comfortable-details{
+    max-height: 670px;
+    overflow: auto;
+}
+
+.btn-reset-daysbook{
+    background: white;
+    padding: 14px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 18px;
+}
+.btn-reset-daysbook:hover{
+    background: #F7F7F7;
+}
+
+.Mui-selected{
+background: black !important;
+}
+
+.range-highlight {
+    background-color: #e2e0e0 !important;
+  }
+
+.MuiTypography-subtitle1{
+    font-weight: bold !important;
+}
+
+.MuiDateRangePickerDay-day{
+    font-weight: 500 !important;
+}
+
+.rating-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    width: 50%;
+}
+
+.rating-label {
+    margin-right: 10px;
+    width: 20%;
+}
+
+.rating-bar {
+    width: 200px;
+    height: 15px;
+    border: 1px solid #ccc;
+    position: relative;
+    border-radius: 20px;
+    background: #DDDDDD;
+}
+
+.filled-bar {
+    height: 100%;
+    background-color: #0e0e0e;
+    position: absolute;
+    border-radius: 20px
+}
+
+.empty-bar {
+    height: 100%;
+    background-color: #f0f0f0;
+}
+
+.container-review{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.review-details{
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.content-details{
+    width: 50%;
+}
+
+.review-point{
+    padding: 0px 40px;
+    font-weight: bold;
+    font-size: 26px;
+    width: 6%;
+}
+
+.container-details-users{
+    display: flex;
+}
+
+.avatar-user-review{
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin-right: 20px;
+}
+
+.content-user-review{
+    width: 90%;
+    line-height: 1.4;
+    font-family: 'circular';
+}
+
+.active-reviews-container{
+    display: flex;
+    width: 100%;
+}
+
+.active-reviews-main{
+    width: 50%;
+}
+
+.active-reviews-extra{
+    width: 65%;
+}
+
+.input-search-reviews{
+    width: 92%;
+    background: #dcd4d457;
+    padding: 14px 2px;
+    border-radius: 20px;
+    outline: none;
+    border: 2px solid #afa5a5;
+    padding-left: 55px;
+    position: relative;
+}
+.input-search-reviews::placeholder{
+    position: absolute;
+    left: 55px;
+}
+.input-search-reviews:focus{
+    border:  2px  solid black;
+}
+
+.icon-inp-search-review{
+    position: absolute;
+    display: block;
+    margin: 11px 10px;
+    font-size: 27px;
+}
+
+.container-lastest-reviews{
+    padding: 10px 0px;
+    max-height: 600px;
+    overflow: auto;
+}
+
+.leaflet-control{
+    display: flex;
+    align-items: baseline;
+    height: 39px;
+    padding: 0px 0px;
+    margin: 3px 1px;
+    background: transparent !important;
+    color: black;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.infor-host{
+    padding: 4px 110px;
+    align-items: center;
+    position: relative;
+    font-size: 20px;
+}
+
+.infor-host-detail{
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    line-height: 2;
+}
+
+.infor-host-devide{
+    width: 50%;
+}
+
+.title-host-detail{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.icon-host-detail{
+    width: 50%;
+    align-items: center;
+    display: flex;
+}
+.icon-host-detail svg{
+    margin-right: 15px;
+}
+
+.text-underline{
+    text-decoration: underline;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+
+
+.btn-contact-with-host{
+    cursor: pointer;
+    padding: 14px 12px;
+    border-radius: 13px;
+    background: white;
+    font-weight: bolder;
+    font-size: 17px;
+}
+.btn-contact-with-host:hover{
+    background: rgb(224, 223, 223);
+}
+
+.menu-on-list-airbnb{
+    display: flex;
+    align-items: center;
+}
+
+.link-to{
+    color: black;
+    font-weight: bold;
+    font-size: 22px;
+    text-decoration: none;
+    padding: 6px;
+}

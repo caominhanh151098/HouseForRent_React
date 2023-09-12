@@ -1,0 +1,881 @@
+import React, { useEffect, useState } from 'react'
+import "../AirBnbDetail.css"
+import { Link, useParams } from 'react-router-dom';
+import { API_HOUSE_COMFORTABLE_DETAIL, API_HOUSE_DETAIL_URL, API_HOUSE_REVIEW, API_HOUSE_REVIEWS } from '../../../Services/common';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import dayjs from 'dayjs';
+import { styled } from '@mui/material/styles';
+import { LocalizationProvider } from '@mui/x-date-pickers-pro';
+import { AdapterDayjs } from '@mui/x-date-pickers-pro/AdapterDayjs';
+import { DateRangeCalendar } from '@mui/x-date-pickers-pro/DateRangeCalendar';
+import { DateRangePickerDay as MuiDateRangePickerDay } from '@mui/x-date-pickers-pro/DateRangePickerDay';
+import LocationDetail from './LocationDetail';
+import ConvertDateReview from './ConvertDateReview';
+import _ from 'lodash';
+
+const BodyDetail = () => {
+    const [indexImg, setIndexImg] = useState(0)
+    const { houseID } = useParams();
+    const [house, setHouse] = useState({})
+    const [isOverlayVisible, setIsOverlayVisible] = useState(false);
+    const [isOverlayComfortable, setIsOVerlayComfortable] = useState(false)
+    const [isOverlayReviews, setIsOVerlayReviews] = useState(false)
+    const [searchReviews, setSearchReviews] = useState('');
+    const [filteredReviewsSearch, setFilteredReviewsSearch] = useState([]);
+    const [houseComfortable, setHouseComfortable] = useState([]);
+    const [houseReview, setHouseReview] = useState({})
+    const [houseReviews, setHouseReviews] = useState({})
+    const [loadingInputSearch, setLoadingInputSearch] = useState(false)
+    const [selectedDates, setSelectedDates] = useState([
+        dayjs().subtract(1, 'day'),
+        dayjs().add(1, 'day')
+    ]);
+    const [showFullDescription, setShowFullDescription] = useState(false);
+    const [isTruncated, setIsTruncated] = useState(true);
+
+    const handleDateChange = (newDates) => {
+        setSelectedDates(newDates);
+    };
+    const numberOfNights = selectedDates[1] && selectedDates[0] ? selectedDates[1].diff(selectedDates[0], 'day') : null;
+
+    const handleResetDates = () => {
+        setSelectedDates([
+            dayjs().subtract(1, 'day'),
+            dayjs().add(1, 'day')]);
+    };
+
+    useEffect(() => {
+        console.log('demo')
+        async function getHouseDetail() {
+            let res = await fetch(API_HOUSE_DETAIL_URL + `${houseID}`);
+            let housedtl = await res.json()
+            setHouse(housedtl)
+        }
+        getHouseDetail();
+    }, [])
+    console.log(house);
+
+    useEffect(() => {
+        async function getComfortableDetail() {
+            let res = await fetch(API_HOUSE_COMFORTABLE_DETAIL + `${houseID}`);
+            let houseComfordtl = await res.json();
+            setHouseComfortable(houseComfordtl);
+        }
+        getComfortableDetail();
+    }, [])
+    console.log(houseComfortable);
+
+    const totalComfortables = house?.miniListComfortable?.length;
+
+    useEffect(() => {
+        async function getReviewHouse() {
+            let res = await fetch(API_HOUSE_REVIEW + `${houseID}`);
+            let houseReview = await res.json();
+            setHouseReview(houseReview);
+        }
+        getReviewHouse();
+        document.querySelector('.MuiDateRangeCalendar-root div').style.display = 'none'
+    }, [])
+    console.log('houseReview', houseReview);
+
+
+    const sixLastestReviews = houseReview?.reviews?.length >= 6 ? houseReview?.reviews.slice(0, 6)
+        .sort((a, b) => new Date(b.reviewDate) - new Date(a.reviewDate)) :
+        houseReview?.reviews?.sort((a, b) => new Date(b.reviewDate) - new Date(a.reviewDate));
+    console.log(sixLastestReviews);
+
+
+
+
+    useEffect(() => {
+        async function getReviewsHouse() {
+            let res = await fetch(API_HOUSE_REVIEWS + `${houseID}`);
+            let houseReviews = await res.json();
+            setHouseReviews(houseReviews);
+        }
+        getReviewsHouse();
+    }, [])
+
+    const lastestReviews = houseReviews ? houseReviews?.content?.sort((a, b) => new Date(b.reviewDate) - new Date(a.reviewDate)) : null;
+    console.log(lastestReviews);
+
+    const toggleOverlay = () => {
+        setIsOverlayVisible(!isOverlayVisible);
+        if (!isOverlayVisible) {
+            document.querySelector('.leaflet-control').style.display = 'none';
+            document.querySelector('.leaflet-control-attribution').style.display = 'none'
+        } else {
+            document.querySelector('.leaflet-control').style = 'block';
+            document.querySelector('.leaflet-control-attribution').style = 'block'
+        }
+    };
+
+    const toggleOverlayComfortable = () => {
+        setIsOVerlayComfortable(!isOverlayComfortable);
+    };
+
+    const toggleOverlayReviews = () => {
+        setIsOVerlayReviews(!isOverlayReviews);
+        if (!isOverlayReviews) {
+            document.querySelector('.leaflet-control').style.display = 'none';
+            document.querySelector('.leaflet-control-attribution').style.display = 'none'
+        } else {
+            document.querySelector('.leaflet-control').style = 'block';
+            document.querySelector('.leaflet-control-attribution').style = 'block'
+        }
+    };
+
+
+    const DateRangePickerDay = styled(MuiDateRangePickerDay)(
+        ({
+            theme,
+            isHighlighting,
+            isStartOfHighlighting,
+            isEndOfHighlighting,
+            outsideCurrentMonth,
+        }) => ({
+            ...(!outsideCurrentMonth &&
+                isHighlighting && {
+                borderRadius: 0,
+                backgroundColor: theme.palette.primary.main,
+                color: theme.palette.common.white,
+                '&:hover, &:focus': {
+                    backgroundColor: theme.palette.primary.dark,
+                },
+            }),
+            ...(isStartOfHighlighting && {
+                borderTopLeftRadius: '50%',
+                borderBottomLeftRadius: '50%',
+            }),
+            ...(isEndOfHighlighting && {
+                borderTopRightRadius: '50%',
+                borderBottomRightRadius: '50%',
+            }),
+            ...(isHighlighting && {
+                // Thêm class range-highlight nếu nằm trong khoảng đang chọn
+                '& .range-highlight': {
+                    backgroundColor: 'red',
+                    opacity: 0.5,
+                },
+            }),
+        }),
+    );
+
+    const handleInputSearchReviews = _.debounce((e) => {
+        setLoadingInputSearch(true);
+        const searchTerm = e.target.value.toLowerCase();
+
+        setSearchReviews(searchTerm);
+
+        const filteredReviews = lastestReviews.filter(
+            review => review.content.toLowerCase().includes(searchTerm)
+        );
+
+        setFilteredReviewsSearch(filteredReviews);
+        setLoadingInputSearch(false)
+    }, 500)
+
+    const maxLength = 100;
+    const description = house?.description?.listingDescription;
+
+    const toggleDescription = () => {
+        setShowFullDescription(!showFullDescription);
+        setIsTruncated(!isTruncated);
+    };
+
+    const truncatedDescription = description && description.length > maxLength
+        ? `${description.substring(0, maxLength)}...`
+        : description;
+
+
+
+    // const lastestReviews = houseReview?.reviews.slice(0, 6)
+    // console.log(lastestReviews);
+    return (
+        <>
+            <div className='body-detail'>
+                <div>
+                    <div className='title'>
+                        <h1>
+                            <svg className='svg-title' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" aria-label="Tiêu đề được dịch tự động: Cabin 1 - Cabin sang trọng bên sườn núi với chế độ xem Batulao" role="img" focusable="false">
+                                <path d="M9 0a1 1 0 0 1 1 .88V6h5a1 1 0 0 1 1 .88V15a1 1 0 0 1-.88 1H7a1 1 0 0 1-1-.88V10H1a1 1 0 0 1-1-.88V1a1 1 0 0 1 .88-1H9zm1.73 7-1.4.5.24.21.13.13c.12.13.23.25.3.36l.08.1.05.07.04.08H7.31v1.3h1.2l.17.53.1.26.1.3A6.3 6.3 0 0 0 10 12.61c-.5.32-1.12.61-1.87.87l-.33.11-.35.11-.44.14.72 1.15.4-.13.4-.12c1-.35 1.83-.76 2.48-1.22.57.4 1.28.77 2.12 1.08l.37.14.38.12.41.13.72-1.15-.45-.14-.26-.08-.34-.11a9.23 9.23 0 0 1-1.94-.9 6.3 6.3 0 0 0 1.07-1.7l.13-.31.11-.33.17-.52h1.2V8.45h-3.05l-.1-.23A3.7 3.7 0 0 0 11 7.3l-.12-.15-.14-.15zm1.35 2.76-.04.13-.08.22-.1.27a4.99 4.99 0 0 1-.86 1.38 4.95 4.95 0 0 1-.74-1.13l-.12-.25-.1-.27-.08-.22-.04-.13h2.16zM9 1H1v8h5V7l.01-.17H3.83L3.43 8H2l2.26-6h1.48l1.5 4H9V1zM5 3.41 4.25 5.6h1.5L5 3.41z"></path>
+                            </svg>
+                            {house.hotelName}
+                        </h1>
+                    </div>
+                    <div className='review'>
+                        <div>
+                            <p><i class="fa-solid fa-star"></i> {house.reviewPoint} ·
+                                <span className='text' style={{ textDecoration: 'underline' }}>{house.numReview} đánh giá</span>
+                                <span className='text'><i class="fa-solid fa-medal"></i> Chủ nhà siêu cấp</span>
+                                <span className='text' style={{ textDecoration: 'underline' }}>{house.location?.address}</span>
+                            </p>
+                        </div>
+                        <div>
+                            <p>
+                                <span className='text'><i class="fa-solid fa-arrow-up-from-bracket"></i> <span style={{ textDecoration: 'underline' }} > Chia sẻ</span></span>
+                                <span className='text'> <i class="fa-regular fa-heart"></i> <span style={{ textDecoration: 'underline' }} > Lưu</span></span>
+                            </p>
+                        </div>
+                    </div>
+                    {
+                        house.images && (
+                            <div className='image-house-detail'>
+                                <div className='img0'>
+                                    <img src={house.images[0].srcImg} />
+                                </div>
+                                <div className='imgs'>
+                                    <img src={house.images[1].srcImg} />
+                                    <img src={house.images[2].srcImg}
+                                        style={{ borderRadius: '0px 30px 0px 0px' }} />
+                                    <img src={house.images[3].srcImg} />
+                                    <img src={house.images[4].srcImg}
+                                        style={{ borderRadius: '0px 0px 30px 0px' }} />
+                                    <div>
+                                        <button className='btn-show-imgs'> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" aria-hidden="true" role="presentation" focusable="false" style={{ height: '16px', width: '16px', fill: 'currentcolor', margin: '-3px 1px' }}><path fill-rule="evenodd" d="M3 11.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm5 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm5 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm-10-5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm5 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm5 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm-10-5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm5 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm5 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3z"></path></svg>
+                                            <span style={{ padding: '0px 8px' }}>Hiển thị tất cả ảnh</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )
+                    }
+                    <div className='details'>
+                        <div className='details-container'>
+                            <div className='title'>
+                                <div className='information-house'>
+                                    <div>
+                                        <h1 >{house.title} </h1>
+                                        <h3 style={{ letterSpacing: '2px' }}>{house.requestDetail}</h3>
+                                    </div>
+                                    {
+                                        house.user && (
+                                            <div>
+                                                <img className='avatar' src={house.user.avatar} alt="" />
+                                                <svg className='avatar2' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 14" aria-hidden="true" role="presentation" focusable="false"><linearGradient id="a" x1="8.5%" x2="92.18%" y1="17.16%" y2="17.16%"><stop offset="0" stop-color="#e61e4d"></stop><stop offset=".5" stop-color="#e31c5f"></stop><stop offset="1" stop-color="#d70466"></stop></linearGradient><path fill="#fff" d="M9.93 0c.88 0 1.6.67 1.66 1.52l.01.15v2.15c0 .54-.26 1.05-.7 1.36l-.13.08-3.73 2.17a3.4 3.4 0 1 1-2.48 0L.83 5.26A1.67 1.67 0 0 1 0 3.96L0 3.82V1.67C0 .79.67.07 1.52 0L1.67 0z"></path><path fill="url(#a)" d="M5.8 8.2a2.4 2.4 0 0 0-.16 4.8h.32a2.4 2.4 0 0 0-.16-4.8zM9.93 1H1.67a.67.67 0 0 0-.66.57l-.01.1v2.15c0 .2.1.39.25.52l.08.05L5.46 6.8c.1.06.2.09.29.1h.1l.1-.02.1-.03.09-.05 4.13-2.4c.17-.1.3-.29.32-.48l.01-.1V1.67a.67.67 0 0 0-.57-.66z"></path></svg>
+                                            </div>
+                                        )
+                                    }
+
+                                </div>
+
+                            </div>
+                            <hr className='hr'></hr>
+                            <div>
+                                <div className='title' style={{ display: 'flex', alignItems: 'center' }}>
+                                    <div>
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" role="presentation" focusable="false" style={{ height: '26px', width: '25px', fill: 'currentcolor' }}><path d="M1.67 2.68A2 2 0 0 1 4.1.72l.14.04L16.01 4.3 27.78.91a2 2 0 0 1 2.53 1.63l.02.14v23.25a2 2 0 0 1-1.27 1.85l-.15.06-12.62 3.78a1 1 0 0 1-.46.03l-.12-.03L3.1 27.84a2 2 0 0 1-1.42-1.75v-.17zm2 0v23.24L16 29.62l12.33-3.7V2.82L16.28 6.3a1 1 0 0 1-.46.03l-.1-.03zm21.66 17.48v2.08L16 25.04v-2.08zm0-6v2.08L16 19.04v-2.08zm0-6v2.08L16 13.04v-2.08z"></path></svg>
+                                    </div>
+                                    <div className='main'>
+                                        <h3>Được giới thiệu trong</h3>
+                                        <p>fạgfkagf</p>
+                                    </div>
+                                </div>
+                                <div className='title' style={{ display: 'flex', alignItems: 'center' }}>
+                                    <div>
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" role="presentation" focusable="false" style={{ height: '26px', width: '25px', fill: 'currentcolor' }}><path d="M2 4a1 1 0 0 1 1.62-.78l.09.07 25 25a1 1 0 0 1-.6 1.7L28 30H3a1 1 0 0 1-1-.88V29zm2 2.42V28h21.59l-4.09-4.09-1.8 1.8-1.4-1.42 1.78-1.8-2.58-2.58-1.8 1.8-1.4-1.42 1.78-1.8-2.58-2.58-1.8 1.8-1.4-1.42 1.78-1.8-2.58-2.58-1.8 1.8-1.4-1.42 1.78-1.8zM7 17a1 1 0 0 1 1.62-.78l.09.07 7 7a1 1 0 0 1-.6 1.7L15 25H8a1 1 0 0 1-1-.88V24zm5.3-15.2a1 1 0 0 1 1.31-.09l.1.08 15.5 15.5a1 1 0 0 1 .15.2l.05.1 2 4.5a1 1 0 0 1-1.1 1.4l-.1-.03-5-1.5a1 1 0 0 1-.32-.17l-.1-.08L9.3 6.2a1 1 0 0 1-.08-1.32l.08-.1zM9 19.4V23h3.58zm7.25-12.25-1.58 1.59L26.02 20.1l2.67.8-1.04-2.33zM13 3.91 11.42 5.5l1.83 1.83 1.58-1.58z"></path></svg>
+                                    </div>
+                                    <div className='main'>
+                                        <h3>Người thiết kế là</h3>
+                                        <p>fạgfkagf</p>
+                                    </div>
+                                </div>
+                                <div className='title' style={{ display: 'flex', alignItems: 'center' }}>
+                                    <div>
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" role="presentation" focusable="false" style={{ height: '26px', width: '25px', fill: 'currentcolor' }}><path d="M11.67 0v1.67h8.66V0h2v1.67h6a2 2 0 0 1 2 1.85v16.07a2 2 0 0 1-.46 1.28l-.12.13L21 29.75a2 2 0 0 1-1.24.58H6.67a5 5 0 0 1-5-4.78V3.67a2 2 0 0 1 1.85-2h6.15V0zm16.66 11.67H3.67v13.66a3 3 0 0 0 2.82 3h11.18v-5.66a5 5 0 0 1 4.78-5h5.88zm-.08 8h-5.58a3 3 0 0 0-3 2.82v5.76zm-18.58-16h-6v6h24.66v-6h-6v1.66h-2V3.67h-8.66v1.66h-2z"></path></svg>
+                                    </div>
+                                    <div className='main'>
+                                        <h3>Huỷ miễn phí trong 48 giờ </h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr className='hr'></hr>
+                            <div>
+                                <div className='title'>
+                                    <p>
+                                        <svg className='svg-title' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" aria-label="Tiêu đề được dịch tự động: Cabin 1 - Cabin sang trọng bên sườn núi với chế độ xem Batulao" role="img" focusable="false" style={{ height: '26px', width: '25px' }}>
+                                            <path d="M9 0a1 1 0 0 1 1 .88V6h5a1 1 0 0 1 1 .88V15a1 1 0 0 1-.88 1H7a1 1 0 0 1-1-.88V10H1a1 1 0 0 1-1-.88V1a1 1 0 0 1 .88-1H9zm1.73 7-1.4.5.24.21.13.13c.12.13.23.25.3.36l.08.1.05.07.04.08H7.31v1.3h1.2l.17.53.1.26.1.3A6.3 6.3 0 0 0 10 12.61c-.5.32-1.12.61-1.87.87l-.33.11-.35.11-.44.14.72 1.15.4-.13.4-.12c1-.35 1.83-.76 2.48-1.22.57.4 1.28.77 2.12 1.08l.37.14.38.12.41.13.72-1.15-.45-.14-.26-.08-.34-.11a9.23 9.23 0 0 1-1.94-.9 6.3 6.3 0 0 0 1.07-1.7l.13-.31.11-.33.17-.52h1.2V8.45h-3.05l-.1-.23A3.7 3.7 0 0 0 11 7.3l-.12-.15-.14-.15zm1.35 2.76-.04.13-.08.22-.1.27a4.99 4.99 0 0 1-.86 1.38 4.95 4.95 0 0 1-.74-1.13l-.12-.25-.1-.27-.08-.22-.04-.13h2.16zM9 1H1v8h5V7l.01-.17H3.83L3.43 8H2l2.26-6h1.48l1.5 4H9V1zM5 3.41 4.25 5.6h1.5L5 3.41z"></path>
+                                        </svg>
+                                        Một số thông tin đã được dịch tự động.
+                                        <span style={{ textDecoration: 'underline', fontWeight: 'bolder', cursor: 'pointer' }}> Hiển thị ngôn ngữ gốc</span>
+                                    </p>
+                                    {
+                                        house.description && (
+                                            <p className='description'>{house.description.listingDescription}</p>
+                                        )
+                                    }
+                                    <button className='btn-show-description' onClick={toggleOverlay}>
+                                        <p>Hiển thị thêm  <span><i class="fa-solid fa-angle-right"></i></span></p>
+                                    </button>
+
+                                </div>
+                                {(
+                                    <div className={`overlay2 ${isOverlayVisible ? '' : 'd-none'}`} >
+                                        <div className={`appearing-div ${isOverlayVisible ? 'active' : ''}`}>
+                                            <div>
+                                                <i onClick={toggleOverlay} class="fa-solid fa-xmark close-description" ></i>
+                                            </div>
+                                            <div className='container-description-details'>
+                                                {
+                                                    house.description?.listingDescription && (
+                                                        <>
+                                                            <h1>Giới thiệu về chỗ này</h1>
+                                                            <p className='description'>{house.description.listingDescription}</p>
+                                                        </>
+                                                    )
+                                                }
+                                                {
+                                                    house.description?.space && (
+                                                        <>
+                                                            <h2>Chỗ ở</h2>
+                                                            <p className='description'>{house.description.space}</p>
+                                                        </>
+                                                    )
+                                                }
+                                                {
+                                                    house.description?.guestAccess && (
+                                                        <>
+                                                            <h2>Tiện nghi khách có quyền sử dụng</h2>
+                                                            <p className='description'>{house.description.guestAccess}</p>
+                                                        </>
+                                                    )
+                                                }
+                                                {
+                                                    house.description?.other && (
+                                                        <>
+                                                            <h2>Những điều cần lưu ý khác</h2>
+                                                            <p className='description'>{house.description.other}</p>
+                                                        </>
+                                                    )
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                            <hr className='hr'></hr>
+                            <div>
+                                <div className='title'>
+                                    <h2>Nơi này có những gì cho bạn</h2>
+                                </div>
+                                <div className='container-comfortable'>
+                                    {
+                                        house.miniListComfortable && (
+                                            house.miniListComfortable.slice(0, 10).map((item, index) => (
+                                                <div key={index} className='comfortable'>
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" role="presentation" focusable="false" style={{ height: '26px', width: '25px', fill: 'currentcolor' }}
+                                                        className='svg-title comfortable-icon'>
+                                                        <path d={item.icon}></path>
+                                                    </svg>
+                                                    <p>{item.name}</p>
+                                                </div>
+                                            ))
+                                        )
+                                    }
+                                    {totalComfortables > 8 && (
+                                        <button className='btn-show-all-comfortable' onClick={toggleOverlayComfortable}>Hiển thị tất cả {totalComfortables} tiện nghi</button>
+                                    )}
+                                    {(
+                                        <div className={`overlay2 ${isOverlayComfortable ? '' : 'd-none'}`} >
+                                            <div className={`appearing-div ${isOverlayComfortable ? 'active' : ''}`}>
+                                                <div>
+                                                    <i onClick={toggleOverlayComfortable} class="fa-solid fa-xmark close-description" ></i>
+                                                </div>
+                                                <div>
+                                                    {
+                                                        houseComfortable && (
+                                                            <>
+                                                                <h1>Nơi này có những gì cho bạn</h1>
+                                                                <div className='comfortable-details'>
+                                                                    {
+                                                                        houseComfortable?.map((item, index) => (
+                                                                            <div key={index}>
+                                                                                <h2>{item.nameComfortableType}</h2>
+                                                                                {
+                                                                                    item.comfortableDetailList?.map((item) => (
+                                                                                        <>
+                                                                                            <div className='comfortable'>
+                                                                                                <svg
+                                                                                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" role="presentation" focusable="false" style={{ height: '26px', width: '25px', fill: 'currentcolor' }}
+                                                                                                    className='svg-title comfortable-icon'>
+                                                                                                    <path d={item.icon}></path>
+                                                                                                </svg>
+                                                                                                <p>{item.name}</p>
+                                                                                            </div>
+                                                                                        </>
+                                                                                    ))
+                                                                                }
+                                                                                <hr className='hr'></hr>
+                                                                            </div>
+                                                                        ))
+                                                                    }
+                                                                </div>
+                                                            </>
+                                                        )
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                            <hr className='hr'></hr>
+                            <div>
+                                <div className='title'>
+                                    <h2>{numberOfNights !== null ? `${numberOfNights} đêm tại ${house.hotelName}` : 'Chọn ngày trả phòng'}</h2>
+                                    <h3>{selectedDates[0] && selectedDates[1] ? (
+                                        `${selectedDates[0].format('D [thg] M YYYY')} - ${selectedDates[1].format('D [thg] M YYYY')}`
+                                    ) : (
+                                        <div>
+                                            <p style={{ opacity: '0.8' }}>Thêm ngày đi để biết giá chính xác</p>
+                                        </div>
+                                    )}</h3>
+                                    <button className='btn-reset-daysbook'
+                                        onClick={handleResetDates}>Đặt lại ngày</button>
+                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                        <DemoContainer components={['DateRangeCalendar']}>
+                                            <DateRangeCalendar
+                                                value={selectedDates}
+                                                onChange={handleDateChange}
+                                                minDate={selectedDates[0]}
+                                                slots={{ day: (props) => <DateRangePickerDay {...props} className={props.isHighlighting ? 'range-highlight' : ''} /> }}
+                                            />
+                                        </DemoContainer>
+                                    </LocalizationProvider>
+                                </div>
+                            </div>
+                            <hr className='hr' style={{ width: '140%' }}></hr>
+                            <div style={{ width: '1200px' }}>
+                                <div className='title'>
+                                    <h3><i class="fa-solid fa-star"></i> {house.reviewPoint} ·
+                                        <span className='text' style={{ textDecoration: 'underline' }}>{house.numReview} đánh giá</span>
+                                    </h3>
+                                    <div className='container-review'>
+                                        {
+                                            houseReview.reviewPointHouse && (
+                                                <div class="rating-container">
+                                                    <div class="rating-label" >
+                                                        <span>Mức độ sạch sẽ: </span>
+                                                    </div>
+                                                    <span className='review-point'>{houseReview.reviewPointHouse.cleanlinessPoint}</span>
+                                                    <div class="rating-bar" style={{ display: 'flex' }}>
+                                                        <div class="filled-bar" style={{ width: `${(houseReview.reviewPointHouse.cleanlinessPoint / 5) * 100}%` }}></div>
+                                                        <div class="empty-bar"></div>
+                                                    </div>
+                                                </div>
+                                            )
+                                        }
+                                        {
+                                            houseReview.reviewPointHouse && (
+                                                <div class="rating-container">
+                                                    <div class="rating-label" >
+                                                        <span>Độ chính xác :</span>
+                                                    </div>
+                                                    <span className='review-point'>{houseReview.reviewPointHouse.accuracyPoint}</span>
+                                                    <div class="rating-bar" style={{ display: 'flex' }}>
+                                                        <div class="filled-bar" style={{ width: `${(houseReview.reviewPointHouse.accuracyPoint / 5) * 100}%` }}></div>
+                                                        <div class="empty-bar"></div>
+                                                    </div>
+                                                </div>
+                                            )
+                                        }
+                                        {
+                                            houseReview.reviewPointHouse && (
+                                                <div class="rating-container">
+                                                    <div
+                                                        class="rating-label" >Giao tiếp: </div>
+                                                    <span
+                                                        className='review-point'>{houseReview.reviewPointHouse.communicationPoint}</span>
+                                                    <div class="rating-bar" style={{ display: 'flex' }}>
+                                                        <div class="filled-bar" style={{ width: `${(houseReview.reviewPointHouse.communicationPoint / 5) * 100}%` }}></div>
+                                                        <div class="empty-bar"></div>
+                                                    </div>
+                                                </div>
+                                            )
+                                        }
+                                        {
+                                            houseReview.reviewPointHouse && (
+                                                <div class="rating-container">
+                                                    <div class="rating-label" >Vị trí: </div>
+                                                    <span
+                                                        className='review-point'>{houseReview.reviewPointHouse.locationPoint}</span>
+                                                    <div class="rating-bar" style={{ display: 'flex' }}>
+                                                        <div class="filled-bar" style={{ width: `${(houseReview.reviewPointHouse.locationPoint / 5) * 100}%` }}></div>
+                                                        <div class="empty-bar"></div>
+                                                    </div>
+                                                </div>
+                                            )
+                                        }
+                                        {
+                                            houseReview.reviewPointHouse && (
+                                                <div class="rating-container">
+                                                    <div class="rating-label">Nhận phòng: </div>
+                                                    <span
+                                                        className='review-point'>{houseReview.reviewPointHouse.checkInPoint}</span>
+                                                    <div class="rating-bar" style={{ display: 'flex' }}>
+                                                        <div class="filled-bar" style={{ width: `${(houseReview.reviewPointHouse.checkInPoint / 5) * 100}%` }}></div>
+                                                        <div class="empty-bar"></div>
+                                                    </div>
+                                                </div>
+                                            )
+                                        }
+                                        {
+                                            houseReview.reviewPointHouse && (
+                                                <div class="rating-container">
+                                                    <div class="rating-label" >Giá trị: </div>
+                                                    <span
+                                                        className='review-point'>{houseReview.reviewPointHouse.valuePoint}</span>
+                                                    <div class="rating-bar" style={{ display: 'flex' }}>
+                                                        <div class="filled-bar" style={{ width: `${(houseReview.reviewPointHouse.valuePoint / 5) * 100}%` }}></div>
+                                                        <div class="empty-bar"></div>
+                                                    </div>
+                                                </div>
+                                            )
+                                        }
+                                    </div>
+                                    <div className='review-details'>
+                                        {
+                                            sixLastestReviews && (
+                                                sixLastestReviews.map((review, index) => (
+                                                    <div className='content-details' key={index}>
+                                                        <div className='container-details-users'>
+                                                            <img className='avatar-user-review'
+                                                                src={review?.user?.avatar} alt="" />
+                                                            <div >
+                                                                <h3>{review?.user.lastName}</h3>
+                                                                <ConvertDateReview date={review?.reviewDate}></ConvertDateReview>
+                                                            </div>
+                                                        </div>
+                                                        <div className='content-user-review'>
+                                                            <p>{review?.content}</p>
+                                                        </div>
+                                                    </div>
+                                                ))
+                                            )
+
+                                        }
+                                    </div>
+                                    {
+                                        houseReview?.reviews?.length >= 2 && (
+                                            <button className='btn-show-all-comfortable' onClick={toggleOverlayReviews}>Hiển thị tất cả {houseReviews?.totalElements} đánh giá</button>
+                                        )
+                                    }
+                                    {(
+                                        <div className={`overlay2 ${isOverlayReviews ? '' : 'd-none'}`} >
+                                            <div style={{ width: '60%', height: '700px' }}
+                                                className={`appearing-div ${isOverlayReviews ? 'active' : ''}`}>
+                                                <div>
+                                                    <i onClick={toggleOverlayReviews} class="fa-solid fa-xmark close-description" ></i>
+                                                </div>
+                                                <div className='active-reviews-container'>
+                                                    <div className='active-reviews-main'>
+                                                        <h2><i class="fa-solid fa-star"></i> {house.reviewPoint} ·
+                                                            <span> {house.numReview} đánh giá</span>
+                                                        </h2>
+                                                        {
+                                                            houseReview.reviewPointHouse && (
+                                                                <div class="rating-container" style={{ width: '130%' }}>
+                                                                    <div class="rating-label" >
+                                                                        <span>Mức độ sạch sẽ: </span>
+                                                                    </div>
+                                                                    <span className='review-point'>{houseReview.reviewPointHouse.cleanlinessPoint}</span>
+                                                                    <div class="rating-bar" style={{ display: 'flex' }}>
+                                                                        <div class="filled-bar" style={{ width: `${(houseReview.reviewPointHouse.cleanlinessPoint / 5) * 100}%` }}></div>
+                                                                        <div class="empty-bar"></div>
+                                                                    </div>
+                                                                </div>
+                                                            )
+                                                        }
+                                                        {
+                                                            houseReview.reviewPointHouse && (
+                                                                <div class="rating-container" style={{ width: '130%' }}>
+                                                                    <div class="rating-label" >
+                                                                        <span>Độ chính xác :</span>
+                                                                    </div>
+                                                                    <span className='review-point'>{houseReview.reviewPointHouse.accuracyPoint}</span>
+                                                                    <div class="rating-bar" style={{ display: 'flex' }}>
+                                                                        <div class="filled-bar" style={{ width: `${(houseReview.reviewPointHouse.accuracyPoint / 5) * 100}%` }}></div>
+                                                                        <div class="empty-bar"></div>
+                                                                    </div>
+                                                                </div>
+                                                            )
+                                                        }
+                                                        {
+                                                            houseReview.reviewPointHouse && (
+                                                                <div class="rating-container" style={{ width: '130%' }}>
+                                                                    <div
+                                                                        class="rating-label" >Giao tiếp: </div>
+                                                                    <span
+                                                                        className='review-point'>{houseReview.reviewPointHouse.communicationPoint}</span>
+                                                                    <div class="rating-bar" style={{ display: 'flex' }}>
+                                                                        <div class="filled-bar" style={{ width: `${(houseReview.reviewPointHouse.communicationPoint / 5) * 100}%` }}></div>
+                                                                        <div class="empty-bar"></div>
+                                                                    </div>
+                                                                </div>
+                                                            )
+                                                        }
+                                                        {
+                                                            houseReview.reviewPointHouse && (
+                                                                <div class="rating-container" style={{ width: '130%' }}>
+                                                                    <div class="rating-label" >Vị trí: </div>
+                                                                    <span
+                                                                        className='review-point'>{houseReview.reviewPointHouse.locationPoint}</span>
+                                                                    <div class="rating-bar" style={{ display: 'flex' }}>
+                                                                        <div class="filled-bar" style={{ width: `${(houseReview.reviewPointHouse.locationPoint / 5) * 100}%` }}></div>
+                                                                        <div class="empty-bar"></div>
+                                                                    </div>
+                                                                </div>
+                                                            )
+                                                        }
+                                                        {
+                                                            houseReview.reviewPointHouse && (
+                                                                <div class="rating-container" style={{ width: '130%' }}>
+                                                                    <div class="rating-label">Nhận phòng: </div>
+                                                                    <span
+                                                                        className='review-point'>{houseReview.reviewPointHouse.checkInPoint}</span>
+                                                                    <div class="rating-bar" style={{ display: 'flex' }}>
+                                                                        <div class="filled-bar" style={{ width: `${(houseReview.reviewPointHouse.checkInPoint / 5) * 100}%` }}></div>
+                                                                        <div class="empty-bar"></div>
+                                                                    </div>
+                                                                </div>
+                                                            )
+                                                        }
+                                                        {
+                                                            houseReview.reviewPointHouse && (
+                                                                <div class="rating-container" style={{ width: '130%' }}>
+                                                                    <div class="rating-label" >Giá trị: </div>
+                                                                    <span
+                                                                        className='review-point'>{houseReview.reviewPointHouse.valuePoint}</span>
+                                                                    <div class="rating-bar" style={{ display: 'flex' }}>
+                                                                        <div class="filled-bar" style={{ width: `${(houseReview.reviewPointHouse.valuePoint / 5) * 100}%` }}></div>
+                                                                        <div class="empty-bar"></div>
+                                                                    </div>
+                                                                </div>
+                                                            )
+                                                        }
+                                                    </div>
+                                                    <div className='active-reviews-extra'>
+                                                        <div>
+                                                            <i class="fa-solid fa-magnifying-glass icon-inp-search-review"></i>
+                                                            <input className='input-search-reviews'
+                                                                type="text" placeholder='Tìm kiếm đánh giá'
+                                                                onChange={handleInputSearchReviews} />
+                                                        </div>
+                                                        <div className='container-lastest-reviews'>
+                                                            {
+                                                                searchReviews ?
+                                                                    loadingInputSearch ? (
+                                                                        <div><p>Đang tìm kiếm</p></div>
+                                                                    ) : (
+                                                                        filteredReviewsSearch?.length > 0 ? (
+                                                                            filteredReviewsSearch?.map((review, index) => {
+                                                                                return (
+                                                                                    <div style={{ width: '100%' }} className='content-details' key={index}>
+                                                                                        <div className='container-details-users'>
+                                                                                            <img className='avatar-user-review' src={review?.user?.avatar} alt="" />
+                                                                                            <div>
+                                                                                                <h3>{review?.user.lastName}</h3>
+                                                                                                <ConvertDateReview date={review?.reviewDate}></ConvertDateReview>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div style={{ width: '100%' }} className='content-user-review'>
+                                                                                            <p>{review?.content}</p>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                );
+                                                                            })
+                                                                        ) : (
+                                                                            <div><p>Không tìm thấy đánh giá nào phù hợp</p></div>
+                                                                        )
+                                                                    ) : (
+                                                                        lastestReviews && (
+                                                                            lastestReviews.map((review, index) => (
+                                                                                <div style={{ width: '100%' }}
+                                                                                    className='content-details' key={index}>
+                                                                                    <div className='container-details-users'>
+                                                                                        <img className='avatar-user-review'
+                                                                                            src={review?.user?.avatar} alt="" />
+                                                                                        <div >
+                                                                                            <h3>{review?.user.lastName}</h3>
+                                                                                            <ConvertDateReview date={review?.reviewDate}></ConvertDateReview>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div style={{ width: '100%' }}
+                                                                                        className='content-user-review'>
+                                                                                        <p>{review?.content}</p>
+                                                                                    </div>
+                                                                                </div>
+                                                                            ))
+                                                                        )
+                                                                    )
+                                                            }
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                </div>
+                            </div>
+                            <hr className='hr' style={{ width: '140%' }}></hr>
+                            <div style={{ width: '1200px' }}>
+                                <div className='title'>
+                                    <h2>Nơi bạn sẽ đến</h2>
+                                    {
+                                        house?.location?.latitude && (
+                                            <LocationDetail latitude={house.location.latitude} longitude={house.location.longitude} />
+                                        )
+                                    }
+                                    <button className='btn-show-description' onClick={toggleOverlay}>
+                                        <p>Hiển thị thêm  <span><i class="fa-solid fa-angle-right"></i></span></p>
+                                    </button>
+                                </div>
+                            </div>
+                            <hr className='hr' style={{ width: '140%' }}></hr>
+                            <div style={{ width: '1200px' }}>
+                                <div className='title'>
+                                    {
+                                        house.user && (
+                                            <div>
+                                                <div>
+                                                    <img style={{ margin: '17px 0px' }}
+                                                        className='avatar' src={house.user.avatar} alt="" />
+                                                    <svg style={{ padding: '90px 60px' }}
+                                                        className='avatar2' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 14" aria-hidden="true" role="presentation" focusable="false"><linearGradient id="a" x1="8.5%" x2="92.18%" y1="17.16%" y2="17.16%"><stop offset="0" stop-color="#e61e4d"></stop><stop offset=".5" stop-color="#e31c5f"></stop><stop offset="1" stop-color="#d70466"></stop></linearGradient><path fill="#fff" d="M9.93 0c.88 0 1.6.67 1.66 1.52l.01.15v2.15c0 .54-.26 1.05-.7 1.36l-.13.08-3.73 2.17a3.4 3.4 0 1 1-2.48 0L.83 5.26A1.67 1.67 0 0 1 0 3.96L0 3.82V1.67C0 .79.67.07 1.52 0L1.67 0z"></path><path fill="url(#a)" d="M5.8 8.2a2.4 2.4 0 0 0-.16 4.8h.32a2.4 2.4 0 0 0-.16-4.8zM9.93 1H1.67a.67.67 0 0 0-.66.57l-.01.1v2.15c0 .2.1.39.25.52l.08.05L5.46 6.8c.1.06.2.09.29.1h.1l.1-.02.1-.03.09-.05 4.13-2.4c.17-.1.3-.29.32-.48l.01-.1V1.67a.67.67 0 0 0-.57-.66z"></path></svg>
+                                                </div>
+                                                <div className='infor-host'>
+                                                    <h3>Chủ nhà</h3>
+                                                    <p>ágsgdsg</p>
+                                                </div>
+                                            </div>
+                                        )
+                                    }
+                                    <div className='infor-host-detail'>
+                                        <div className='infor-host-devide'>
+                                            <div className='title-host-detail'>
+                                                <div className='icon-host-detail'>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" role="presentation" focusable="false" style={{ display: 'block', height: '16px', width: '16px' }}><path fill-rule="evenodd" d="m15.1 1.58-4.13 8.88-9.86 1.27a1 1 0 0 0-.54 1.74l7.3 6.57-1.97 9.85a1 1 0 0 0 1.48 1.06l8.62-5 8.63 5a1 1 0 0 0 1.48-1.06l-1.97-9.85 7.3-6.57a1 1 0 0 0-.55-1.73l-9.86-1.28-4.12-8.88a1 1 0 0 0-1.82 0z"></path></svg>
+                                                    <p>BAO NHIÊU??? đánh giá</p>
+                                                </div>
+                                                <div className='icon-host-detail'>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" role="presentation" focusable="false" style={{ display: 'block', height: '16px', width: '16px' }}><path d="m16 .8.56.37C20.4 3.73 24.2 5 28 5h1v12.5C29 25.57 23.21 31 16 31S3 25.57 3 17.5V5h1c3.8 0 7.6-1.27 11.45-3.83L16 .8zm7 9.08-9.5 9.5-4.5-4.5L6.88 17l6.62 6.62L25.12 12 23 9.88z"></path></svg>
+                                                    <p>Đã xác minh danh tính</p>
+                                                </div>
+                                                <div className='icon-host-detail'>
+                                                    <i style={{ marginRight: '15px' }} class="fa-solid fa-medal"></i>
+                                                    <p>Chủ nhà siêu cấp</p>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                {
+                                                    house && (
+                                                        <>
+                                                            <p style={{ width: '90%' }}>{isTruncated ? truncatedDescription : description}</p>
+                                                            {isTruncated ? (
+                                                                <p className='text-underline' onClick={toggleDescription}>Tìm hiểu thêm</p>
+                                                            ) : (
+                                                                <p className='text-underline' onClick={toggleDescription}>Ẩn bớt</p>
+                                                            )}
+                                                        </>
+                                                    )
+                                                }
+                                            </div>
+                                            <div style={{ width: '90%' }}>
+                                                {
+                                                    house && (
+                                                        <>
+                                                            <h3>{house?.hotelName} là 1 chủ nhà siêu cấp</h3>
+                                                            <p>Chủ nhà siêu cấp là những người có kinh nghiệm, được đánh giá cao và cam kết mang lại kỳ nghỉ tuyệt vời cho khách.</p>
+                                                        </>
+                                                    )
+                                                }
+
+                                            </div>
+                                        </div>
+                                        <div style={{ lineHeight: '2' }}
+                                            className='infor-host-devide'>
+                                            <p>Ngôn ngữ: Việt Nam</p>
+                                            <p>Tỉ lệ phản hồi: 100%</p>
+                                            <p>Thời gian phản hồi: Trong vòng 1 giờ</p>
+                                            <button className='btn-contact-with-host'>Liên hệ với chủ nhà</button>
+                                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                <i style={{ marginRight: '15px' }}
+                                                    class="fa-solid fa-shield"></i>
+                                                <p style={{ opacity: '0.8', width: '65%' }}>
+                                                    Để bảo vệ khoản thanh toán của bạn, tuyệt đối không chuyển tiền hoặc liên lạc bên ngoài trang web hoặc ứng dụng Airbnb.</p>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <hr className='hr' style={{ width: '140%' }}></hr>
+                            <div style={{ width: '1200px' }}>
+                                <div className='title'>
+                                    <h2>Những điều cần biết</h2>
+                                    <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                                        <div style={{ width: '33%' }}>
+                                            <h3>Nội quy nhà</h3>
+                                            <p>Nhận phòng sau</p>
+                                            <p>Trả phòng sau</p>
+                                            <p>Tối đa 12 khách</p>
+                                            <button className='btn-show-description' onClick={toggleOverlay}>
+                                                <p>Hiển thị thêm  <span><i class="fa-solid fa-angle-right"></i></span></p>
+                                            </button>
+                                        </div>
+                                        <div style={{ width: '33%' }}>
+                                            <h3>An toàn và chỗ ở</h3>
+                                            <p>Không có máy phát hiện khí CO</p>
+                                            <p>Không có máy báo khói</p>
+                                            <p>Camera an ninh/thiết bị ghi</p>
+                                            <button className='btn-show-description' onClick={toggleOverlay}>
+                                                <p>Hiển thị thêm  <span><i class="fa-solid fa-angle-right"></i></span></p>
+                                            </button>
+                                        </div>
+                                        <div style={{ width: '33%' }}>
+                                            <h3>Chính sách hủy</h3>
+                                            <p>Đặt phòng/đặt chỗ này không được hoàn tiền.</p>
+                                            <p>Hãy đọc toàn bộ chính sách hủy của Chủ nhà/Người tổ chức được áp dụng ngay cả khi bạn hủy vì ốm bệnh hoặc gián đoạn do dịch COVID-19.</p>
+                                            <button className='btn-show-description' onClick={toggleOverlay}>
+                                                <p>Hiển thị thêm  <span><i class="fa-solid fa-angle-right"></i></span></p>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr className='hr' style={{ width: '140%' }}></hr>
+                            <div className='menu-on-list-airbnb'>
+                                <Link className='link-to' to={`/house`}><p>AirBnb</p></Link>
+                                <i class="fa-solid fa-angle-right"></i>
+                                <Link className='link-to' to={`/house`}><p>Việt Nam</p></Link>
+                                <i class="fa-solid fa-angle-right"></i>
+                                <Link className='link-to' to={`/house`}><p>MIMAROPA</p></Link>
+                                <i class="fa-solid fa-angle-right"></i>
+                                <Link className='link-to' to={`/house`}><p>Palawan</p></Link>
+                                <i class="fa-solid fa-angle-right"></i>
+                                <Link className='link-to' to={`/house`}><p>San Vicente</p></Link>
+                                <i class="fa-solid fa-angle-right"></i>
+                            </div>
+                            <hr className='hr' style={{ width: '140%' }}></hr>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div className='fixed-book'>
+
+                </div>
+
+
+            </div>
+            <div>
+
+            </div>
+        </>
+    )
+}
+
+export default BodyDetail
