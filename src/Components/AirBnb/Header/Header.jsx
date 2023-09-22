@@ -98,7 +98,7 @@ const Header = () => {
       />
       <header>
         <div className={`overlay ${showFormHeader ? 'active' : ''}`} onClick={() => setShowFormHeader(false)}></div>
-        <Link to={''}>
+        <Link to={'/'}>
         <img
           className="img-header"
           src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Airbnb_Logo_B%C3%A9lo.svg/2560px-Airbnb_Logo_B%C3%A9lo.svg.png"

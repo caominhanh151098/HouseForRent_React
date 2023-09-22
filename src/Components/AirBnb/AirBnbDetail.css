@@ -129,6 +129,7 @@
 
 .description {
     line-height: 1.6;
+    width: 95%;
 }
 
 .btn-show-description {
@@ -160,65 +161,68 @@
     border-radius: 20px;
     max-height: 90%;
     width: 730px;
-    
-    
+
+
 }
+
 .appearing-div.active {
     animation: toTop 0.2s ease-in-out;
 }
 
 
-@keyframes toTop{
-    0%{
+@keyframes toTop {
+    0% {
         transform: translateY(100%);
     }
-    100%{
+
+    100% {
         transform: translateY(0%);
     }
 }
 
-.close-description{
+.close-description {
     cursor: pointer;
     font-size: 30px;
     border-radius: 50%;
     padding: 6px 10px;
-    
+
 }
-.close-description:hover{
+
+.close-description:hover {
     background: lightgrey;
     font-size: 30px;
     border-radius: 50%;
     padding: 6px 10px;
 }
 
-.d-none{
+.d-none {
     display: none;
 }
 
-.container-comfortable{
+.container-comfortable {
     width: 100%;
     display: flex;
     flex-wrap: wrap;
 }
 
-.container-description-details{
+.container-description-details {
     max-height: 800px;
     overflow: auto;
 }
 
-.comfortable{
+.comfortable {
     width: 50%;
     display: flex;
     height: 20%;
     align-items: center;
 }
 
-.comfortable-icon{
+.comfortable-icon {
     width: 15%;
     height: 30%;
 }
 
-.btn-show-all-comfortable{
+.btn-show-all-comfortable {
     background: white;
     padding: 15px 13px;
     cursor: pointer;
@@ -227,39 +231,41 @@
     font-size: 18px;
     margin: 10px 0px;
 }
-.btn-show-all-comfortable:hover{
+
+.btn-show-all-comfortable:hover {
     background: #F7F7F7;
 }
 
-.comfortable-details{
+.comfortable-details {
     max-height: 670px;
     overflow: auto;
 }
 
-.btn-reset-daysbook{
+.btn-reset-daysbook {
     background: white;
     padding: 14px 14px;
     border-radius: 10px;
     cursor: pointer;
     font-size: 18px;
 }
-.btn-reset-daysbook:hover{
+
+.btn-reset-daysbook:hover {
     background: #F7F7F7;
 }
 
-.Mui-selected{
-background: black !important;
+.Mui-selected {
+    background: black !important;
 }
 
 .range-highlight {
     background-color: #e2e0e0 !important;
-  }
+}
 
-.MuiTypography-subtitle1{
+.MuiTypography-subtitle1 {
     font-weight: bold !important;
 }
 
-.MuiDateRangePickerDay-day{
+.MuiDateRangePickerDay-day {
     font-weight: 500 !important;
 }
 
@@ -296,60 +302,60 @@ background: black !important;
     background-color: #f0f0f0;
 }
 
-.container-review{
+.container-review {
     width: 100%;
     display: flex;
     flex-wrap: wrap;
 }
 
-.review-details{
+.review-details {
     display: flex;
     flex-wrap: wrap;
     width: 100%;
 }
 
-.content-details{
+.content-details {
     width: 50%;
 }
 
-.review-point{
+.review-point {
     padding: 0px 40px;
     font-weight: bold;
     font-size: 26px;
     width: 6%;
 }
 
-.container-details-users{
+.container-details-users {
     display: flex;
 }
 
-.avatar-user-review{
+.avatar-user-review {
     width: 80px;
     height: 80px;
     border-radius: 50%;
     margin-right: 20px;
 }
 
-.content-user-review{
+.content-user-review {
     width: 90%;
     line-height: 1.4;
     font-family: 'circular';
 }
 
-.active-reviews-container{
+.active-reviews-container {
     display: flex;
     width: 100%;
 }
 
-.active-reviews-main{
+.active-reviews-main {
     width: 50%;
 }
 
-.active-reviews-extra{
+.active-reviews-extra {
     width: 65%;
 }
 
-.input-search-reviews{
+.input-search-reviews {
     width: 92%;
     background: #dcd4d457;
     padding: 14px 2px;
@@ -359,31 +365,33 @@ background: black !important;
     padding-left: 55px;
     position: relative;
 }
-.input-search-reviews::placeholder{
+
+.input-search-reviews::placeholder {
     position: absolute;
     left: 55px;
 }
-.input-search-reviews:focus{
-    border:  2px  solid black;
+
+.input-search-reviews:focus {
+    border: 2px solid black;
 }
 
-.icon-inp-search-review{
+.icon-inp-search-review {
     position: absolute;
     display: block;
     margin: 11px 10px;
     font-size: 27px;
 }
 
-.container-lastest-reviews{
+.container-lastest-reviews {
     padding: 10px 0px;
     max-height: 600px;
     overflow: auto;
 }
 
-.leaflet-control{
+.leaflet-control {
     display: flex;
     align-items: baseline;
-    height: 39px;
+    height: 31px;
     padding: 0px 0px;
     margin: 3px 1px;
     background: transparent !important;
@@ -392,39 +400,40 @@ background: black !important;
     font-size: 16px;
 }
 
-.infor-host{
+.infor-host {
     padding: 4px 110px;
     align-items: center;
     position: relative;
     font-size: 20px;
 }
 
-.infor-host-detail{
+.infor-host-detail {
     display: flex;
     flex-wrap: wrap;
     width: 100%;
     line-height: 2;
 }
 
-.infor-host-devide{
+.infor-host-devide {
     width: 50%;
 }
 
-.title-host-detail{
+.title-host-detail {
     display: flex;
     flex-wrap: wrap;
 }
 
-.icon-host-detail{
+.icon-host-detail {
     width: 50%;
     align-items: center;
     display: flex;
 }
-.icon-host-detail svg{
+
+.icon-host-detail svg {
     margin-right: 15px;
 }
 
-.text-underline{
+.text-underline {
     text-decoration: underline;
     font-size: 20px;
     font-weight: bold;
@@ -433,7 +442,7 @@ background: black !important;
 
 
 
-.btn-contact-with-host{
+.btn-contact-with-host {
     cursor: pointer;
     padding: 14px 12px;
     border-radius: 13px;
@@ -441,19 +450,285 @@ background: black !important;
     font-weight: bolder;
     font-size: 17px;
 }
-.btn-contact-with-host:hover{
+
+.btn-contact-with-host:hover {
     background: rgb(224, 223, 223);
 }
 
-.menu-on-list-airbnb{
+.menu-on-list-airbnb {
     display: flex;
     align-items: center;
 }
 
-.link-to{
+.link-to {
     color: black;
     font-weight: bold;
-    font-size: 22px;
+    font-size: 20px;
     text-decoration: none;
-    padding: 6px;
+    padding: 10px;
+}
+
+.link-to:hover {
+    text-decoration: underline;
+}
+
+.end {
+    width: 141%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.a-tag {
+    padding: 0px 10px;
+}
+
+.a-tag-end {
+    color: black;
+    text-decoration: none;
+    padding: 0 10px;
+}
+
+.a-tag-end:hover {
+    text-decoration: underline;
+}
+
+.fixed-book {
+    background: white;
+    height: 307px;
+    width: 332px;
+    right: 21%;
+    display: block;
+    position: absolute;
+    top: 86%;
+    border-radius: 20px;
+    border: 1.5px solid #b4adad;
+    box-shadow: 4;
+    box-shadow: 5px 5px 20px 0 rgba(0, 0, 0, 0.1);
+}
+
+.fixed-price {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    line-height: 0.5;
+}
+
+.fixed-book-day {
+    margin-left: 5%;
+    margin-right: 5%;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.fixed-devide-book {
+    width: 49.5%;
+    border: 1px solid #9b9b9b;
+    height: 70px;
+    cursor: pointer;
+}
+
+.fixed-full-book {
+    width: 100%;
+    border: 1px solid #9b9b9b;
+    justify-content: space-between;
+    align-items: center;
+    display: flex;
+    border-radius: 0px 0px 10px 10px;
+    border-top: none;
+    cursor: pointer;
+    line-height: 0.8;
+}
+
+.fix-div1 {
+    border-right: none;
+}
+
+.fixed-down-icon {
+    margin: 20px;
+    cursor: pointer;
+    transition: transform 0.3s ease-in;
+}
+
+.fixed-down-icon:hover {
+    transform: scale(1.3);
+}
+
+.btn-book-now {
+    width: 90%;
+    margin: 10px;
+    padding: 16px 0px;
+    border-radius: 10px;
+    border: none;
+    background: linear-gradient(45deg, #FF385C, #F0255F, #FB355B);
+    cursor: pointer;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    transition: background 2s ease-in;
+    /* Thêm transition */
+}
+
+.count-guests {
+    position: absolute;
+    background: red;
+    width: 200px;
+    width: 200px;
+}
+
+.add-guest-detail {
+    background-color: white;
+    /* width: 50%; */
+    border-radius: 10px px;
+    position: static;
+    border-radius: 10px;
+}
+
+.count-guest-detail {
+    position: absolute;
+    /* background: red; */
+    /* width: 200px; */
+    width: 89%;
+    border: 1px solid #9b9b9b;
+    margin: 0px -25px;
+    border-radius: 10px;
+}
+
+.check-room-available-book-detail {
+    position: absolute;
+    border: 1px solid #c8c8c8;
+    top: -6%;
+    background: white;
+    border-radius: 13px;
+    right: -45%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+    animation: zoomIn 0.2s ease;
+}
+
+@keyframes zoomIn {
+    0% {
+        scale: 0;
+    }
+
+    100% {
+        scale: 100;
+    }
+}
+
+.btn-close-check-available-room {
+    background: black;
+    color: white;
+    padding: 9px 14px;
+    border-radius: 10px;
+    font-size: 18px;
+    cursor: pointer;
+    margin-top: -16px;
+    margin-right: 20px;
+    margin-bottom: 20px;
+}
+
+.btn-close-check-available-room:hover {
+    filter: brightness(1.6);
+}
+
+.btn-reset-check-available-room {
+    background: white;
+    border: none;
+    text-decoration: underline;
+    font-size: 17px;
+    cursor: pointer;
+    padding: 12px 8px;
+    border-radius: 19px;
+}
+
+.btn-reset-check-available-room:hover {
+    background: rgb(226, 221, 221);
+}
+
+.div-choose-day-available-room {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 46px;
+}
+
+.details-choose-day-available {
+    display: flex;
+    justify-content: space-between;
+    width: 65%;
+}
+
+.div-where-you-sleep {
+    width: 100%;
+    display: flex;
+}
+
+.div-detail-where-you-sleep {
+    text-align: left;
+    width: 50%;
+    border: 1px solid #c6c6c6;
+    border-radius: 15px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+.slick-slider {
+    width: 720px !important;
+}
+
+.slick-arrow {
+    background-color: #3d3f42 !important;
+    color: #fff !important;
+    font-size: 22px !important;
+    border-radius: 50% !important;
+}
+
+.slick-arrow:hover {
+    background-color: #0e0e0e !important;
+}
+
+.slick-prev {
+    left: 0;
+}
+
+.slick-next {
+    right: 0;
+}
+
+.slider-container .slick-slide {
+    margin-right: 10px;
+}
+
+
+.slider-container .slick-slide:last-child {
+    margin-right: 0;
+}
+
+.div-detail-where-you-sleep {
+    display: flex;
+    height: 193px;
+    margin-right: 10px !important;
+    margin-left: 10px !important;
+    width:90% !important;
+}
+
+.svg-container {
+    display: flex;
+    flex-wrap: wrap;
+    margin: -5px -1px;
+}
+
+.svg-container svg {
+    height: 40px;
+    width: 54px;
+    fill: currentColor;
+    margin: 5px 2px;
+}
+
+.img-div-where-you-sleep-have-image{
+    width: 85%;
+    height: 244px;
+    margin-left: 18px;
+    margin-right: 10px;
+    border-radius: 20px;
 }

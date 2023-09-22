@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react'
 import "../AirBnbDetail.css"
 import { Link, useParams } from 'react-router-dom';
 import { API_HOUSE_COMFORTABLE_DETAIL, API_HOUSE_DETAIL_URL, API_HOUSE_REVIEW, API_HOUSE_REVIEWS } from '../../../Services/common';
@@ -12,10 +12,22 @@ import { DateRangePickerDay as MuiDateRangePickerDay } from '@mui/x-date-pickers
 import LocationDetail from './LocationDetail';
 import ConvertDateReview from './ConvertDateReview';
 import _ from 'lodash';
+import GradientButton from './GradientButton';
+import { el } from 'date-fns/locale';
+import BookingProvider from '../Book/Main/BookingProvider';
+import BookingContext from '../Book/Main/BookingContext';
+import { API_HOUSE_DETAIL_PRICE } from './../../../Services/common';
+import SvgSlider from './SvgSlider';
+import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+
 
 const BodyDetail = () => {
     const [indexImg, setIndexImg] = useState(0)
-    const { houseID } = useParams();
+    const { houseID, CountOld, CountYoung, CountBaby, CountPet, GoDay, BackDay } = useParams();
     const [house, setHouse] = useState({})
     const [isOverlayVisible, setIsOverlayVisible] = useState(false);
     const [isOverlayComfortable, setIsOVerlayComfortable] = useState(false)
@@ -27,14 +39,24 @@ const BodyDetail = () => {
     const [houseReviews, setHouseReviews] = useState({})
     const [loadingInputSearch, setLoadingInputSearch] = useState(false)
     const [selectedDates, setSelectedDates] = useState([
-        dayjs().subtract(1, 'day'),
-        dayjs().add(1, 'day')
+        GoDay ? dayjs(GoDay) : dayjs().subtract(1, 'day'),
+        BackDay ? dayjs(BackDay) : dayjs().add(1, 'day')
     ]);
     const [showFullDescription, setShowFullDescription] = useState(false);
     const [isTruncated, setIsTruncated] = useState(true);
+    const [countOld, setCountOld] = useState(CountOld ? Number(CountOld) : 1);
+    const [countYoung, setCountYoung] = useState(CountYoung ? Number(CountYoung) : 0);
+    const [countBaby, setCountBaby] = useState(CountBaby ? Number(CountBaby) : 0);
+    const [countPets, setCountPets] = useState(CountPet ? Number(CountPet) : 0);
+    const [housePrice, setHousePrice] = useState({});
+    const [checkAvailableRoom, setCheckAvailableRoom] = useState(false)
+
 
     const handleDateChange = (newDates) => {
         setSelectedDates(newDates);
+        if (newDates[1]) {
+            setCheckAvailableRoom(false)
+        }
     };
     const numberOfNights = selectedDates[1] && selectedDates[0] ? selectedDates[1].diff(selectedDates[0], 'day') : null;
 
@@ -45,7 +67,6 @@ const BodyDetail = () => {
     };
 
     useEffect(() => {
-        console.log('demo')
         async function getHouseDetail() {
             let res = await fetch(API_HOUSE_DETAIL_URL + `${houseID}`);
             let housedtl = await res.json()
@@ -53,7 +74,7 @@ const BodyDetail = () => {
         }
         getHouseDetail();
     }, [])
-    console.log(house);
+    console.log("house", house);
 
     useEffect(() => {
         async function getComfortableDetail() {
@@ -63,7 +84,7 @@ const BodyDetail = () => {
         }
         getComfortableDetail();
     }, [])
-    console.log(houseComfortable);
+    console.log("houseComfortable", houseComfortable);
 
     const totalComfortables = house?.miniListComfortable?.length;
 
@@ -74,7 +95,8 @@ const BodyDetail = () => {
             setHouseReview(houseReview);
         }
         getReviewHouse();
-        document.querySelector('.MuiDateRangeCalendar-root div').style.display = 'none'
+        document.querySelector('.MuiDateRangeCalendar-root div').style.display = 'none';
+        // document.querySelector('.check-room-available-book-detail .MuiDateRangeCalendar-root div').style.display = 'none'
     }, [])
     console.log('houseReview', houseReview);
 
@@ -82,7 +104,7 @@ const BodyDetail = () => {
     const sixLastestReviews = houseReview?.reviews?.length >= 6 ? houseReview?.reviews.slice(0, 6)
         .sort((a, b) => new Date(b.reviewDate) - new Date(a.reviewDate)) :
         houseReview?.reviews?.sort((a, b) => new Date(b.reviewDate) - new Date(a.reviewDate));
-    console.log(sixLastestReviews);
+    console.log("sixLastestReviews", sixLastestReviews);
 
 
 
@@ -97,7 +119,7 @@ const BodyDetail = () => {
     }, [])
 
     const lastestReviews = houseReviews ? houseReviews?.content?.sort((a, b) => new Date(b.reviewDate) - new Date(a.reviewDate)) : null;
-    console.log(lastestReviews);
+    console.log("lastestReviews", lastestReviews);
 
     const toggleOverlay = () => {
         setIsOverlayVisible(!isOverlayVisible);
@@ -112,6 +134,13 @@ const BodyDetail = () => {
 
     const toggleOverlayComfortable = () => {
         setIsOVerlayComfortable(!isOverlayComfortable);
+        if (!isOverlayComfortable) {
+            document.querySelector('.css-1nkg345-MuiButtonBase-root-MuiIconButton-root-MuiPickersArrowSwitcher-button').style.display = 'none'
+            document.querySelector('.MuiIconButton-root').style.display = 'none'
+        } else {
+            document.querySelector('.css-1nkg345-MuiButtonBase-root-MuiIconButton-root-MuiPickersArrowSwitcher-button').style = 'block'
+            document.querySelector('.MuiIconButton-root').style = 'block'
+        }
     };
 
     const toggleOverlayReviews = () => {
@@ -124,6 +153,46 @@ const BodyDetail = () => {
             document.querySelector('.leaflet-control-attribution').style = 'block'
         }
     };
+
+    const increaseOld = () => {
+        if (countOld + countYoung < maxGuests) {
+            setCountOld((prevCount) => prevCount + 1)
+        }
+    }
+    const decreaseOld = () => {
+        if (countOld > 0) {
+            setCountOld((prevCount) => prevCount - 1)
+        }
+    }
+
+    const increaseYoung = () => {
+        if (countOld + countYoung < maxGuests) {
+            setCountYoung((prevCount) => prevCount + 1)
+        }
+    }
+    const decreaseYoung = () => {
+        if (countYoung > 0) {
+            setCountYoung((prevCount) => prevCount - 1)
+        }
+    }
+
+    const increaseBaby = () => {
+        setCountBaby((prevCount) => prevCount + 1)
+    }
+    const decreaseBaby = () => {
+        if (countBaby > 0) {
+            setCountBaby((prevCount) => prevCount - 1)
+        }
+    }
+
+    const increasePets = () => {
+        setCountPets((prevCount) => prevCount + 1)
+    }
+    const decreasePets = () => {
+        if (countPets > 0) {
+            setCountPets((prevCount) => prevCount - 1)
+        }
+    }
 
 
     const DateRangePickerDay = styled(MuiDateRangePickerDay)(
@@ -188,9 +257,104 @@ const BodyDetail = () => {
         : description;
 
 
+    useEffect(() => {
+        const fixedBook = document.querySelector('.fixed-book');
+        let isFixed = false;
 
-    // const lastestReviews = houseReview?.reviews.slice(0, 6)
-    // console.log(lastestReviews);
+        window.addEventListener('scroll', () => {
+            const offset = window.scrollY;
+
+            if (offset >= 700 && !isFixed) {
+                fixedBook.style.position = 'fixed';
+                fixedBook.style.top = '100' + 'px';
+                isFixed = true;
+            }
+            if (offset > 2006 && isFixed) {
+                fixedBook.style.position = 'absolute';
+                fixedBook.style.top = '227%';
+                isFixed = false;
+            }
+            if (offset < 680 && isFixed) {
+                fixedBook.style.position = 'absolute';
+                fixedBook.style.top = '86%';
+                isFixed = false;
+            }
+        });
+    }, []);
+
+    const [isOpenCountGuests, setIsOpenCountGuests] = useState(false);
+    const [isUpOpenCountGuests, setIsUpOpenCountGuests] = useState(false);
+
+    const toggleCountGuestsDetails = () => {
+        setIsOpenCountGuests(!isOpenCountGuests);
+        setIsUpOpenCountGuests(!isUpOpenCountGuests);
+    };
+
+    const { bookingInfo, setBookingInfo } = useContext(BookingContext);
+
+    const handleClick = () => {
+        const newBookingInfo = {
+            numReview: house?.numReview,
+            srcImg: house.images[0].srcImg,
+            goDay: selectedDates[0].format('D [thg] M YYYY'),
+            backDay: selectedDates[1].format('D [thg] M YYYY'),
+        };
+
+        setBookingInfo(newBookingInfo);
+        localStorage.setItem('bookingInfo', JSON.stringify(bookingInfo))
+    };
+
+    useEffect(() => {
+        async function getHousePrice() {
+            let res = await fetch(API_HOUSE_DETAIL_PRICE + `${houseID}`)
+            let price = await res.json();
+            setHousePrice(price)
+        }
+        getHousePrice();
+    }, [])
+    console.log("giá:", housePrice);
+
+    const handleCheckAvailableRoom = () => {
+        setCheckAvailableRoom(!checkAvailableRoom)
+    }
+    useEffect(() => {
+        if (checkAvailableRoom) {
+            document.querySelector('.check-room-available-book-detail .MuiStack-root .MuiDateRangeCalendar-root div').style.display = 'none';
+        }
+    }, [checkAvailableRoom])
+
+    const requestDetail = house?.requestDetail;
+    const requestMaxGuest = requestDetail ? requestDetail.match(/\d+/) : null;
+    const maxGuests = requestMaxGuest ? parseInt(requestMaxGuest[0]) : null;
+
+    let maxHeight = 0;
+
+    if (house && house?.rooms) {
+        house.rooms.forEach(item => {
+            const divs = document.querySelectorAll('.div-detail-where-you-sleep');
+            divs.forEach(div => {
+                const height = div.clientHeight;
+                if (height > maxHeight) {
+                    maxHeight = height;
+                }
+            });
+        });
+    }
+
+    console.log("max heigth sau cùng là", maxHeight);
+
+    let count = 0;
+    let size = house ? house?.rooms ? house?.rooms.length : 0 : 0;
+    let imgArrHouse = house?.rooms ? house?.rooms : [];
+useEffect(() => {
+    for (let i = 0; i < size; i++ ){
+        if (imgArrHouse[i]?.image !== undefined || imgArrHouse[i]?.image !== null) {
+            count+=1;
+        }
+    }
+}, [])
+
+
     return (
         <>
             <div className='body-detail'>
@@ -354,6 +518,102 @@ const BodyDetail = () => {
                                 )}
                             </div>
                             <hr className='hr'></hr>
+                            {
+                                house && house?.rooms && size > 1 && size == count ? (
+                                    <>
+                                        <div>
+                                            <div className='title'>
+                                                <h2>Nơi bạn sẽ ngủ nghỉ</h2>
+                                            </div>
+                                            <div className='div-where-you-sleep'>
+                                                <Slider
+                                                    dots={true}
+                                                    infinite={true}
+                                                    speed={400}
+                                                    slidesToShow={2.5}
+                                                    slidesToScroll={1}
+                                                    prevArrow={<div className="slick-arrow"><FontAwesomeIcon icon={faArrowLeft} /></div>}
+                                                    nextArrow={<div className="slick-arrow"><FontAwesomeIcon icon={faArrowRight} /></div>}
+                                                >
+                                                    {
+                                                        house && house?.rooms && (
+                                                            house?.rooms.map((item, index) => (
+                                                                <div className='div-where-you-sleep-have-image'
+                                                                     key={index}>
+                                                                    <div>
+                                                                        <img className='img-div-where-you-sleep-have-image'
+                                                                         src={item.image}>
+                                                                        </img>
+                                                                    </div>
+                                                                    <div >
+                                                                        <h3>{item.name}</h3>
+                                                                        <p>{item.bed}</p>
+                                                                    </div>
+                                                                </div>
+                                                            ))
+                                                        )
+                                                    }
+
+                                                </Slider>
+                                                <div></div>
+                                                <div></div>
+                                                <div></div>
+                                            </div>
+                                        </div>
+                                        <hr className='hr' style={{ marginTop: '36px' }}></hr>
+                                    </>
+                                ) : 
+                                house && house?.rooms && size > 1 ? 
+                                (
+                                    <>
+                                    <div>
+                                        <div className='title'>
+                                            <h2>Nơi bạn sẽ ngủ nghỉ</h2>
+                                        </div>
+                                        <div className='div-where-you-sleep'>
+                                            <Slider
+                                                dots={true}
+                                                infinite={true}
+                                                speed={400}
+                                                slidesToShow={2.5}
+                                                slidesToScroll={1}
+                                                prevArrow={<div className="slick-arrow"><FontAwesomeIcon icon={faArrowLeft} /></div>}
+                                                nextArrow={<div className="slick-arrow"><FontAwesomeIcon icon={faArrowRight} /></div>}
+                                            >
+                                                {
+                                                    house && house?.rooms && (
+                                                        house?.rooms.map((item, index) => (
+                                                            <div style={{ height: `${maxHeight}px` }}
+                                                                className='div-detail-where-you-sleep' key={index}>
+                                                                <div className="svg-container">
+                                                                    {Array.from({ length: item.bedDetail[0].quantity }, (_, i) => (
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" role="presentation" focusable="false">
+                                                                            <path fill-rule="evenodd" d={item.bedDetail[0].iconPath}>
+                                                                            </path>
+                                                                        </svg>
+                                                                    ))}
+                                                                </div>
+                                                                <div style={{ padding: '5px 30px' }}>
+                                                                    <h3>{item.name}</h3>
+                                                                    <p>{item.bed}</p>
+                                                                </div>
+                                                            </div>
+                                                        ))
+                                                    )
+                                                }
+
+                                            </Slider>
+                                            <div></div>
+                                            <div></div>
+                                            <div></div>
+                                        </div>
+                                    </div>
+                                    <hr className='hr' style={{ marginTop: '36px' }}></hr>
+                                </>
+                                ) : (
+                                    <></>
+                                )
+                            }
                             <div>
                                 <div className='title'>
                                     <h2>Nơi này có những gì cho bạn</h2>
@@ -857,19 +1117,209 @@ const BodyDetail = () => {
                                 <Link className='link-to' to={`/house`}><p>Palawan</p></Link>
                                 <i class="fa-solid fa-angle-right"></i>
                                 <Link className='link-to' to={`/house`}><p>San Vicente</p></Link>
-                                <i class="fa-solid fa-angle-right"></i>
                             </div>
                             <hr className='hr' style={{ width: '140%' }}></hr>
+                            <div>
+                                <div className='end'>
+                                    <div style={{ display: 'flex', alignItems: 'center ' }}>
+                                        <p style={{ padding: '0px 10px' }}>© 2023 Airbnb, Inc. </p>
+                                        <span>·</span>
+                                        <a className='a-tag-end' href=""> <bnsp></bnsp> Quyền riêng tư</a>
+                                        <span>·</span>
+                                        <a className='a-tag-end' href=""> <bnsp></bnsp> Điều khoản</a>
+                                        <span> · </span>
+                                        <a className='a-tag-end' href=""> <bnsp></bnsp> Sơ đồ trang web</a>
+                                    </div>
+                                    <div style={{ display: 'flex' }}>
+                                        <a className='a-tag' href="https://www.facebook.com/airbnb" target='_blank'>
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-label="Chuyển tới Facebook" role="img" focusable="false" style={{ display: 'block', height: '16px', width: '16px' }}><path d="M30 0a2 2 0 0 1 2 2v28a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2z"></path><path fill="#fff" d="M22.94 16H18.5v-3c0-1.27.62-2.5 2.6-2.5h2.02V6.56s-1.83-.31-3.58-.31c-3.65 0-6.04 2.21-6.04 6.22V16H9.44v4.62h4.06V32h5V20.62h3.73z"></path></svg>
+                                        </a>
+                                        <a className='a-tag' href="https://twitter.com/airbnb" target='_blank'>
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-label="Chuyển tới Twitter" role="img" focusable="false" style={{ display: 'block', height: '16px', width: '16px' }}><path d="M32 4v24a4 4 0 0 1-4 4H4a4 4 0 0 1-4-4V4a4 4 0 0 1 4-4h24a4 4 0 0 1 4 4z"></path><path fill="#fff" d="M18.66 7.99a4.5 4.5 0 0 0-2.28 4.88A12.31 12.31 0 0 1 7.3 8.25a4.25 4.25 0 0 0 1.38 5.88c-.69 0-1.38-.13-2-.44a4.54 4.54 0 0 0 3.5 4.31 4.3 4.3 0 0 1-2 .06 4.64 4.64 0 0 0 4.19 3.13A8.33 8.33 0 0 1 5.8 23a12.44 12.44 0 0 0 19.32-11.19A7.72 7.72 0 0 0 27.3 9.5a8.3 8.3 0 0 1-2.5.75 4.7 4.7 0 0 0 2-2.5c-.87.5-1.81.87-2.81 1.06a4.5 4.5 0 0 0-5.34-.83z"></path></svg>
+                                        </a>
+                                        <a className='a-tag' href="https://www.instagram.com/airbnb/" target='_blank'>
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-label="Chuyển tới Instagram" role="img" focusable="false" style={{ display: 'block', height: '16px', width: '16px' }}><path d="M30 0H2a2 2 0 0 0-2 2v28c0 1.1.9 2 2 2h28a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"></path><path fill="#fff" d="M15.71 4h1.25c2.4 0 2.85.02 3.99.07 1.28.06 2.15.26 2.91.56.79.3 1.46.72 2.13 1.38.6.6 1.08 1.33 1.38 2.13l.02.06c.28.74.48 1.58.54 2.8l.01.4c.05 1.02.06 1.63.06 4.4v.92c0 2.6-.02 3.05-.07 4.23a8.78 8.78 0 0 1-.56 2.91c-.3.8-.77 1.53-1.38 2.13a5.88 5.88 0 0 1-2.13 1.38l-.06.02c-.74.28-1.59.48-2.8.53l-.4.02c-1.02.05-1.63.06-4.4.06h-.92a73.1 73.1 0 0 1-4.23-.07 8.78 8.78 0 0 1-2.91-.56c-.8-.3-1.53-.77-2.13-1.38a5.88 5.88 0 0 1-1.38-2.13l-.02-.06a8.84 8.84 0 0 1-.54-2.8l-.01-.37A84.75 84.75 0 0 1 4 16.29v-1c0-2.62.02-3.06.07-4.24.06-1.26.26-2.13.55-2.88l.01-.03c.3-.8.77-1.53 1.38-2.13a5.88 5.88 0 0 1 2.13-1.38l.06-.02a8.84 8.84 0 0 1 2.8-.54l.37-.01C12.39 4 12.99 4 15.71 4zm.91 2.16h-1.24c-2.3 0-2.91.01-3.81.05l-.42.02c-1.17.05-1.8.25-2.23.41-.56.22-.96.48-1.38.9-.4.41-.67.8-.88 1.35l-.03.06a6.7 6.7 0 0 0-.4 2.2l-.02.45c-.04.9-.05 1.53-.05 3.94v1.08c0 2.64.02 3.05.07 4.23v.07c.06 1.13.25 1.74.42 2.16.21.56.47.96.9 1.38.4.4.8.67 1.34.88l.06.03a6.7 6.7 0 0 0 2.2.4l.45.02c.9.04 1.53.05 3.94.05h1.08c2.64 0 3.05-.02 4.23-.07h.07a6.51 6.51 0 0 0 2.16-.42c.52-.19.99-.5 1.38-.9.4-.4.67-.8.88-1.34l.03-.06a6.7 6.7 0 0 0 .4-2.2l.02-.45c.04-.9.05-1.53.05-3.94v-1.09c0-2.63-.02-3.04-.07-4.22v-.07a6.51 6.51 0 0 0-.42-2.16c-.19-.52-.5-.99-.9-1.38a3.7 3.7 0 0 0-1.34-.88l-.06-.03a6.63 6.63 0 0 0-2.16-.4l-.46-.02c-.9-.04-1.5-.05-3.8-.05zM16 9.84a6.16 6.16 0 1 1 0 12.32 6.16 6.16 0 0 1 0-12.32zM16 12a4 4 0 1 0 0 8 4 4 0 0 0 0-8zm6.4-3.85a1.44 1.44 0 1 1 0 2.88 1.44 1.44 0 0 1 0-2.88z"></path></svg>                                        </a>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
 
                 <div className='fixed-book'>
+                    <div className='fixed-price'>
+                        <div style={{ marginLeft: '20px' }}>
+                            {
+                                housePrice && (
+                                    <h1>$ {housePrice.price} <span style={{ fontWeight: '200', fontSize: '20px' }}> / đêm</span></h1>
+                                )
+                            }
+                            <p>Tổng trước thuế</p>
+                        </div>
+                        <div>
+                            {
+                                house && (
+                                    <p>
+                                        <i class="fa-solid fa-star"></i> {house.reviewPoint} ·
+                                        <span className='text' style={{ textDecoration: 'underline' }}>{house.numReview} đánh giá</span>
+                                    </p>
+                                )
+                            }
+                        </div>
+                    </div>
+                    <div className='fixed-book-day'>
+                        <div style={{ borderRadius: '10px 0px 0px 0px' }}
+                            className='fixed-devide-book fix-div1'>
+                            <div style={{ lineHeight: '0.8', borderRight: 'none' }}>
+                                <p style={{ fontWeight: 'bolder' }}>Nhận phòng</p>
+                                <p>
+                                    {selectedDates[0] ?
+                                        (`${selectedDates[0].format('D [thg] M YYYY')}`) : ('Thêm ngày')}
+                                </p>
+                            </div>
 
+                        </div>
+                        <div style={{ borderRadius: '0px 10px 0px 0px' }}
+                            className='fixed-devide-book'>
+                            <div style={{ lineHeight: '0.8' }}>
+                                <p style={{ fontWeight: 'bolder' }}>Trả phòng</p>
+                                <p>{selectedDates[0] && selectedDates[1] ? (
+                                    `${selectedDates[1].format('D [thg] M YYYY')}`
+                                ) : ('Thêm ngày')}</p>
+                            </div>
+                        </div>
+                        <div className='fixed-full-book'>
+                            <div style={{ textAlign: 'left', margin: '0px 25px' }}>
+                                <p style={{ fontWeight: 'bolder' }}>Khách</p>
+                                <p style={{ width: '113%' }}>
+                                    {countOld || countYoung ? countOld + countYoung + ' khách ' : 'Thêm ít nhất 1 khách'}
+                                    {countBaby ? ', ' + countBaby + ' em bé ' : ''}
+                                    {countPets ? ', ' + countPets + ' thú cưng' : ''}
+                                </p>
+                                {
+                                    isOpenCountGuests && (
+                                        <div className='count-guest-detail'>
+                                            <div className="add-guest-detail">
+                                                <div className="body-guests">
+                                                    <div className="header-guests">
+                                                        <h3>Người lớn</h3>Từ 13 tuổi trở lên
+                                                    </div>
+                                                    <div className="group-btn-guests">
+                                                        <button className={`degbtn ${countOld === 0 ? 'disable-degbtn' : ''}`} onClick={decreaseOld} disabled={countOld === 1}><span>-</span></button>
+                                                        <span className="countOld">{countOld}</span>
+                                                        <button className="crebtn" onClick={increaseOld} disabled={countOld + countYoung >= maxGuests}>+</button>
+                                                    </div>
+                                                </div>
+                                                <hr className='hr' />
+                                                <div className="body-guests">
+                                                    <div className="header-guests">
+                                                        <h3>Trẻ em</h3>Độ tuổi 2 - 12
+                                                    </div>
+                                                    <div className="group-btn-guests">
+                                                        <button className={`degbtn ${countYoung === 0 ? 'disable-degbtn' : ''}`} onClick={decreaseYoung} disabled={countYoung === 0}><span>-</span></button>
+                                                        <span className="countOld">{countYoung}</span>
+                                                        <button className="crebtn" onClick={increaseYoung} disabled={countOld + countYoung >= maxGuests}>+</button>
+                                                    </div>
+                                                </div>
+                                                <hr className='hr' />
+                                                <div className="body-guests">
+                                                    <div className="header-guests">
+                                                        <h3>Em bé</h3>Dưới 2 tuổi
+                                                    </div>
+                                                    <div className="group-btn-guests">
+                                                        <button className={`degbtn ${countBaby === 0 ? 'disable-degbtn' : ''}`} onClick={decreaseBaby} disabled={countBaby === 0}><span>-</span></button>
+                                                        <span className="countOld">{countBaby}</span>
+                                                        <button className="crebtn" onClick={increaseBaby} disabled={countBaby === 5}>+</button>
+                                                    </div>
+                                                </div>
+                                                <hr className='hr' />
+                                                <div className="body-guests">
+                                                    <div className="header-guests">
+                                                        <h3>Thú cưng</h3>
+                                                    </div>
+                                                    <div className="group-btn-guests">
+                                                        <button className={`degbtn ${countPets === 0 ? 'disable-degbtn' : ''}`} onClick={decreasePets} disabled={countPets === 0}><span>-</span></button>
+                                                        <span className="countOld">{countPets}</span>
+                                                        <button className="crebtn" onClick={increasePets} disabled={countPets === 5}>+</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )
+                                }
+                            </div>
+                            <div className='fixed-down-icon' onClick={toggleCountGuestsDetails} >
+                                <i
+                                    class={`fa-solid fa-angle-${isUpOpenCountGuests ? 'up' : 'down'}`}></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        {
+                            selectedDates[0] ? selectedDates[1] ? (
+                                <Link to={`/book/${houseID}/${countOld}/${countYoung}/${countBaby}/${countPets}/${selectedDates[0].format('YYYY-MM-DD')}/${selectedDates[1].format('YYYY-MM-DD')}`}
+                                    onClick={handleClick}>
+                                    <GradientButton>Đặt phòng</GradientButton>
+                                </Link>
+                            ) : (
+                                <GradientButton onClick={handleCheckAvailableRoom}>Kiểm tra tình trạng còn phòng</GradientButton>
+                            ) : (
+                                <GradientButton>Kiểm tra tình trạng còn phòng</GradientButton>
+                            )
+                        }
+                        {
+                            checkAvailableRoom && (
+                                <div className='check-room-available-book-detail'>
+                                    <div className='div-choose-day-available-room'>
+                                        <div style={{ width: '45%' }}>
+                                            <h2>Chọn ngày</h2>
+                                            <p>Thời gian ở tối thiểu: 1 đêm</p>
+                                        </div>
+                                        <div className='details-choose-day-available'>
+                                            <div style={{ borderRadius: '15px' }}
+                                                className='fixed-devide-book fix-div1'>
+                                                <div style={{ lineHeight: '0.8', borderRight: 'none' }}>
+                                                    <p style={{ fontWeight: 'bolder' }}>Nhận phòng</p>
+                                                    <p>
+                                                        {selectedDates[0] ?
+                                                            (`${selectedDates[0].format('D [thg] M YYYY')}`) : ('Thêm ngày')}
+                                                    </p>
+                                                </div>
+
+                                            </div>
+                                            <div style={{ borderRadius: '15px' }}
+                                                className='fixed-devide-book'>
+                                                <div style={{ lineHeight: '0.8' }}>
+                                                    <p style={{ fontWeight: 'bolder' }}>Trả phòng</p>
+                                                    <p>{selectedDates[0] && selectedDates[1] ? (
+                                                        `${selectedDates[1].format('D [thg] M YYYY')}`
+                                                    ) : ('Thêm ngày')}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                        <DemoContainer id='huydeptrai' components={['DateRangeCalendar']}>
+                                            <DateRangeCalendar
+                                                value={selectedDates}
+                                                onChange={handleDateChange}
+                                                minDate={selectedDates[0]}
+                                                slots={{ day: (props) => <DateRangePickerDay {...props} className={props.isHighlighting ? 'range-highlight' : ''} /> }}
+                                            />
+                                        </DemoContainer>
+                                    </LocalizationProvider>
+                                    <div style={{ textAlign: 'right' }}>
+                                        <button className='btn-reset-check-available-room'
+                                            onClick={handleResetDates}>Xoá ngày</button>
+                                        <button className='btn-close-check-available-room'
+                                            onClick={handleCheckAvailableRoom}>Đóng</button>
+                                    </div>
+                                </div>
+                            )
+                        }
+                    </div>
                 </div>
-
-
             </div>
             <div>
 

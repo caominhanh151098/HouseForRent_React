@@ -1,0 +1,82 @@
+.MuiPaper-elevation {
+    margin-top: -26px;
+}
+
+.MuiMobileStepper-dots {
+    z-index: 99;
+}
+
+.stepper-button {
+    margin-top: -100% !important;
+    color: #747474 !important;
+}
+
+.MuiSvgIcon-root {
+    background: #f0f0f0 !important;
+    border-radius: 50% !important;
+    width: 1.4em !important;
+    height: 1.4em !important;
+    z-index: 999 !important;
+    transition: transform ease-in 0.3s;
+    /* opacity: 0; */
+}
+
+.MuiSvgIcon-root:hover {
+    transform: scale(1.3);
+}
+
+/* 
+.img:hover MuiSvgIcon-root {
+    opacity: 1 !important;
+}
+
+.stepper-button {
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 99;
+}
+
+.img:hover + .stepper-button {
+    opacity: 1;
+    z-index: 99;
+}
+
+.house-slider-container:hover .stepper-button {
+    opacity: 1;
+} */
+
+.css-114p2tk-MuiMobileStepper-dot {
+    background: black;
+}
+
+.MuiMobileStepper-dotActive {
+    background: white !important;
+}
+
+
+.stepper-button:disabled {
+    cursor: not-allowed;
+}
+
+/* .stepper-button {
+    opacity: 0 ;
+}
+
+.img:hover .stepper-button{
+    opacity: 1 ;
+} */
+
+.div-show-map-details-on-list{
+    /* position: absolute !important;
+    left: 30% !important;
+    top: 27% !important;
+    width: 14% !important;
+    z-index: 99 !important; */
+}
+
+.icon-conmemya{
+    color: revert;
+    position: absolute !important;
+    top: 37% !important;
+    right: 87% !important;
+}
