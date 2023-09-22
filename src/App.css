@@ -111,3 +111,66 @@ body {
     font-size: 3.5rem;
   }
 }
+
+.button-close-modal {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 7px;
+  position: relative;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+
+.button-close-modal:hover {
+  background-color: #efefef;
+}
+
+.button-next-modal {
+  background-color: #252525;
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 0px;
+}
+
+.button-next-modal:hover {
+  background-color:black;
+}
+
+.button-next-modal:disabled {
+  background-color: #cccccc !important;
+  cursor: not-allowed !important
+}
+
+.button-next-login {
+  width: 100%;
+  border-radius: 8px;
+  background-color: #e61e4d;
+  border: none;
+  color: white;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.button-other-login {
+  display: flex !important;
+  width: 100%;
+  border-radius: 8px;
+  background-color: white;
+  border: 1px solid;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.input-otp {
+  width: 40%;
+  letter-spacing: 18px;
+  border-radius: 10px;
+  border: 1px solid;
+}
+
+.rc-anchor{
+  display: none !important;
+}
