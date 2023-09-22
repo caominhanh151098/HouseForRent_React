@@ -1,4 +1,5 @@
-import logo from './logo.svg';
+import useScript from './custom/admin/useScript';
+import React, { useEffect, useState } from 'react';
 import './App.css';
 import Header from './Components/AirBnb/Header/Header';
 import Body from './Components/AirBnb/Body/Body';
@@ -9,8 +10,14 @@ import Home from './Components/AirBnb/Home/Home';
 import { el } from 'date-fns/locale';
 import BookHouse from './Components/AirBnb/Book/Main/BookHouse';
 import ErrorBookBody from './Components/AirBnb/Book/Body/ErrorBookBody';
+import Layout from './components/admin/layout/Layout';
+import us from "./assets/images/animat-rocket-color.gif";
+import axios from 'axios';
 
 function App() {
+  
+
+
   return (
     <div className="App">
       {/* <Header/>
@@ -29,6 +36,7 @@ function App() {
         <Route path='/error/:houseID/:CountOld/:CountYoung/:CountBaby/:CountPet/:GoDay/:BackDay' 
         element={<ErrorBookBody/>}></Route>
       </Routes>
+     
     </div>
   );
 }

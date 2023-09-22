@@ -6,6 +6,14 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
 import BookingProvider from './Components/AirBnb/Book/Main/BookingProvider';
 import "../node_modules/@fortawesome/fontawesome-free/css/all.min.css"
+import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
+import "../node_modules/bootstrap/dist/js/bootstrap.min.js";
+import "../node_modules/@fortawesome/fontawesome-free/css/fontawesome.min.css";
+import "./assets/css/bootstrap.min.css";
+import "./assets/css/icons.min.css";
+import "./assets/css/app.min.css";
+import "./assets/images/favicon.ico";
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
