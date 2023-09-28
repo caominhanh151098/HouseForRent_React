@@ -4,6 +4,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import FormLogin from './FormLogin';
+import OTPAddPhone from './OTPAddPhone';
 
 const style = {
   position: 'absolute',

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import '../AirBnb.css'
-import UseFetchCategory from '../../../Hooks/UseFetchCategory';
 import 'rc-slider/assets/index.css';
 import Slider from 'rc-slider';
 import HouseList from './HouseList';
+import UseFetchCategory from './../../../Hooks/UseFetchCategory';
 
 
 const itemsPerLoad = 7;

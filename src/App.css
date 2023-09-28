@@ -171,6 +171,16 @@ body {
   border: 1px solid;
 }
 
+.input-data {
+  border: 0px;
+  width: 90%
+}
+
 .rc-anchor{
   display: none !important;
+}
+
+.form-input {
+  border-radius: 8px; 
+  border: 1px solid;
 }
