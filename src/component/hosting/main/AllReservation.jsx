@@ -175,7 +175,7 @@ function AllReservation() {
             <NavbarHosting></NavbarHosting>
             <div className='ms-5'>
                 <div className='d-flex justify-content-between mb-3'>
-                <div className='fs-5 text-decoration-underline ms-5 '><Link style={{color:'black'}} to={`/bookedToday`}> <i class="fa-solid fa-chevron-left fa-2xs"></i> Quay lại</Link></div>
+                <div className='fs-5 text-decoration-underline ms-5 '><Link style={{color:'black'}} to={`/host/bookedToday`}> <i class="fa-solid fa-chevron-left fa-2xs"></i> Quay lại</Link></div>
                     <div className='d-flex justify-content-between me-5'>
                         <button className='btn me-3 ms-3' style={{ border: 'gray solid 1px', borderRadius: '5px' }} onClick={() => setShowFilterForm(true)}><i class="fa-solid fa-angle-down" ></i> Lọc</button>
                         <button className='btn me-3 ms-3' style={{ border: 'gray solid 1px', borderRadius: '5px' }}><i class="fa-solid fa-angle-down"></i> Xuất</button>

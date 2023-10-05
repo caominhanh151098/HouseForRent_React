@@ -150,7 +150,7 @@ function BookedToday() {
                     <button style={type == "coming" ? { borderColor: 'black' } : {}} onClick={() => setType("coming")} className='rounded-pill btn-type'>Sắp đến ({coming.length})</button>
                     <button style={type == "upcoming" ? { borderColor: 'black' } : {}} onClick={() => setType("upcoming")} className='rounded-pill btn-type'>Sắp tới ({upComing.length})</button>
                     <button style={type == "waitApproval" ? { borderColor: 'black' } : {}} onClick={() => setType("waitApproval")} className='rounded-pill btn-type'>Đánh giá đang chờ xử lí ({waitApproval.length})</button>
-                    <div className='fs-5 text-decoration-underline' style={{marginLeft:'200px'}}><Link style={{color:'black',textDecoration:'underline'}} to={`/AllReservation`}>Tất cả đặt phòng</Link>  </div>
+                    <div className='fs-5 text-decoration-underline' style={{marginLeft:'200px'}}><Link style={{color:'black',textDecoration:'underline'}} to={`/host/AllReservation`}>Tất cả đặt phòng</Link>  </div>
                 </div>
                 <table className='col-8 table table-striped' style={{ border: 'solid 1px gray', width: '100%' }}>
                     <thead>
