@@ -1,29 +1,16 @@
 import useScript from './custom/admin/useScript';
 import React, { useEffect, useState } from 'react';
-import './App.css';
-import Header from './Components/AirBnb/Header/Header';
-import Body from './Components/AirBnb/Body/Body';
-import Footer from './Components/AirBnb/Footer/Footer';
+// import './App.css';
 import HouseDetail from './Components/AirBnb/Detail/HouseDetail';
 import { Route, Routes } from 'react-router-dom';
 import Home from './Components/AirBnb/Home/Home';
-import { el } from 'date-fns/locale';
+// import { el } from 'date-fns/locale';
 import BookHouse from './Components/AirBnb/Book/Main/BookHouse';
 import ErrorBookBody from './Components/AirBnb/Book/Body/ErrorBookBody';
-import Layout from './components/admin/layout/Layout';
-import us from "./assets/images/animat-rocket-color.gif";
-import axios from 'axios';
 
 function App() {
-  
-
-
   return (
     <div className="App">
-      {/* <Header/>
-      <Body/>
-      <Footer/>
-      <HouseDetail/> */}
       <Routes>
         <Route path='/' element={<Home/>}></Route>
         <Route path='/house/:houseID' element={<HouseDetail/>}></Route>

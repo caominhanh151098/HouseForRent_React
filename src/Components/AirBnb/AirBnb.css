@@ -91,7 +91,7 @@ header {
 }
 
 .listing {
-    width: 13%;
+    width: 15%;
     margin-bottom: 20px;
     padding: 10px;
     /* box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1); */
@@ -107,9 +107,10 @@ header {
 
 .listing-header {
     display: flex;
-    /* align-items: center; */
+    align-items: center;
     justify-content: space-between;
-    /* margin-bottom: 5px; */
+    margin-bottom: 10px;
+    margin-top: -26px;
 }
 
 .listing img {
@@ -126,13 +127,67 @@ header {
 .review {
     font-size: 18px;
     font-weight: bold;
-    margin-left: 10px;
+    /* margin-left: 10px; */
+    text-align: right;
 }
 
 .listing p {
     margin: 5px 0;
     color: #777;
 }
+
+.favorite-icon {
+    position: relative;
+    width: 100%;
+    left: 243px;
+    top: -243px;
+    font-size: 26px;
+}
+
+.outer-div {
+    position: relative;
+    /* right: auto; */
+    text-align: end;
+    top: -242px;
+    color: black;
+    font-size: 34px;
+    cursor: pointer;
+    right: -239px;
+    width: 12%;
+    transition: transform 0.3s;
+}
+.outer-div:hover{
+    transform: rotateX(360deg);
+}
+
+@keyframes fadeIn {
+    0% {
+        transform: scale(1);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1.4);
+        opacity: 1;
+    }
+}
+
+.heartCircle-icon {
+    animation: fadeIn 0.5s ease-in-out forwards;
+}
+
+@keyframes fadeOut {
+    0% {
+        transform: scale(1.4);
+    }
+    100%  {
+        transform: scale(1);
+    }
+}
+
+.heart-icon{
+    animation: fadeOut 0.5s ease-in forwards;
+}
+
 
 .header3 {
     margin-right: 15px;
@@ -163,11 +218,12 @@ header {
     margin-right: 10px
 }
 
-.loading-group{
+.loading-group {
     display: flex;
     justify-content: space-between !important;
 }
-.loading-btn-1{
+
+.loading-btn-1 {
     background: #C7C7C7;
     outline: none;
     border: none;
@@ -176,7 +232,8 @@ header {
     margin: 5px 0px;
     margin-right: 20px;
 }
-.loading-btn-2{
+
+.loading-btn-2 {
     background: #C7C7C7;
     outline: none;
     border: none;
@@ -184,7 +241,8 @@ header {
     border-radius: 6px;
     margin: 5px 0px;
 }
-.loading-btn-3{
+
+.loading-btn-3 {
     background: #C7C7C7;
     outline: none;
     border: none;
@@ -192,7 +250,8 @@ header {
     border-radius: 6px;
     margin: 5px 0px;
 }
-.loading-btn-4{
+
+.loading-btn-4 {
     background: #C7C7C7;
     outline: none;
     border: none;
@@ -200,7 +259,8 @@ header {
     border-radius: 6px;
     margin: 5px 0px;
 }
-.loading-btn-5{
+
+.loading-btn-5 {
     background: #C7C7C7;
     outline: none;
     border: none;
@@ -230,6 +290,10 @@ header {
     margin-right: 10px;
     cursor: pointer;
     border-bottom: 2px solid transparent
+}
+
+.category-item-selected-comfortable {
+    border-bottom: 2px solid black;
 }
 
 .category-item:hover {
@@ -308,6 +372,50 @@ header {
     border-color: black;
 }
 
+.btn-filter-condition {
+    width: 127px;
+    background: white;
+    font-size: 22px;
+    padding: 15px;
+    margin-right: 22px;
+    outline: none;
+    border-color: antiquewhite;
+    border-radius: 15px;
+    margin-top: -30px;
+    cursor: pointer;
+    border: 3px solid transparent;
+    background-image: linear-gradient(45deg, #494949, #b5b4b3, #ffff00);
+    background-size: 300% 300%;
+    animation: rainbowBorder 3s linear infinite;
+    border-image: linear-gradient(45deg, #494949, #b5b4b3, #ffff00);
+    border-image-slice: 1;
+}
+
+.count-filter-results {
+    position: absolute;
+    top: 12px;
+    right: 21px;
+    font-size: 26px;
+    background: black;
+    color: white;
+    border-radius: 50%;
+    padding: 1px 11px;
+}
+
+@keyframes rainbowBorder {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
 .show-map {
     border-radius: 43px;
     font-size: 18px;
@@ -382,6 +490,7 @@ header {
     ;
     color: white;
     background: black;
+    margin: 5px;
 }
 
 .selectedBathroom {
@@ -397,6 +506,7 @@ header {
     border-color: black;
 }
 
+
 .typeofhouse {
     margin: 8px;
     border-radius: 15px;
@@ -410,6 +520,11 @@ header {
 
 .typeofhouse:hover {
     border-color: black;
+}
+
+.selected-type-of-house {
+    border: 3px solid black;
+    background: #d9d5d5e6;
 }
 
 .convenient {
@@ -523,6 +638,78 @@ header {
     transform: translateX(20px);
 }
 
+.switch-input3 {
+    display: none;
+}
+
+.switch-label3 {
+    position: absolute;
+    top: 29px;
+    left: 366px;
+    width: 100%;
+    height: 100%;
+    background-color: #ccc;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.switch-input3:checked+.switch-label3 {
+    background-color: #0c0c0c;
+}
+
+.switch-label3::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.3s ease-in-out;
+}
+
+.switch-input3:checked+.switch-label3::before {
+    transform: translateX(20px);
+}
+
+.switch-input5 {
+    display: none;
+}
+
+.switch-label5 {
+    position: absolute;
+    top: 29px;
+    left: 366px;
+    width: 100%;
+    height: 100%;
+    background-color: #ccc;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.switch-input5:checked+.switch-label5 {
+    background-color: #0c0c0c;
+}
+
+.switch-label5::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.3s ease-in-out;
+}
+
+.switch-input5:checked+.switch-label5::before {
+    transform: translateX(20px);
+}
+
 /* .price-range {
     width: 100%;
     display: flex;
@@ -573,14 +760,14 @@ header {
 .rc-slider-handle {
     background-color: #ffffff;
     scale: 1.5;
-    width: 25px;
-    height: 25px;
-    margin-top: -10px;
-    border: solid 2px #0ba1dd;
+    width: 24px !important;
+    height: 21px !important;
+    margin-top: -22px !important;
+    border: solid 2px #030303 !important;
 }
 
 .rc-slider-handle:focus {
-    background-color: #f8f5f5;
+    background-color: white !important;
     scale: 1.5;
 }
 
@@ -697,7 +884,6 @@ header {
     font-size: 19px;
     background: white;
     cursor: pointer;
-
 }
 
 .switch-total {
@@ -750,6 +936,7 @@ header {
     z-index: 9999;
     background: white;
     border-radius: 17px;
+    text-align: center;
 }
 
 .choices {
@@ -912,11 +1099,15 @@ header {
 .search-details img {
     width: 95%;
     border-radius: 50%;
-    border: 1.5px solid transparent;
+    border: 2.5px solid transparent;
 }
 
 .search-details img:hover {
-    border: 1.5px solid black;
+    border: 2.5px solid black;
+}
+
+.selected-region-search img {
+    border: 2.5px solid black;
 }
 
 
@@ -1027,7 +1218,7 @@ header {
 
 
 .house-on-map {
-       top: 29%;
+    top: 29%;
     left: 40%;
     width: 300%;
     /* position: absolute; */
@@ -1045,7 +1236,8 @@ header {
     background-image: url('/src/Pictures/marker.png');
     background-size: cover;
 }
-.custom-marker:hover{
+
+.custom-marker:hover {
     width: 42px !important;
     height: 42px !important;
 }
@@ -1060,4 +1252,192 @@ header {
     font-size: 30px;
     border: none;
     cursor: pointer;
+}
+
+
+.custom-div-icon-leaflet {
+    background-color: white;
+    color: #010101;
+    padding: 2px 0px;
+    text-align: center !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
+    width: 333% !important;
+    border-radius: 15px !important;
+    font-size: 15px !important;
+    font-weight: bolder !important;
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 1.1) !important;
+    transition: transform 0.3s ease-in;
+}
+
+/* .selected-marker-leaflet {
+    background: black;
+    color: white;
+} */
+
+.custom-div-icon-leaflet:hover {
+    transform: scale(1.2);
+}
+
+.img-custom-div-leaflet {
+    width: 348px;
+    /* background-size: cover; */
+    object-fit: cover;
+    padding: -14px -12px;
+    margin: -19px -22px;
+    border-radius: 18px 18px 0px 0px;
+    height: 250px;
+}
+
+.leaflet-popup-close-button {
+    color: white !important;
+    background: #555554 !important;
+    left: 0;
+    border-radius: 50% !important;
+    padding: 5px 6px !important;
+    font-size: 32px !important;
+    margin: 8px 11px !important;
+    width: 8% !important;
+}
+
+.leaflet-popup-close-button:hover {
+    background: black !important;
+    transform: scale(1.1);
+}
+
+.test-selected {
+    background-color: black;
+    color: white;
+    /* Chỉnh màu chữ cho phù hợp */
+}
+
+.btn-show-current-location {
+    position: relative;
+    top: 52px;
+    font-size: 35px;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    z-index: 999;
+    right: -1851px;
+}
+
+.spinner {
+    position: relative;
+    left: 49%;
+    top: 101px;
+    z-index: 9999;
+    margin-top: -55px;
+    background: white;
+    width: 5%;
+    padding: 12px 0px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.spinner>div {
+    width: 18px;
+    height: 18px;
+    background-color: #333;
+
+    border-radius: 100%;
+    display: inline-block;
+    -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+    animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+}
+
+.spinner .bounce1 {
+    -webkit-animation-delay: -0.32s;
+    animation-delay: -0.32s;
+}
+
+.spinner .bounce2 {
+    -webkit-animation-delay: -0.16s;
+    animation-delay: -0.16s;
+}
+
+@-webkit-keyframes sk-bouncedelay {
+
+    0%,
+    80%,
+    100% {
+        -webkit-transform: scale(0)
+    }
+
+    40% {
+        -webkit-transform: scale(1.0)
+    }
+}
+
+@keyframes sk-bouncedelay {
+
+    0%,
+    80%,
+    100% {
+        -webkit-transform: scale(0);
+        transform: scale(0);
+    }
+
+    40% {
+        -webkit-transform: scale(1.0);
+        transform: scale(1.0);
+    }
+}
+
+.rc-slider-rail {
+    height: 0px !important;
+}
+
+.rc-slider-track {
+    height: 0px !important;
+}
+
+.btn-loading-filter-house {
+    right: 8px;
+    position: absolute;
+    background: #000000d1;
+    padding: 6px 81px;
+    border-radius: 16px;
+    bottom: 6px;
+}
+
+.no-filter-results {
+    margin-left: 88px;
+    margin-right: 30px;
+    font-size: 20px;
+}
+
+.input-checkbox-filter-comfortable {
+    margin-left: 5px;
+
+}
+
+.input-checkbox-filter-comfortable:checked {
+    background: black;
+}
+
+.suggest-location-list{
+    position: absolute;
+    top: 174px;
+    z-index: 999999;
+    font-size: 23px;
+    width: 325px;
+    border-radius: 28px;
+    text-align: left;
+    border: 1px solid #d2d2d2;
+    padding: 13px 81px;
+    line-height: 3;
+    background: white;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.icon-location-suggest-list{
+    background: #d5d5d5;
+    padding: 10px 14px;
+    border-radius: 11px;
+    font-size: 32px;
+    color: #636363;
+    margin-right: 18px;
 }

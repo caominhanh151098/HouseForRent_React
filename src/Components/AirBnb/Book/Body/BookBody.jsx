@@ -19,6 +19,8 @@ import axios from 'axios';
 import CircularProgressVariants from './CircularProgressVariants';
 import _ from 'lodash';
 import { useNavigate } from 'react-router-dom';
+import "../../../../../node_modules/@fortawesome/fontawesome-free/css/all.min.css"
+import OpenOTP from '../../../otp/OpenOTP';
 
 
 const BookBody = () => {
@@ -176,10 +178,10 @@ const BookBody = () => {
   const handleResetDates = () => {
     setTempBookDay([
       dayjs(),
-      dayjs().add(1, 'day')]);
+      dayjs().add(5, 'day')]);
     setBookDay([
       dayjs(),
-      dayjs().add(1, 'day')]);
+      dayjs().add(5, 'day')]);
     setSaveDay(false);
   };
 
@@ -246,7 +248,6 @@ const BookBody = () => {
       dayjs(BackDay).isBefore(dayjs(GoDay))
     );
     if (isInvalid) {
-      console.log("cái địt mẹ mayfff");
       const errorURL = `/error/${houseID}/${CountOld}/${CountYoung}/${CountBaby}/${CountPet}/${tempBookDay[0].format('YYYY-MM-DD')}/${tempBookDay[1].format('YYYY-MM-DD')}`;
       navigate(errorURL);
     }
@@ -512,9 +513,12 @@ const BookBody = () => {
                               <button className='btn-delete-book-date' onClick={handleResetDates}>Xoá ngày</button>
                               {
                                 loadingBtnSaveBookDay ? (
-                                  <button className='btn-save-book-date-loading'><CircularProgressVariants /></button>
+                                  <button style={{top:'13px', margin:'-15px 0px'}} className='btn-save-book-date-loading'><CircularProgressVariants /></button>
                                 ) : (
-                                  <button className='btn-save-book-date' onClick={handleSaveDates} disabled={isSaveDisabled}>Lưu</button>
+                                  
+                                   <button className='btn-save-book-date' onClick={handleSaveDates} disabled={isSaveDisabled}>Lưu</button>
+                                 
+                                 
                                   // <button className='btn-save-book-date-loading'><CircularProgressVariants /></button>
                                 )
                               }
@@ -604,10 +608,12 @@ const BookBody = () => {
 
                                       {
                                         loadingBtnSaveCountGuests ? (
-                                          <button className='btn-save-count-guests-loading'><CircularProgressVariants /></button>
-
+                                          <button style={{margin:'-11px 0px'}}
+                                          className='btn-save-count-guests-loading'><CircularProgressVariants /></button>
                                         ) : (
-                                          <button className='btn-save-book-date' onClick={() => { handleSaveCountGuest() }} disabled={isSaveDisabled}>Lưu</button>
+                                           <button style={{padding:'9px 20px', borderRadius:'12px'}}
+                                            className='btn-save-book-date' onClick={() => { handleSaveCountGuest() }} disabled={isSaveDisabled}>Lưu</button>
+                                          
                                         )
                                       }
                                     </div>
@@ -639,11 +645,12 @@ const BookBody = () => {
                   housePrice.feeHouses &&
                   numberOfNights && '$' + (
                     housePrice.price * (numberOfNights - countWeekendDay) +
-                    (housePrice.weekendPrice && countWeekendDay > 0 && housePrice.weekendPrice * countWeekendDay) +
+                    (countWeekendDay > 0 && housePrice.weekendPrice ? housePrice.weekendPrice * countWeekendDay : housePrice.price * countWeekendDay) +
                     (numberOfNights >= 3 && housePrice.feeHouses[0]?.price || 0) +
-                    (numberOfNights >= 2 && housePrice.feeHouses[1]?.price || 0) +
-                    (housePrice.feeHouses[2]?.price || 0) +
-                    (housePrice.feeHouses[3]?.price || 0)
+                    (numberOfNights === 2 && housePrice.feeHouses[1]?.price || 0) +
+                    (countPets > 0 && housePrice.feeHouses[2]?.price || 0) +
+                    ((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other) > 0 && 
+                    ((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other)) * housePrice.feeHouses[3]?.price || 0)
                   ).toFixed(2)
                 }) </span> ngay bây giờ và thế là xong.</p>
             </div>
@@ -684,7 +691,7 @@ const BookBody = () => {
         {
           userLogin && (
             <div>
-              <h2>Đăng nhập hoặc đăng ký để đặt phòng/đặt chỗ</h2>
+              <h2 style={{padding:"0px 56px"}}>Đăng nhập hoặc đăng ký để đặt phòng/đặt chỗ</h2>
               <div className='payment-text-body'>
                 <div onClick={() => { handleClickDivPhoneLogIn('country') }}
                   className={`country-login-text-body ${selectedPhoneLogIn === 'country' ? 'selectedDivCountryLogIn' : ''}`}>
@@ -727,7 +734,8 @@ const BookBody = () => {
                 <p className='p-tag-text-body'>Chúng tôi sẽ gọi điện hoặc nhắn tin cho bạn để xác nhận số điện thoại.
                   Có áp dụng phí dữ liệu và phí tin nhắn tiêu chuẩn. <a href="https://www.airbnb.com.vn/help/article/2855" className='a-tag-text-body'>Chính sách về quyền riêng tư</a></p>
               </div>
-              <div className='div-gradient-btn-text-body'>
+              <div style={{margin:"0px 48px", width:'92%'}}
+               className='div-gradient-btn-text-body'>
                 <GradientButton >Tiếp tục</GradientButton>
               </div>
               <div className='group-btn-login-text-body'>
@@ -759,6 +767,7 @@ const BookBody = () => {
             <div>
               <button className='add-telephone-to-your-trip' onClick={toggleAddTelephone}>Thêm</button>
             </div>
+            <OpenOTP/>
             {(
               <div className={`overlay2 ${isOverlayVisible3 ? '' : 'd-none'}`} >
                 <div className={`appearing-div ${isOverlayVisible3 ? 'active' : ''}`} style={{ width: '550px' }}>
@@ -804,8 +813,8 @@ const BookBody = () => {
         <hr style={{ width: '82%' }} />
         <div className='cancellation-policy-text-body'>
           <h2>Chính sách huỷ</h2>
-          <p><span style={{ fontWeight: 'bold' }}>Huỷ miễn phí trước ???????.</span>
-            <span> Bạn được hoàn tiền một phần nếu hủy trước khi nhận phòng vào 10 thg 10.</span></p>
+          <p><span style={{ fontWeight: 'bold' }}>Huỷ miễn phí trước {bookDay[0].format('D [thg] M YYYY')}.</span>
+            <span> Bạn được hoàn tiền một phần nếu hủy trước khi nhận phòng vào {bookDay[0].format('D [thg] M YYYY')}. Sau thời gian đó, số tiền hoàn lại sẽ phụ thuộc vào thời điểm bạn hủy.</span></p>
         </div>
         <hr style={{ width: '82%' }} />
         <div className='cancellation-policy-text-body'>
@@ -848,7 +857,7 @@ const BookBody = () => {
                   <p>{house?.hotelName}</p>
                 )
               }
-              <p>Căn phòng quý tộc vào Torino lịch sử</p>
+              <p>{house?.title}</p>
               {
                 house && (
                   <p style={{ display: 'flex', alignItems: 'center', padding: '9px 0px' }}>
@@ -885,12 +894,12 @@ const BookBody = () => {
                     {
                       housePrice && countWeekendDay > 0 && (
                         <p onClick={handleOpenWeekendDayDetail}
-                          className='detail-text-payment-book-body'>${housePrice.weekendPrice} x {countWeekendDay} đêm (Cuối tuần)</p>
+                          className='detail-text-payment-book-body'>${housePrice?.weekendDays ? housePrice.weekendPrice : housePrice.price} x {countWeekendDay} đêm (Cuối tuần)</p>
                       )
                     }
                   </div>
                   <div>
-                    <p>{housePrice && countWeekendDay > 0 && '$' + housePrice?.weekendPrice * countWeekendDay}</p>
+                    <p>{housePrice && countWeekendDay > 0 && housePrice?.weekendPrice ? '$' + housePrice?.weekendPrice * countWeekendDay : housePrice?.price * countWeekendDay}</p>
                   </div>
                   {
                     isOpenWeekendDetail && (
@@ -943,7 +952,7 @@ const BookBody = () => {
                 {
                   housePrice &&
                   housePrice?.feeHouses &&
-                  numberOfNights >= 2 &&
+                  numberOfNights === 2 &&
                   housePrice.feeHouses[0] &&
                   (
                     <p className='detail-text-payment-book-body'>{housePrice?.feeHouses[1]?.fee.name}</p>
@@ -954,7 +963,7 @@ const BookBody = () => {
                 {
                   housePrice &&
                   housePrice?.feeHouses &&
-                  numberOfNights >= 2 &&
+                  numberOfNights === 2 &&
                   housePrice.feeHouses[0] &&
                   (
                     <p>${housePrice?.feeHouses[1]?.price}</p>
@@ -967,7 +976,8 @@ const BookBody = () => {
                 {
                   housePrice &&
                   housePrice?.feeHouses &&
-                  housePrice.feeHouses[0] && (
+                  housePrice.feeHouses[2] && 
+                  countPets > 0 && (
                     <p className='detail-text-payment-book-body'>{housePrice?.feeHouses[2]?.fee.name}</p>
                   )
                 }
@@ -976,7 +986,8 @@ const BookBody = () => {
                 {
                   housePrice &&
                   housePrice?.feeHouses &&
-                  housePrice.feeHouses[0] && (
+                  housePrice.feeHouses[0] && 
+                  countPets > 0 && (
                     <p>${housePrice?.feeHouses[2]?.price}</p>
                   )
                 }
@@ -987,7 +998,9 @@ const BookBody = () => {
                 {
                   housePrice &&
                   housePrice?.feeHouses &&
-                  housePrice.feeHouses[0] && (
+                  housePrice.feeHouses[3] && 
+                  housePrice?.feeHouses[3]?.other && 
+                  ((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other) > 0) && (
                     <p className='detail-text-payment-book-body'>{housePrice?.feeHouses[3]?.fee.name}</p>
                   )
                 }
@@ -996,8 +1009,10 @@ const BookBody = () => {
                 {
                   housePrice &&
                   housePrice?.feeHouses &&
-                  housePrice.feeHouses[0] && (
-                    <p>${housePrice?.feeHouses[3]?.price}</p>
+                  housePrice.feeHouses[3] && 
+                  housePrice?.feeHouses[3]?.other && 
+                  ((countOld  + countYoung) - Number(housePrice?.feeHouses[3]?.other) > 0) &&(
+                    <p>${((countOld  + countYoung) - Number(housePrice?.feeHouses[3]?.other)) * housePrice?.feeHouses[3]?.price}</p>
                   )
                 }
               </div>
@@ -1016,11 +1031,12 @@ const BookBody = () => {
                     housePrice.feeHouses &&
                     numberOfNights && '$' + (
                       housePrice.price * (numberOfNights - countWeekendDay) +
-                      (housePrice.weekendPrice && countWeekendDay > 0 && housePrice.weekendPrice * countWeekendDay) +
+                      (countWeekendDay > 0 && housePrice.weekendPrice ? housePrice.weekendPrice * countWeekendDay : housePrice.price * countWeekendDay) +
                       (numberOfNights >= 3 && housePrice.feeHouses[0]?.price || 0) +
-                      (numberOfNights >= 2 && housePrice.feeHouses[1]?.price || 0) +
-                      (housePrice.feeHouses[2]?.price || 0) +
-                      (housePrice.feeHouses[3]?.price || 0)
+                      (numberOfNights === 2 && housePrice.feeHouses[1]?.price || 0) +
+                      (countPets > 0 && housePrice.feeHouses[2]?.price || 0) +
+                      ((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other) > 0 && 
+                      ((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other)) * housePrice.feeHouses[3]?.price || 0)
                     ).toFixed(2)
                   }
                 </h3>

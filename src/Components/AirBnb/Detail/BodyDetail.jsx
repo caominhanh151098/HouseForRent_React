@@ -23,12 +23,20 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import ImageList from '@mui/material/ImageList';
+import ImageListItem from '@mui/material/ImageListItem';
+import ImageListItemBar from '@mui/material/ImageListItemBar';
+import IconButton from '@mui/material/IconButton';
+import StarBorderIcon from '@mui/icons-material/StarBorder';
+import ImagesSlider from './ImagesSlider';
 
 
 const BodyDetail = () => {
     const [indexImg, setIndexImg] = useState(0)
     const { houseID, CountOld, CountYoung, CountBaby, CountPet, GoDay, BackDay } = useParams();
     const [house, setHouse] = useState({})
+    const [isOverLayImages, setIsOverLayImages] = useState(false)
+    const [isOverLayImagesSlider, setIsOverLayImagesSlider] = useState(false)
     const [isOverlayVisible, setIsOverlayVisible] = useState(false);
     const [isOverlayComfortable, setIsOVerlayComfortable] = useState(false)
     const [isOverlayReviews, setIsOVerlayReviews] = useState(false)
@@ -39,8 +47,8 @@ const BodyDetail = () => {
     const [houseReviews, setHouseReviews] = useState({})
     const [loadingInputSearch, setLoadingInputSearch] = useState(false)
     const [selectedDates, setSelectedDates] = useState([
-        GoDay ? dayjs(GoDay) : dayjs().subtract(1, 'day'),
-        BackDay ? dayjs(BackDay) : dayjs().add(1, 'day')
+        GoDay ? dayjs(GoDay) : dayjs(),
+        BackDay ? dayjs(BackDay) : dayjs().add(5, 'day')
     ]);
     const [showFullDescription, setShowFullDescription] = useState(false);
     const [isTruncated, setIsTruncated] = useState(true);
@@ -50,6 +58,12 @@ const BodyDetail = () => {
     const [countPets, setCountPets] = useState(CountPet ? Number(CountPet) : 0);
     const [housePrice, setHousePrice] = useState({});
     const [checkAvailableRoom, setCheckAvailableRoom] = useState(false)
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+    const handleImageClick = (index) => {
+        setCurrentImageIndex(index);
+        toggleOverlayImagesSlider();
+    };
 
 
     const handleDateChange = (newDates) => {
@@ -62,8 +76,8 @@ const BodyDetail = () => {
 
     const handleResetDates = () => {
         setSelectedDates([
-            dayjs().subtract(1, 'day'),
-            dayjs().add(1, 'day')]);
+            dayjs(),
+            dayjs().add(5, 'day')]);
     };
 
     useEffect(() => {
@@ -86,7 +100,7 @@ const BodyDetail = () => {
     }, [])
     console.log("houseComfortable", houseComfortable);
 
-    const totalComfortables = house?.miniListComfortable?.length;
+    // const totalComfortables = house?.miniListComfortable?.length;
 
     useEffect(() => {
         async function getReviewHouse() {
@@ -120,6 +134,28 @@ const BodyDetail = () => {
 
     const lastestReviews = houseReviews ? houseReviews?.content?.sort((a, b) => new Date(b.reviewDate) - new Date(a.reviewDate)) : null;
     console.log("lastestReviews", lastestReviews);
+
+    const toggleOverlayImages = () => {
+        setIsOverLayImages(!isOverLayImages);
+        if (!isOverLayImages) {
+            document.querySelector('.leaflet-control').style.display = 'none';
+            document.querySelector('.leaflet-control-attribution').style.display = 'none'
+        } else {
+            document.querySelector('.leaflet-control').style = 'block';
+            document.querySelector('.leaflet-control-attribution').style = 'block'
+        }
+    }
+
+    const toggleOverlayImagesSlider = () => {
+        setIsOverLayImagesSlider(!isOverLayImagesSlider);
+        if (!isOverLayImagesSlider) {
+            document.querySelector('.leaflet-control').style.display = 'none';
+            document.querySelector('.leaflet-control-attribution').style.display = 'none'
+        } else {
+            document.querySelector('.leaflet-control').style = 'block';
+            document.querySelector('.leaflet-control-attribution').style = 'block'
+        }
+    }
 
     const toggleOverlay = () => {
         setIsOverlayVisible(!isOverlayVisible);
@@ -257,30 +293,7 @@ const BodyDetail = () => {
         : description;
 
 
-    useEffect(() => {
-        const fixedBook = document.querySelector('.fixed-book');
-        let isFixed = false;
 
-        window.addEventListener('scroll', () => {
-            const offset = window.scrollY;
-
-            if (offset >= 700 && !isFixed) {
-                fixedBook.style.position = 'fixed';
-                fixedBook.style.top = '100' + 'px';
-                isFixed = true;
-            }
-            if (offset > 2006 && isFixed) {
-                fixedBook.style.position = 'absolute';
-                fixedBook.style.top = '227%';
-                isFixed = false;
-            }
-            if (offset < 680 && isFixed) {
-                fixedBook.style.position = 'absolute';
-                fixedBook.style.top = '86%';
-                isFixed = false;
-            }
-        });
-    }, []);
 
     const [isOpenCountGuests, setIsOpenCountGuests] = useState(false);
     const [isUpOpenCountGuests, setIsUpOpenCountGuests] = useState(false);
@@ -343,18 +356,61 @@ const BodyDetail = () => {
 
     console.log("max heigth sau cùng là", maxHeight);
 
-    let count = 0;
+
+    const [count, setCount] = useState(0)
     let size = house ? house?.rooms ? house?.rooms.length : 0 : 0;
-    let imgArrHouse = house?.rooms ? house?.rooms : [];
-useEffect(() => {
-    for (let i = 0; i < size; i++ ){
-        if (imgArrHouse[i]?.image !== undefined || imgArrHouse[i]?.image !== null) {
-            count+=1;
+    let imgArrHouse = house && house?.rooms ? house?.rooms : [];
+    useEffect(() => {
+        let count = 0;
+        for (let i = 0; i < size; i++) {
+            if (imgArrHouse[i]?.image !== undefined && imgArrHouse[i]?.image !== null) {
+                count += 1;
+            }
         }
+        setCount(count);
+    }, [size])
+
+    useEffect(() => {
+        const fixedBook = document.querySelector('.fixed-book');
+        let isFixed = false;
+
+        window.addEventListener('scroll', () => {
+            const offset = window.scrollY;
+
+            if (offset >= 700 && !isFixed) {
+                fixedBook.style.position = 'fixed';
+                fixedBook.style.top = '100' + 'px';
+                isFixed = true;
+            }
+            if (offset > 2006 && isFixed) {
+                fixedBook.style.position = 'absolute';
+                fixedBook.style.top = '227%';
+                isFixed = false;
+            }
+            if (offset < 680 && isFixed) {
+                fixedBook.style.position = 'absolute';
+                fixedBook.style.top = '86%';
+                isFixed = false;
+            }
+        });
+    }, []);
+
+    function srcset(image, width, height, rows = 1, cols = 1) {
+        return {
+            src: `${image}?w=${width * cols}&h=${height * rows}&fit=crop&auto=format`,
+            srcSet: `${image}?w=${width * cols}&h=${height * rows
+                }&fit=crop&auto=format&dpr=2 2x`,
+        };
     }
-}, [])
 
+    const getHost = (str) => {
+        const matches = str.match(/Chủ nhà (.+)/);
+        return matches ? matches[1] : null;
+    };
 
+    const totalComfortable = houseComfortable.reduce((acc, type) => acc + type.comfortableDetailList.length, 0);
+
+    console.log(`Tổng số comfortable là: ${totalComfortable}`);
     return (
         <>
             <div className='body-detail'>
@@ -396,9 +452,94 @@ useEffect(() => {
                                     <img src={house.images[4].srcImg}
                                         style={{ borderRadius: '0px 0px 30px 0px' }} />
                                     <div>
-                                        <button className='btn-show-imgs'> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" aria-hidden="true" role="presentation" focusable="false" style={{ height: '16px', width: '16px', fill: 'currentcolor', margin: '-3px 1px' }}><path fill-rule="evenodd" d="M3 11.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm5 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm5 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm-10-5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm5 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm5 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm-10-5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm5 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm5 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3z"></path></svg>
+                                        <button onClick={toggleOverlayImages} className='btn-show-imgs'> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" aria-hidden="true" role="presentation" focusable="false" style={{ height: '16px', width: '16px', fill: 'currentcolor', margin: '-3px 1px' }}><path fill-rule="evenodd" d="M3 11.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm5 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm5 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm-10-5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm5 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm5 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm-10-5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm5 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm5 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3z"></path></svg>
                                             <span style={{ padding: '0px 8px' }}>Hiển thị tất cả ảnh</span>
                                         </button>
+                                        {(
+                                            <div className={`overlay2 ${isOverLayImages ? '' : 'd-none'}`} >
+                                                <div style={{ width: '100%', height: '100%' }}
+                                                    className={`appearing-div ${isOverLayImages ? 'active' : ''}`}>
+                                                    <div>
+                                                        <i onClick={toggleOverlayImages} class="fa-solid fa-xmark close-description" ></i>
+                                                    </div>
+                                                    <div className='container-description-details'>
+                                                        <div className='div-show-all-images'>
+                                                            <h1>Tổng quan chỗ ở</h1>
+                                                            <div>
+                                                                <ImageList
+                                                                // sx={{
+                                                                //     width: 1555,
+                                                                //     height: 450,
+                                                                //     // Promote the list into its own layer in Chrome. This costs memory, but helps keeping high FPS.
+                                                                //     transform: 'translateZ(0)',
+                                                                // }}
+                                                                // rowHeight={200}
+                                                                // gap={1}
+                                                                >
+                                                                    {house?.images?.map((item, index) => {
+                                                                        const cols = (index % 3 === 0) ? 2 : 1;
+                                                                        const rows = item.featured ? 2 : 1;
+
+
+
+                                                                        return (
+                                                                            <ImageListItem
+                                                                                className={`${index % 3 === 0 ? 'img-full-show-all-details' : 'img-show-all-details'}`}
+                                                                                key={item.srcImg} cols={cols} rows={rows}
+                                                                                onClick={() => handleImageClick(index)}
+                                                                            >
+                                                                                <img
+                                                                                    className={`${index % 3 === 0 ? 'img-full-show-all-details' : 'img-show-all-details'}`}
+                                                                                    {...srcset(item.srcImg, 250, 200, rows, cols)}
+                                                                                    alt={item.description}
+                                                                                    loading="lazy"
+                                                                                />
+                                                                                <ImageListItemBar
+                                                                                    sx={{
+                                                                                        background:
+                                                                                            'linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, ' +
+                                                                                            'rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)',
+                                                                                    }}
+                                                                                    title={item.description}
+                                                                                    position="top"
+                                                                                // actionIcon={
+                                                                                //     <IconButton
+                                                                                //         sx={{ color: 'white' }}
+                                                                                //         aria-label={`star ${item.description}`}
+                                                                                //     >
+                                                                                //         <StarBorderIcon />
+                                                                                //     </IconButton>
+                                                                                // }
+                                                                                // actionPosition="left"
+                                                                                />
+                                                                            </ImageListItem>
+                                                                        );
+                                                                    })}
+                                                                </ImageList>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+                                        {(
+                                            <div className={`overlay2 ${isOverLayImagesSlider ? '' : 'd-none'}`} >
+                                                <div style={{ width: '100%', height: '100%', maxHeight: '100%' }}
+                                                    className={`appearing-div ${isOverLayImagesSlider ? 'active' : ''}`}>
+                                                    <div>
+                                                        <i onClick={toggleOverlayImagesSlider} class="fa-solid fa-xmark close-description" ></i>
+                                                    </div>
+                                                    <div className='container-description-details'>
+                                                        <div>
+                                                            <h1 style={{ textAlign: 'center' }}>Tổng quan chỗ ở</h1>
+                                                            <div className='slider-images-show-all'>
+                                                                <ImagesSlider style={{ maxLength: '1000px' }} house={house} currentImageIndex={currentImageIndex} />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -432,7 +573,7 @@ useEffect(() => {
                                     </div>
                                     <div className='main'>
                                         <h3>Được giới thiệu trong</h3>
-                                        <p>fạgfkagf</p>
+                                        <p>{house && house.title && getHost(house?.title)}</p>
                                     </div>
                                 </div>
                                 <div className='title' style={{ display: 'flex', alignItems: 'center' }}>
@@ -441,7 +582,7 @@ useEffect(() => {
                                     </div>
                                     <div className='main'>
                                         <h3>Người thiết kế là</h3>
-                                        <p>fạgfkagf</p>
+                                        <p>{house && house.title && getHost(house?.title)}</p>
                                     </div>
                                 </div>
                                 <div className='title' style={{ display: 'flex', alignItems: 'center' }}>
@@ -519,7 +660,7 @@ useEffect(() => {
                             </div>
                             <hr className='hr'></hr>
                             {
-                                house && house?.rooms && size > 1 && size == count ? (
+                                house && house?.rooms && size && count && size === count ? (
                                     <>
                                         <div>
                                             <div className='title'>
@@ -539,13 +680,13 @@ useEffect(() => {
                                                         house && house?.rooms && (
                                                             house?.rooms.map((item, index) => (
                                                                 <div className='div-where-you-sleep-have-image'
-                                                                     key={index}>
+                                                                    key={index}>
                                                                     <div>
                                                                         <img className='img-div-where-you-sleep-have-image'
-                                                                         src={item.image}>
+                                                                            src={item.image}>
                                                                         </img>
                                                                     </div>
-                                                                    <div >
+                                                                    <div style={{ textAlign: 'center', width: '95%' }}>
                                                                         <h3>{item.name}</h3>
                                                                         <p>{item.bed}</p>
                                                                     </div>
@@ -562,57 +703,57 @@ useEffect(() => {
                                         </div>
                                         <hr className='hr' style={{ marginTop: '36px' }}></hr>
                                     </>
-                                ) : 
-                                house && house?.rooms && size > 1 ? 
-                                (
-                                    <>
-                                    <div>
-                                        <div className='title'>
-                                            <h2>Nơi bạn sẽ ngủ nghỉ</h2>
-                                        </div>
-                                        <div className='div-where-you-sleep'>
-                                            <Slider
-                                                dots={true}
-                                                infinite={true}
-                                                speed={400}
-                                                slidesToShow={2.5}
-                                                slidesToScroll={1}
-                                                prevArrow={<div className="slick-arrow"><FontAwesomeIcon icon={faArrowLeft} /></div>}
-                                                nextArrow={<div className="slick-arrow"><FontAwesomeIcon icon={faArrowRight} /></div>}
-                                            >
-                                                {
-                                                    house && house?.rooms && (
-                                                        house?.rooms.map((item, index) => (
-                                                            <div style={{ height: `${maxHeight}px` }}
-                                                                className='div-detail-where-you-sleep' key={index}>
-                                                                <div className="svg-container">
-                                                                    {Array.from({ length: item.bedDetail[0].quantity }, (_, i) => (
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" role="presentation" focusable="false">
-                                                                            <path fill-rule="evenodd" d={item.bedDetail[0].iconPath}>
-                                                                            </path>
-                                                                        </svg>
-                                                                    ))}
-                                                                </div>
-                                                                <div style={{ padding: '5px 30px' }}>
-                                                                    <h3>{item.name}</h3>
-                                                                    <p>{item.bed}</p>
-                                                                </div>
-                                                            </div>
-                                                        ))
-                                                    )
-                                                }
+                                ) :
+                                    house && house?.rooms && size > 1 ?
+                                        (
+                                            <>
+                                                <div>
+                                                    <div className='title'>
+                                                        <h2>Nơi bạn sẽ ngủ nghỉ</h2>
+                                                    </div>
+                                                    <div className='div-where-you-sleep'>
+                                                        <Slider
+                                                            dots={true}
+                                                            infinite={true}
+                                                            speed={400}
+                                                            slidesToShow={2.5}
+                                                            slidesToScroll={1}
+                                                            prevArrow={<div className="slick-arrow"><FontAwesomeIcon icon={faArrowLeft} /></div>}
+                                                            nextArrow={<div className="slick-arrow"><FontAwesomeIcon icon={faArrowRight} /></div>}
+                                                        >
+                                                            {
+                                                                house && house?.rooms && (
+                                                                    house?.rooms.map((item, index) => (
+                                                                        <div style={{ height: `${maxHeight}px` }}
+                                                                            className='div-detail-where-you-sleep' key={index}>
+                                                                            <div className="svg-container">
+                                                                                {Array.from({ length: item.bedDetail[0].quantity }, (_, i) => (
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" role="presentation" focusable="false">
+                                                                                        <path fill-rule="evenodd" d={item.bedDetail[0].iconPath}>
+                                                                                        </path>
+                                                                                    </svg>
+                                                                                ))}
+                                                                            </div>
+                                                                            <div style={{ padding: '5px 30px' }}>
+                                                                                <h3>{item.name}</h3>
+                                                                                <p>{item.bed}</p>
+                                                                            </div>
+                                                                        </div>
+                                                                    ))
+                                                                )
+                                                            }
 
-                                            </Slider>
-                                            <div></div>
-                                            <div></div>
-                                            <div></div>
-                                        </div>
-                                    </div>
-                                    <hr className='hr' style={{ marginTop: '36px' }}></hr>
-                                </>
-                                ) : (
-                                    <></>
-                                )
+                                                        </Slider>
+                                                        <div></div>
+                                                        <div></div>
+                                                        <div></div>
+                                                    </div>
+                                                </div>
+                                                <hr className='hr' style={{ marginTop: '36px' }}></hr>
+                                            </>
+                                        ) : (
+                                            <></>
+                                        )
                             }
                             <div>
                                 <div className='title'>
@@ -633,8 +774,8 @@ useEffect(() => {
                                             ))
                                         )
                                     }
-                                    {totalComfortables > 8 && (
-                                        <button className='btn-show-all-comfortable' onClick={toggleOverlayComfortable}>Hiển thị tất cả {totalComfortables} tiện nghi</button>
+                                    {totalComfortable > 8 && (
+                                        <button className='btn-show-all-comfortable' onClick={toggleOverlayComfortable}>Hiển thị tất cả {totalComfortable} tiện nghi</button>
                                     )}
                                     {(
                                         <div className={`overlay2 ${isOverlayComfortable ? '' : 'd-none'}`} >
@@ -1276,7 +1417,7 @@ useEffect(() => {
                                             <h2>Chọn ngày</h2>
                                             <p>Thời gian ở tối thiểu: 1 đêm</p>
                                         </div>
-                                        <div className='details-choose-day-available'>
+                                        <div className='details-choose-day-available' style={{ textAlign: 'center' }}>
                                             <div style={{ borderRadius: '15px' }}
                                                 className='fixed-devide-book fix-div1'>
                                                 <div style={{ lineHeight: '0.8', borderRight: 'none' }}>

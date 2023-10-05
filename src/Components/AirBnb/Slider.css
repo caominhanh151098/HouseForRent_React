@@ -80,3 +80,12 @@
     top: 37% !important;
     right: 87% !important;
 }
+
+.img{
+    border-radius: 20px !important;
+}
+
+.stepper-button2{
+    margin-top: -54% !important;
+    color: black !important;
+}

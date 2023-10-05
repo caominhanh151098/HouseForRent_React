@@ -519,6 +519,7 @@
     margin-right: 5%;
     display: flex;
     flex-wrap: wrap;
+    text-align: center;
 }
 
 .fixed-devide-book {
@@ -709,7 +710,7 @@
     height: 193px;
     margin-right: 10px !important;
     margin-left: 10px !important;
-    width:90% !important;
+    width: 90% !important;
 }
 
 .svg-container {
@@ -725,10 +726,52 @@
     margin: 5px 2px;
 }
 
-.img-div-where-you-sleep-have-image{
+.img-div-where-you-sleep-have-image {
     width: 85%;
     height: 244px;
     margin-left: 18px;
     margin-right: 10px;
     border-radius: 20px;
+}
+
+.div-show-all-images {
+    margin-left: 200px;
+    margin-right: 200px;
+}
+
+.MuiImageListItem-root {
+    height: 587px !important;
+}
+
+.MuiImageListItemBar-titleWrap {
+    padding: 0px 0px !important;
+}
+
+.img-show-all-details {
+    height: 500px !important;
+}
+
+.img-full-show-all-details {
+    height: 800px !important;
+}
+
+.MuiImageList-root {
+    gap: 10px 10px !important;
+    overflow-y: hidden !important;
+    overflow-x: hidden !important;
+}
+
+.slider-images-show-all {
+    text-align: center;
+    display: flex;
+    justify-items: center;
+    justify-content: center;
+}
+
+.centered-content {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 27px;
+    margin: 19px 1px;
 }
