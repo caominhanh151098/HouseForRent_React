@@ -1,5 +1,5 @@
 import React from "react";
-import useScript from "../../../custom/admin/useScript";
+import useScript from "../../../Hooks/custom/useScript";
 
 function HeaderItem() {
     // useScript("./assets/js/vendor.min.js");
@@ -19,12 +19,12 @@ function HeaderItem() {
             >
                 <span className="navbar-toggler-icon" />
             </button>
-            <input
+            {/* <input
                 className="form-control form-control-dark w-100"
                 type="text"
                 placeholder="Search"
                 aria-label="Search"
-            />
+            /> */}
             <div className="navbar-nav">
                 <div className="nav-item text-nowrap">
                     <a className="nav-link px-3" href="#">

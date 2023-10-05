@@ -5,18 +5,24 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "../node_modules/bootstrap/dist/js/bootstrap.min.js";
-import "../node_modules/@fortawesome/fontawesome-free/css/fontawesome.min.css";
-import "./assets/css/bootstrap.min.css";
+import "../node_modules/@fortawesome/fontawesome-free/css/all.min.css";
 import "./assets/css/icons.min.css";
+import { BrowserRouter } from 'react-router-dom';
 import "./assets/css/app.min.css";
-import "./assets/images/favicon.ico";
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+
 
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
   </React.StrictMode>
 );
 

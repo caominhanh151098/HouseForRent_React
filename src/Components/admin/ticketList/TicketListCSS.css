@@ -1,0 +1,120 @@
+.carousel-item img {
+    height: 350px;
+}
+
+.img-house-bigger {
+    height: 400px;
+    width: 580px;
+}
+
+.size-of-img-house {
+    height: 185px;
+    width: 220px;
+}
+
+.img-house {
+    cursor: pointer;
+    height: 185px;
+    width: 220px;
+}
+
+.img-house:hover {
+    filter: brightness(0.9);
+}
+
+.img-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    position: relative;
+}
+
+.img-overlay {
+    position: relative;
+    overflow: hidden;
+}
+
+.img-overlay img {
+    opacity: 0.5;
+}
+
+.overlay-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    font-size: 30px;
+    transform: translate(-50%, -50%);
+    color: white;
+    padding: 10px;
+    border-radius: 40%;
+    background-color: rgba(0, 0, 0, 0.7);
+    cursor: pointer;
+}
+
+.convenient {
+    max-width: 350px;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.convenient-detail {
+    max-width: 35%;
+    max-height: 70px;
+    margin-bottom: 10px;
+}
+
+.vertical-line {
+    border-left: 1px solid rgb(219, 210, 210);
+    height: auto;
+}
+
+.price-top {
+    border: 2px solid black;
+    height: 170px;
+    width: 500px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    box-shadow: 1px 1px 5px #2793af;
+    padding: 10px;
+}
+
+.price-bot {
+    border: 2px solid grey;
+    height: 50px;
+    width: 500px;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 1px 1px 5px #2793af;
+}
+
+.grid-large {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+}
+
+.img-large {
+    width: 605px;
+    height: 300px;
+}
+
+.grid-small {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 5px;
+}
+
+.img-small {
+    width: 300px;
+    height: 300px;
+}
+
+.accepted {
+    background-color: green;
+    color: white;
+    transition: background-color 1s ease-in-out;
+    display: inline-block;
+    padding: 10px;
+    opacity: 0;
+}

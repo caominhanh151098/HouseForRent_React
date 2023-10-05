@@ -1,6 +1,30 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 
 function LeftSideBar({ children }) {
+
+    const [active, setActive] = useState({
+        dashboard: false,
+        ticket: false,
+        houses: false,
+        user: false,
+        reports: false,
+
+    })
+
+    const location = useLocation();
+
+    useEffect(() => {
+        const pathName = location.pathname;
+        setActive({
+            dashboard: pathName === '/admin',
+            ticket: pathName === '/admin/tickets',
+            houses: pathName === '/admin/houses',
+            user: pathName === '/admin/users',
+            reports: pathName === '/admin/reports'
+        })
+    }, [location.pathname])
+
     return (
         <div className="container-fluid">
             <div className="row">
@@ -11,34 +35,34 @@ function LeftSideBar({ children }) {
                     <div className="position-sticky pt-3">
                         <ul className="nav flex-column">
                             <li className="nav-item">
-                                <a className="nav-link active" aria-current="page" href="#">
+                                <Link className={`nav-link ${active.dashboard ? 'active' : ''}`} aria-current="page" to={"/admin"}>
                                     <span className="fa fa-home"></span>
                                     Dashboard
-                                </a>
+                                </Link>
                             </li>
                             <li className="nav-item">
-                                <a className="nav-link" href="#">
+                                <Link className={`nav-link ${active.ticket ? 'active' : ''}`} to={"/admin/tickets"}>
                                     <span className="fa fa-file"></span>
-                                    Orders
-                                </a>
+                                    Browse Tickets
+                                </Link>
                             </li>
                             <li className="nav-item">
-                                <a className="nav-link" href="#">
+                                <Link className={`nav-link ${active.history ? 'active' : ''}`} to={"/admin/houses"}>
                                     <span className="fa fa-shopping-cart"></span>
-                                    Products
-                                </a>
+                                    List Houses
+                                </Link>
                             </li>
                             <li className="nav-item">
-                                <a className="nav-link" href="#">
+                                <Link className={`nav-link ${active.user ? "active" : ""}`} to={"/admin/users"}>
                                     <span className="fa fa-users"></span>
                                     Customers
-                                </a>
+                                </Link>
                             </li>
                             <li className="nav-item">
-                                <a className="nav-link" href="#">
+                                <Link className={`nav-link ${active.reports ? "active" : ""}`} to={"/admin/reports"}>
                                     <span className="fa fa-bar-chart"></span>
                                     Reports
-                                </a>
+                                </Link>
                             </li>
                             <li className="nav-item">
                                 <a className="nav-link" href="#">

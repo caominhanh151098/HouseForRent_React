@@ -1,0 +1,69 @@
+.sticky-thead {
+    position: sticky;
+    top: 0;
+}
+.img-tbody {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+.span-completed {
+    background-color: lightgreen;
+    border-radius: 25px;
+    color: white;
+    padding: 5px 10px;
+    font-size: 11px;
+}
+.span-waiting {
+    background-color: orange;
+    border-radius: 25px;
+    color: white;
+    padding: 5px 10px;
+    font-size: 11px;
+}
+.card-profit {
+    width: 15rem;
+    height: 11rem;
+}
+.card-profit:hover {
+    box-shadow: 1px 1px 5px #2793af;
+    
+}
+.card-statistical-equal {
+    background-color: rgba(113,134,157,.1);
+    border-radius: 5px;
+    padding: 1px 4px;
+    width: auto;
+}
+.card-statistical-equal span {
+    font-size: 70%;
+    color: #71869d;
+}
+.card-statistical-up {
+    background-color:rgba(0,201,167,.1);
+    border-radius: 5px;
+    padding: 1px 4px;
+    width: auto;
+}
+.card-statistical-up i {
+    color: #00c9a7;
+    font-size: 55%;
+}
+.card-statistical-up span {
+    font-size: 70%;
+    color: #00c9a7;
+}
+.card-statistical-down {
+    background-color: rgba(237,76,120,.1);
+    border-radius: 5px;
+    padding: 1px 4px;
+    width: auto;
+}
+.card-statistical-down i {
+    font-size: 55%;
+    color: #ed4c78;
+}
+.card-statistical-down span {
+    font-size: 70%;
+    color: #ed4c78;
+}
