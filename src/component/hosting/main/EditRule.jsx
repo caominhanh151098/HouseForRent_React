@@ -2,6 +2,8 @@ import React from 'react'
 import { useParams } from 'react-router-dom'
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
+import NavbarHosting from '../../layout_hosting/NavbarHosting';
 function EditRule() {
     const list24h = ["Không có", "00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"]
 
@@ -22,21 +24,30 @@ function EditRule() {
     
     useEffect(() => {
         async function getData() {
-            let res = await axios.get(`http://localhost:8080/api/house/houseOfHostDetail/${houseID}`);
+            let res = await axios.get(`http://localhost:8080/api/host/house/houseOfHostDetail/${houseID}`,
+            { headers: {
+                'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+            }});
             setHouse(res.data)
         }
         getData();
     }, [render])
     useEffect(() => {
         async function getData() {
-            let res = await axios.get(`http://localhost:8080/api/rule/getRuleBoolen`);
+            let res = await axios.get(`http://localhost:8080/api/host/rule/getRuleBoolen`,
+            { headers: {
+                'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+            }});
             setListRuleBoolean(res.data)
         }
         getData();
     }, [])
     useEffect(() => {
         async function getData() {
-            let res = await axios.get(`http://localhost:8080/api/rule/getRule/${houseID}`);
+            let res = await axios.get(`http://localhost:8080/api/host/rule/getRule/${houseID}`,
+            { headers: {
+                'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+            }});
             setRuleHouse(res.data)
 
         }
@@ -45,7 +56,10 @@ function EditRule() {
     }, [render ,renderBoolen,openUpdatetimeQuiet,openTimeCHeckIn,openTimeCheckOut,openOther])
     const handleUpdateBookNow = () => {
         async function getData() {
-            let res = await axios.get(`http://localhost:8080/api/house/setBookNow/${houseID}`);
+            let res = await axios.get(`http://localhost:8080/api/host/house/setBookNow/${houseID}`,
+            { headers: {
+                'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+            }});
             setRender(render?false:true)
 
         }
@@ -62,7 +76,10 @@ function EditRule() {
     }
     const handleUpdateRuleBoolen = (ruleID, status) => {
         async function getData() {
-            let res = await axios.get(`http://localhost:8080/api/house/updateRuleBoolen/${houseID}/${ruleID}/${status}`);
+            let res = await axios.get(`http://localhost:8080/api/host/house/updateRuleBoolen/${houseID}/${ruleID}/${status}`,
+            { headers: {
+                'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+            }});
             setRenderBooleen(renderBoolen ? false : true)
 
         }
@@ -80,7 +97,10 @@ function EditRule() {
     }
     const handleUpdateQuietTime=(ruleID,startTime,endTime)=>{
         async function getData() {
-            let res = await axios.get(`http://localhost:8080/api/rule/updateQuietTime/${houseID}/${startTime}/${endTime}/${ruleID}`);
+            let res = await axios.get(`http://localhost:8080/api/host/rule/updateQuietTime/${houseID}/${startTime}/${endTime}/${ruleID}`,
+            { headers: {
+                'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+            }});
             setOpenUpdateTimeQuiet(false)
             setOpenTimeCheckIn(false)
             setOpenTimeCheckOut(false)
@@ -91,16 +111,18 @@ function EditRule() {
         
         async function getData() {
 
-            let res2 = await axios.post(`http://localhost:8080/api/rule/updateOther/${houseID}`, other, {
-                headers: { 'Content-Type': 'application/json' },
-            });
+            let res2 = await axios.post(`http://localhost:8080/api/host/rule/updateOther/${houseID}`, other,{ headers: {
+                'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+            }});
             setOpenOther(false)
         }
         getData();
     }
     return (
         <>
+            <NavbarHosting></NavbarHosting>
             <div style={{ marginLeft: '120px' }} className='col-10'>
+            <div className='fs-5 text-decoration-underline ms-5 mb-5'><Link style={{color:'black'}} to={`/houseOfHostDetail/${houseID}`}> <i class="fa-solid fa-chevron-left fa-2xs"></i> Quay lại</Link></div>
                 <h3 style={{ paddingBottom: '30px' }} className='mb-5 border-bottom'>Chính sách và nội quy của nhà/ Phòng</h3>
                 <div className='fs-4 mb-3'>Chính sách :</div>
                 <div className='d-flex justify-content-between border-bottom mb-5' style={{ paddingBottom: '40px' }}>
@@ -218,7 +240,7 @@ function EditRule() {
                           <div className='d-flex justify-content-between border-bottom mb-3' style={{ paddingBottom: '40px' }}>
                               <div>
                                   <div className='fs-5'>Khung thời gian nhận phòng</div>
-                                  <div>{checkInclue(6) ? `${formatHour((checkInclue(6)).startTime)} - ${formatHour((checkInclue(6)).endTime)}` : " Chưa thiết lập"} </div>
+                                  <div>{checkInclue(6) ? `${formatHour((checkInclue(6)).startTime||"00:00:00")} - ${formatHour((checkInclue(6)).endTime||"00:00:00")}` : " Chưa thiết lập"} </div>
                               </div>
                               <div className='mt-4'>
                                   <div onClick={() => { setOpenTimeCheckIn(true); setTimeCheckin({ startTimeCheckIn: formatHour(checkInclue(6).startTime|| "00:00:00") , endTimeCheckIn: formatHour(checkInclue(6).endTime|| "00:00:00")  }) }} className='fs-5 text-decoration-underline'>Chỉnh sửa</div>
@@ -346,7 +368,7 @@ function EditRule() {
 
                 }
                 
-                <div className='d-flex justify-content-between border-bottom mb-3' style={{ paddingBottom: '40px' }}>
+                {/* <div className='d-flex justify-content-between border-bottom mb-3' style={{ paddingBottom: '40px' }}>
                     <div>
                         <div className='fs-5'>Các nội quy khác</div>
                         <div>chưa thiết lập </div>
@@ -354,7 +376,7 @@ function EditRule() {
                     <div className='mt-4'>
                         <div className='fs-5 text-decoration-underline'>Chỉnh sửa</div>
                     </div>
-                </div>
+                </div> */}
 
 
 

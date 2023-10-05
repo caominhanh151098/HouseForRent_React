@@ -8,6 +8,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import HouseOfHostDetail from './HouseOfHostDetail';
+import NavbarHosting from '../../layout_hosting/NavbarHosting';
 const style = {
     position: 'absolute',
     top: '50%',
@@ -58,7 +59,9 @@ function EditRoom() {
     { type: "COUCH", quantity: 0 }])
     useEffect(() => {
         async function getData() {
-            let res = await axios.get(`http://localhost:8080/api/house/houseOfHostDetail/${houseID}`);
+            let res = await axios.get(`http://localhost:8080/api/host/house/houseOfHostDetail/${houseID}`,{ headers: {
+                'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+            }});
             sethouseOfHostDetail(res.data)
         }
         getData();
@@ -99,9 +102,9 @@ function EditRoom() {
 
         async function getData2() {
 
-            let res2 = await axios.get(`http://localhost:8080/api/house/edit/quantityRoomBedBath/${houseID}/${newQuantityRoom}/${newQuantityOfBathrooms}`, {
-                headers: { 'Content-Type': 'application/json' },
-            });
+            let res2 = await axios.get(`http://localhost:8080/api/host/house/edit/quantityRoomBedBath/${houseID}/${newQuantityRoom}/${newQuantityOfBathrooms}`,{ headers: {
+                'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+            }});
 
         }
         getData2();
@@ -110,9 +113,10 @@ function EditRoom() {
 
         async function getData2() {
 
-            let res2 = await axios.post(`http://localhost:8080/api/house/edit/chooseImage/${RoomEdit}`, imageChoosed, {
-                headers: { 'Content-Type': 'application/json' },
-            });
+            let res2 = await axios.post(`http://localhost:8080/api/host/house/edit/chooseImage/${RoomEdit}`, imageChoosed, 
+            { headers: {
+                'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+            }});
 
         }
         getData2();
@@ -160,16 +164,17 @@ function EditRoom() {
         
         async function getData2() {
             
-            let res2 = await axios.post(`http://localhost:8080/api/house/edit/updateBed/${RoomEdit}`, bed, {
-                headers: { 'Content-Type': 'application/json' },
-            });
+            let res2 = await axios.post(`http://localhost:8080/api/host/house/edit/updateBed/${RoomEdit}`, bed, 
+            { headers: {
+                'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+            }});
 
         }
         getData2();
     }
     return (
         <>
-
+            <NavbarHosting></NavbarHosting>
             <div className='col-9' style={{ marginLeft: '200px' }}>
                 <h3 className='mb-3'>Phòng và không gian</h3>
                 <p className='mb-5'>Thêm hoặc chỉnh sửa khu vực mà khách có thể sử dụng</p>

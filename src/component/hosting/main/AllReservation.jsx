@@ -10,6 +10,8 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateRangePicker } from '@mui/x-date-pickers-pro/DateRangePicker';
 import Dropdown from 'react-bootstrap/Dropdown';
 import "../main/CssHosting/Hosting.css"
+import NavbarHosting from '../../layout_hosting/NavbarHosting';
+import MyAxios from './../../../Services/MyAxios';
 
 function AllReservation() {
     const [showList, setShowList] = useState([])
@@ -152,7 +154,7 @@ function AllReservation() {
     };
     useEffect(() => {
         async function getData() {
-            let res = await axios.get(`http://localhost:8080/api/reservation/all/${type}/${startDate}/${endDate}?page=${currentPage}&size=5`);
+            let res = await MyAxios(`http://localhost:8080/api/host/reservation/all/${type}/${startDate}/${endDate}?page=${currentPage}&size=5`).get();
             setShowList(res.data.content)
             setTotalPage(res.data.totalPages)
             renderPagination()
@@ -161,7 +163,7 @@ function AllReservation() {
     }, [])
     const handleShowList = (type) => {
         async function getData() {
-            let res = await axios.get(`http://localhost:8080/api/reservation/all/${type}/${startDate}/${endDate}?page=${currentPage}&size=5`);
+            let res = await MyAxios(`http://localhost:8080/api/host/reservation/all/${type}/${startDate}/${endDate}?page=${currentPage}&size=5`).get();
             setShowList(res.data.content)
             setTotalPage(res.data.totalPages)
             renderPagination()
@@ -170,9 +172,10 @@ function AllReservation() {
     }
     return (
         <>
+            <NavbarHosting></NavbarHosting>
             <div className='ms-5'>
                 <div className='d-flex justify-content-between mb-3'>
-                    <div className='ms-5 text-decoration-underline'><i class="fa-solid fa-angle-left fa-sm"></i> Quay lại</div>
+                <div className='fs-5 text-decoration-underline ms-5 '><Link style={{color:'black'}} to={`/host/bookedToday`}> <i class="fa-solid fa-chevron-left fa-2xs"></i> Quay lại</Link></div>
                     <div className='d-flex justify-content-between me-5'>
                         <button className='btn me-3 ms-3' style={{ border: 'gray solid 1px', borderRadius: '5px' }} onClick={() => setShowFilterForm(true)}><i class="fa-solid fa-angle-down" ></i> Lọc</button>
                         <button className='btn me-3 ms-3' style={{ border: 'gray solid 1px', borderRadius: '5px' }}><i class="fa-solid fa-angle-down"></i> Xuất</button>

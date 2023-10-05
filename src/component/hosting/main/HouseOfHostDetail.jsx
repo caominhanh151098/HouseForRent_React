@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { toast } from "react-toastify";
-import FileServive from "../../../services/fileService";
+import FileServive from "../../../Services/fileService";
+import NavbarHosting from '../../layout_hosting/NavbarHosting';
 function HouseOfHostDetail() {
     const typeRoomList = ["ENTIRE_PLACE", "ROOM", "SHARED_ROOM"]
     const [reder, setRender] = useState(false);
@@ -36,7 +37,7 @@ function HouseOfHostDetail() {
     const [uploading, setUploading] = useState(false);
     useEffect(() => {
         async function getData() {
-            let res = await axios.get(`http://localhost:8080/api/house/getImageListUrl/${houseID}`);
+            let res = await axios.get(`http://localhost:8080/api/host/house/getImageListUrl/${houseID}`);
             let list = res.data.map((item, index) => (
                 {
                     id: index,
@@ -56,14 +57,14 @@ function HouseOfHostDetail() {
     }, [])
     useEffect(() => {
         async function getData() {
-            let res = await axios.get(`http://localhost:8080/api/categories`);
+            let res = await axios.get(`http://localhost:8080/api/host/categories`);
             setCategoryList(res.data)
         }
         getData();
     }, [reder, updateHotelName, updateDescription, updateQuantityOfGuests])
     useEffect(() => {
         async function getData() {
-            let res = await axios.get(`http://localhost:8080/api/house/houseOfHostDetail/${houseID}`);
+            let res = await axios.get(`http://localhost:8080/api/host/house/houseOfHostDetail/${houseID}`);
             sethouseOfHostDetail(res.data)
         }
         getData();
@@ -75,7 +76,7 @@ function HouseOfHostDetail() {
             const formData = new FormData();
 
             formData.append("stringRequest", newHotelName);
-            let res = await axios.post(`http://localhost:8080/api/house/edit/title/${houseID}`, formData, {
+            let res = await axios.post(`http://localhost:8080/api/host/house/edit/title/${houseID}`, formData, {
                 headers: { 'Content-Type': 'application/json' },
             });
             setUpdateHotlName(true)
@@ -87,7 +88,7 @@ function HouseOfHostDetail() {
             const formData = new FormData();
 
             formData.append("stringRequest", newDescription);
-            let res = await axios.post(`http://localhost:8080/api/house/edit/description/${houseID}`, formData, {
+            let res = await axios.post(`http://localhost:8080/api/host/house/edit/description/${houseID}`, formData, {
                 headers: { 'Content-Type': 'application/json' },
             });
             setUpdatDescription(true)
@@ -98,7 +99,7 @@ function HouseOfHostDetail() {
 
         async function getData() {
 
-            let res = await axios.get(`http://localhost:8080/api/house/edit/quantityOfGuests/${houseID}/${type}`, newQuantityOfguests, {
+            let res = await axios.get(`http://localhost:8080/api/host/house/edit/quantityOfGuests/${houseID}/${type}`, newQuantityOfguests, {
                 headers: { 'Content-Type': 'application/json' },
             });
             setUpdateQuantityOfGeusts(true)
@@ -123,7 +124,7 @@ function HouseOfHostDetail() {
 
         async function getData2() {
 
-            let res2 = await axios.post(`http://localhost:8080/api/house/edit/location/${houseID}`, newLocation, {
+            let res2 = await axios.post(`http://localhost:8080/api/host/house/edit/location/${houseID}`, newLocation, {
                 headers: { 'Content-Type': 'application/json' },
             });
             setUpdateAddress(true);
@@ -133,7 +134,7 @@ function HouseOfHostDetail() {
     const handleUpdateTypeRoom = () => {
         async function getData2() {
 
-            let res2 = await axios.post(`http://localhost:8080/api/house/edit/typeRoomAndCategory/${houseID}`, newTypeRoom, {
+            let res2 = await axios.post(`http://localhost:8080/api/host/house/edit/typeRoomAndCategory/${houseID}`, newTypeRoom, {
                 headers: { 'Content-Type': 'application/json' },
             });
             setUpdateTypeRoom(true);
@@ -220,7 +221,7 @@ function HouseOfHostDetail() {
     const handleUPDATEIMAGE = () => {
         async function getData() {
 
-            let res = await axios.post(`http://localhost:8080/api/house/edit/image/${houseID}`, uploadedAvatar, {
+            let res = await axios.post(`http://localhost:8080/api/host/house/edit/image/${houseID}`, uploadedAvatar, {
                 headers: { 'Content-Type': 'application/json' },
             });
 
@@ -229,6 +230,7 @@ function HouseOfHostDetail() {
     }
     return (
         <>
+        <NavbarHosting></NavbarHosting>
         <div className='fs-5 text-decoration-underline ' style={{marginLeft:'1100px'}}><Link style={{color:'black'}} to={`/homeList`}> <i class="fa-solid fa-chevron-left fa-2xs"></i> Quay lại</Link></div>
             <div style={{ marginLeft: '120px' }} className=' col-10' >
                 <div className='fs-3 '>{houseOfHostDetail.hotelName}</div>

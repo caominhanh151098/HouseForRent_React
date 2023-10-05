@@ -2,8 +2,9 @@ import React, { useEffect } from 'react'
 import { Link, useNavigate } from "react-router-dom";
 
 import { useState } from 'react';
-import { comfortableShowList } from '../../services/comfortableList';
+import { comfortableShowList } from '../../Services/comfortableList';
 import CreateRoom from '../../service/create_room_usestate';
+import Navbar_create_room from '../layout_create_room/Navbar_create_room';
 
  function B2_comfortable  () {
     const [comfortable,setComfortable]=useState(CreateRoom?.getCreateRoom()?.comfortableDetailList||[])
@@ -37,6 +38,7 @@ import CreateRoom from '../../service/create_room_usestate';
       }
   return (
     <>
+    <Navbar_create_room></Navbar_create_room>
      {/* <button onClick={handleLog}> log</button> */}
             <div  style={{marginLeft:'300px'}}>
                 <div className='fs-2 mb-3'>Cho khách biết chỗ ở của bạn có những gì</div>

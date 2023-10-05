@@ -1,8 +1,10 @@
 import React from 'react'
 import { Link, useNavigate } from "react-router-dom";
+import Navbar_create_room from '../layout_create_room/Navbar_create_room';
 function B1_bathroom  ()  {
   return (
     <>
+    <Navbar_create_room></Navbar_create_room>
         <div className='col-6 '></div>
         <div className='col-5 ' style={{marginLeft:'400px'}}>
             <div className='fs-2' style={{marginBottom:'60px'}}>Khách có thể sử dụng loại phòng tắm nào</div>

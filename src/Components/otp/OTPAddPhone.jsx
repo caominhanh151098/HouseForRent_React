@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { auth } from '../../Hooks/FireBase.config';
 import { RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth';
-import UserService from '../../Services/UserService';
+import UserService from './../../Services/UserService';
 
 export default function OTPAddPhone() {
     const [valueOTP, setValueOTP] = useState("");

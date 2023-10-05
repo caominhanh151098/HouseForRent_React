@@ -1,8 +1,10 @@
 import React from 'react'
 import { Link, useNavigate } from "react-router-dom";
+import Navbar_create_room from '../layout_create_room/Navbar_create_room';
 function Second  () {
   return (
    <>
+    <Navbar_create_room></Navbar_create_room>
         <div className='d-flex'>
             <div className='col-5 ms-5 mt-5'> 
                 <p className='fs-5 mb-5'>Bước 2</p>

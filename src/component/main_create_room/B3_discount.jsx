@@ -2,6 +2,7 @@ import React from 'react'
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from 'react';
 import CreateRoom from '../../service/create_room_usestate';
+import Navbar_create_room from '../layout_create_room/Navbar_create_room';
 function B3_discount (){
 
         const [discount,setDiscount]=useState(CreateRoom?.getCreateRoom()?.discount||[])
@@ -16,6 +17,7 @@ function B3_discount (){
              }
   return (
     <>
+    <Navbar_create_room></Navbar_create_room>
         <div className='col-6 ' style={{marginLeft:'200px'}}>
             <div className='fs-3 mb-4'>Thêm ưu đãi giảm giá</div>
             <div className='fs-6 mb-4' >Giúp chỗ ở của bạn trở nên nổi bật để nhanh chóng được đặt phòng và thu hút những bài đánh giá đầu tiên.</div>

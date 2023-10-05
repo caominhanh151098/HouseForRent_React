@@ -1,5 +1,6 @@
 import axios from "axios";
 import MyAxios from "./MyAxios";
+import { API_USER_AUTH_URL } from './common';
 
 class UserService {
     static async loginUser(value) {
@@ -28,7 +29,7 @@ class UserService {
     }
 
     static addPhoneUser(userId) {
-        MyAxios.post(`/client/add-phone/${userId}`)
+        MyAxios(API_USER_AUTH_URL).post(`/client/add-phone/${userId}`)
             .then(resp => {
             })
             .catch(err => {
