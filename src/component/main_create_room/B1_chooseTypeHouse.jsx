@@ -3,6 +3,7 @@ import { useState ,useEffect} from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import CreateRoom from '../../service/create_room_usestate';
 import { roomTypeList } from '../../services/typeRoomList';
+import Navbar_create_room from '../layout_create_room/Navbar_create_room';
 function B1_chooseType  () {
     const [type,setType]=useState(CreateRoom?.getCreateRoom()?.categoryHotel||'')
     const handleLog=()=>{
@@ -17,6 +18,7 @@ function B1_chooseType  () {
    
   return (
     <>
+    <Navbar_create_room></Navbar_create_room>
      {/* <button onClick={handleLog}> log</button> */}
     <div style={{marginLeft:'350px'}} >
         <div>

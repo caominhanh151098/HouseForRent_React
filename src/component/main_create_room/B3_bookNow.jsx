@@ -2,12 +2,14 @@ import React from 'react'
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from 'react';
 import CreateRoom from '../../service/create_room_usestate';
+import Navbar_create_room from '../layout_create_room/Navbar_create_room';
 function B3_bookNow ()  {
   const [bookNow, setBookNow]=useState(CreateRoom?.getCreateRoom()?.bookNow||false)
   
   return (
     
     <>
+    <Navbar_create_room></Navbar_create_room>
         <div>
             <div className='fs-3' style={{marginLeft:'300px'}}>Quyết định cách thức xác nhận đặt phòng</div>
             <div className='d-flex' style={{marginLeft:'200px'}}>

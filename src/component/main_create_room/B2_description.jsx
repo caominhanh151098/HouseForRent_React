@@ -2,11 +2,12 @@ import React from 'react'
 import { Link, useNavigate } from "react-router-dom";
 import CreateRoom from '../../service/create_room_usestate';
 import { useState } from 'react';
+import Navbar_create_room from '../layout_create_room/Navbar_create_room';
 function B2_description  () {
   const [description,setDescription]=useState(CreateRoom?.getCreateRoom()?.descriptions||'')
   return (
     <>     
-       
+       <Navbar_create_room></Navbar_create_room>
         <div className='col-7 ' style={{marginLeft:'300px'}}>
             <div className='fs-2 mb-3'>Tạo phần mô tả</div>
             <div className='fs-5 mb-3'>Chia sẻ những điều tạo nên nét đặc biệt cho chỗ ở của bạn.</div>

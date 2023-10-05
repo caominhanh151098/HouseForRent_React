@@ -5,6 +5,8 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
+import MyAxios from '../../../services/MyAxios';
+import NavbarHosting from '../../layout_hosting/NavbarHosting';
 
 function BookedToday() {
     const [type, setType] = useState("willCheckOut")
@@ -17,35 +19,35 @@ function BookedToday() {
     const [detail,setDetail]=useState({})
     useEffect(() => {
         async function getData() {
-            let res = await axios.get(`http://localhost:8080/api/reservation/willCheckOut`);
+            let res = await MyAxios(`http://localhost:8080/api/host/reservation/willCheckOut`).get();
             setWillCheckOut(res.data)
         }
         getData();
     }, [render])
     useEffect(() => {
         async function getData() {
-            let res = await axios.get(`http://localhost:8080/api/reservation/welcoming`);
+            let res = await MyAxios(`http://localhost:8080/api/host/reservation/welcoming`).get();
             setWelcoming(res.data)
         }
         getData();
     }, [render])
     useEffect(() => {
         async function getData() {
-            let res = await axios.get(`http://localhost:8080/api/reservation/coming`);
+            let res = await MyAxios(`http://localhost:8080/api/host/reservation/coming`).get();
             setComing(res.data)
         }
         getData();
     }, [render])
     useEffect(() => {
         async function getData() {
-            let res = await axios.get(`http://localhost:8080/api/reservation/upcoming`);
+            let res = await MyAxios(`http://localhost:8080/api/host/reservation/upcoming`).get();
             setUpComing(res.data)
         }
         getData();
     }, [render])
     useEffect(() => {
         async function getData() {
-            let res = await axios.get(`http://localhost:8080/api/reservation/waitApproval`);
+            let res = await MyAxios(`http://localhost:8080/api/host/reservation/waitApproval`).get();
             setApproval(res.data)
         }
         getData();
@@ -61,7 +63,7 @@ function BookedToday() {
                     label: "Yes",
                     onClick: () => {
                         async function getData() {
-                            let res = await axios.get(`http://localhost:8080/api/reservation/delete/${id}`);
+                            let res = await MyAxios(`http://localhost:8080/api/host/reservation/delete/${id}`).get();
                             setRender(render ? false : true)
                         }
                         getData();
@@ -87,7 +89,7 @@ function BookedToday() {
                     label: "Yes",
                     onClick: () => {
                         async function getData() {
-                            let res = await axios.get(`http://localhost:8080/api/reservation/accept/${id}`);
+                            let res = await axios.get(`http://localhost:8080/api/host/reservation/accept/${id}`);
                             setRender(render ? false : true)
                         }
                         getData();
@@ -111,7 +113,7 @@ function BookedToday() {
                     label: "Yes",
                     onClick: () => {
                         async function getData() {
-                            let res = await axios.get(`http://localhost:8080/api/reservation/delete/${id}`);
+                            let res = await MyAxios(`http://localhost:8080/api/host/reservation/delete/${id}`).get();
                             setRender(render ? false : true)
                         }
                         getData();
@@ -128,7 +130,7 @@ function BookedToday() {
     const handleshowGuestDetail =(reservationId)=>{
        
         async function getData() {
-            let res = await axios.get(`http://localhost:8080/api/reservation/getGuestDetail/${reservationId}`);
+            let res = await MyAxios(`http://localhost:8080/api/host/reservation/getGuestDetail/${reservationId}`).get();
             setDetail(res.data)
         }
         getData();
@@ -136,6 +138,7 @@ function BookedToday() {
     }
     return (
         <>
+            <NavbarHosting></NavbarHosting>
             <div className='col-10 ' style={{ marginLeft: '100px' }}>
                 <div className='fs-3 mt-5 mb-5'>Chào mừng chủ nhà </div>
                 <div className='fs-4 mb-4'>

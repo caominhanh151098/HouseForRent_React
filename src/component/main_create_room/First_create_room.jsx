@@ -1,8 +1,10 @@
 import React from 'react'
 import { Link, useNavigate } from "react-router-dom";
+import Navbar_create_room from '../layout_create_room/Navbar_create_room';
 function First_create_room() {
   return (
     <>
+    <Navbar_create_room></Navbar_create_room>
       <div className='container d-flex'>
         <div className='col-6 fs-1 text-alight-center'>Bắt đầu trên Airbnb thật dễ dàng</div>
         <div className='col-6'>

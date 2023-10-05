@@ -17,3 +17,9 @@
 .container-revenue{
     margin-left: 200px;
 }
+.table-revenue{
+    border:  1px grey;
+    border-radius: 5px;
+    width: 800px;
+    border-style: solid;
+}

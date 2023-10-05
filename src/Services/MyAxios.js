@@ -2,8 +2,8 @@ import axios from "axios";
 import { API_USER_URL } from "./common";
 
     
-const MyAxios = axios.create({
-    baseURL: API_USER_URL,
+const MyAxios =(url)=> axios.create({
+    baseURL: url,
     headers: {
         'Authorization': `Bearer ${localStorage.getItem("jwt")}`
     }

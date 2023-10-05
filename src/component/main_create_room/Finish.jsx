@@ -7,7 +7,10 @@ function Finish  ()  {
     console.log(CreateRoom.getCreateRoom());
   }
   const handleCreateHouse=()=>{
-    axios.post('http://localhost:8080/api/house', CreateRoom.getCreateRoom());
+    axios.post('http://localhost:8080/api/host/house', CreateRoom.getCreateRoom(),
+    {headers: {
+      'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+  }});
   }
   return (
     <>
@@ -21,7 +24,7 @@ function Finish  ()  {
                             <i className="fa fa-arrow-left me-2" />
                             quay lại
                         </Link>
-                        <div><Link className="" to={'/homeList'}> <button onClick={handleCreateHouse} className='btn bg-dark text-white me-5 mb-5' >Hoàn thành</button></Link></div>
+                        <div><Link className="" to={'/bookedToday'}> <button onClick={handleCreateHouse} className='btn bg-dark text-white me-5 mb-5' >Hoàn thành</button></Link></div>
     </div>
     </>
   )

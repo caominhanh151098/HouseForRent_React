@@ -1,8 +1,10 @@
 import React from 'react'
 import { Link, useNavigate } from "react-router-dom";
+import Navbar_create_room from '../layout_create_room/Navbar_create_room';
 function B1_share_add () {
   return (
     <>
+    <Navbar_create_room></Navbar_create_room>
     <div className='me-5 ms-5 col-6'>
         <p className='fs-4 mb-5 mt-5'>Bước 1</p>
         <p className='fs-1 mb-5 mt-5'>Chia sẻ thông tin về chỗ ở của bạn cho chúng tôi</p>

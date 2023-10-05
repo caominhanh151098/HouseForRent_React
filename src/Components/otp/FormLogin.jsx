@@ -1,10 +1,10 @@
 import { RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth';
 import React, { useEffect, useState } from 'react';
-import UserService from '../../Services/UserService';
 import { auth } from '../../Hooks/FireBase.config';
 import * as yup from 'yup';
 import { yupResolver } from "@hookform/resolvers/yup"
 import { useForm } from 'react-hook-form'
+import UserService from './../../services/UserService';
 
 const schema = yup.object({
     firstName: yup.string().required("Bắt buộc điền tên."),

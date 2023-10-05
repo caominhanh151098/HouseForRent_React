@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import CreateRoom from '../../service/create_room_usestate';
 import { useState, useEffect } from 'react';
 import axios from "axios"
+import Navbar_create_room from '../layout_create_room/Navbar_create_room';
 
 function B1_address  () {
   const handleLog=()=>{
@@ -47,8 +48,7 @@ function B1_address  () {
   
   return (
     <>
-
-    <button onClick={handleLog}> log</button>
+    <Navbar_create_room></Navbar_create_room>
         <div style={{textAlign:'center'}}>
             <h4>Chỗ ở của bạn nằm ở đâu?</h4>
             <p>Địa chỉ của bạn chỉ được chia sẻ với khách sau khi họ đặt phòng thành công.</p>

@@ -1,51 +1,73 @@
 import { startOfDay } from 'date-fns';
 import { useState } from 'react';
-import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css';
-
+import MultipleDatesPicker from '@ambiot/material-ui-multiple-dates-picker'
 function CalendarRangePickerTest(props){
 
-    const [value, onChange] = useState(new Date());
-    const dataNotYetFetched = useState();
+   
+    // // disabled some days until I fetched the data...
+    // var disabledDates = [
+    //     new Date(2023, 10, 1),
+    //     new Date(2023, 10, 2),
+    // ];
+    // const [selectedDates, setSelectedDates] = useState([]);
 
-    // disabled some days until I fetched the data...
-    var disabledDates = [
-        new Date(2023, 10, 1),
-        new Date(2023, 10, 2),
-    ];
-    //console.log(disabledDates);
-    var modifiers = null;
-    if(props.modifiers != null) {
-        modifiers = props.modifiers;
-        console.log(modifiers);
-        disabledDates = modifiers.disabled;
-    }
+    // const handleDateChange = (date) => {
+    //     console.log(date);
 
+    //     // Nếu chưa chọn đủ hai ngày, thêm ngày vào mảng
+    //     setSelectedDates([...selectedDates, date[0]]);
+      
+      
+    // };
+    // //console.log(disabledDates);
+    // var modifiers = null;
+    // if(props.modifiers != null) {
+    //     modifiers = props.modifiers;
+    //     console.log(modifiers);
+    //     disabledDates = modifiers.disabled;
+    // }
+    // const handleLog =()=>console.log(selectedDates);
+    const [open, setOpen] = useState(false)
+    const [values, setValues] = useState(["2023-10-03", "2023-10-04"])
     return (
-        <div style={{width:'1000px'}}>
-        <Calendar 
-            // Make calendar not viewable for previous months
-            minDate={new Date()}
-            // Whether to show two months 
-            showDoubleView = {false}
-            ActiveStartDate = {new Date()}
-            returnValue={"range"}
-            // settings for the calendar
-            onChange={onChange} 
-            value={value} 
-            selectRange={false} 
-            locale="en-US"
-            autofocus={false}
-            // disabled dates. Got data from channel manager
-            tileDisabled={({date, view}) =>
-            (view === 'month') && // Block day tiles only
-            disabledDates.some(disabledDate =>
-            date.getFullYear() === disabledDate.getFullYear() &&
-            date.getMonth() === disabledDate.getMonth() &&
-            date.getDate() === disabledDate.getDate()
-            )}
+        <div>
+            <button onClick={() => setOpen(!open)}>
+        Select Dates
+      </button>
+        <MultipleDatesPicker
+          open={open}
+          selectedDates={[]}
+          onCancel={() => setOpen(false)}
+          value={values} 
+          onSubmit={dates => console.log('selected dates', dates)}
         />
-        </div>
+      </div>
+        // <div style={{width:'1000px'}}>
+        //     <button onClick={handleLog}>log</button>
+        // <Calendar 
+        //     // Make calendar not viewable for previous months
+        //     minDate={new Date()}
+        //     // Whether to show two months 
+        //     showDoubleView = {false}
+        //     ActiveStartDate = {new Date()}
+        //     returnValue={"range"}
+        //     // settings for the calendar
+        //     onChange={(date)=>handleDateChange(date)} 
+        //     value={selectedDates} 
+        //     selectRange={false} 
+        //     locale="en-US"
+        //     autofocus={false}
+        //     multiple 
+        //     // disabled dates. Got data from channel manager
+        //     tileDisabled={({date, view}) =>
+        //     (view === 'month') && // Block day tiles only
+        //     disabledDates.some(disabledDate =>
+        //     date.getFullYear() === disabledDate.getFullYear() &&
+        //     date.getMonth() === disabledDate.getMonth() &&
+        //     date.getDate() === disabledDate.getDate()
+        //     )}
+        // />
+        // </div>
     );
 }
 

@@ -2,6 +2,7 @@ import React from 'react'
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from 'react';
 import CreateRoom from '../../service/create_room_usestate';
+import Navbar_create_room from '../layout_create_room/Navbar_create_room';
 function B1_infor ()  {
     const [guestQuantity  ,setGuestQuantity]=useState(CreateRoom?.getCreateRoom()?.quantityOfGuests||1)
     const [roomQuantity  ,setRoomQuantity]=useState(CreateRoom?.getCreateRoom()?.quantityOfRooms||1)
@@ -41,6 +42,8 @@ function B1_infor ()  {
     }
   return (
         <>
+
+        <Navbar_create_room></Navbar_create_room>
         <div className='col-6 '></div>
         <div className='col-5 ' style={{marginLeft:'400px'}}>
             <div className='fs-2' style={{marginBottom:'60px'}}>Hãy bắt đầu từ những điều cơ bản</div>
@@ -82,7 +85,7 @@ function B1_infor ()  {
                             <i className="fa fa-arrow-left me-2" />
                             quay lại
                         </Link>
-                        <div><Link className="" to={'/create/b1/bathroom'}> <button onClick={()=>{CreateRoom.setCreateRoom({...CreateRoom.getCreateRoom(), quantityOfGuests:guestQuantity,quantityOfRooms:roomQuantity,quantityOfBeds:bedQuantity,quantityOfBathrooms:bathroomQuantity})}} className='btn bg-dark text-white me-5 mb-5' >Tiếp theo</button></Link></div>
+                        <div><Link className="" to={'/create/second'}> <button onClick={()=>{CreateRoom.setCreateRoom({...CreateRoom.getCreateRoom(), quantityOfGuests:guestQuantity,quantityOfRooms:roomQuantity,quantityOfBeds:bedQuantity,quantityOfBathrooms:bathroomQuantity})}} className='btn bg-dark text-white me-5 mb-5' >Tiếp theo</button></Link></div>
     </div>
         </>
   )

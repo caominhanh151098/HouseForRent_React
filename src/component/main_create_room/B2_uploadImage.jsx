@@ -3,6 +3,7 @@ import { Await, Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import CreateRoom from "../../service/create_room_usestate";
 import FileServive from "../../services/fileService";
+import Navbar_create_room from "../layout_create_room/Navbar_create_room";
 
 function B2_uploadImage() {
     const list = CreateRoom.getCreateRoom().imageList?.map((item, index) => (
@@ -109,7 +110,7 @@ function B2_uploadImage() {
     }
     return (
         <>
-         
+            <Navbar_create_room></Navbar_create_room>
             <div className="col-7" style={{ marginLeft: '300px' }}>
                 <div className="fs-3 mb-5">Bổ sung một số bức ảnh chụp chỗ ở thuộc danh mục nhà của bạn</div>
                 <div className="fs-4 mb-5">Bạn sẽ cần 5 bức ảnh để bắt đầu. Về sau, bạn vẫn có thể đăng thêm hoặc thay đổi ảnh.

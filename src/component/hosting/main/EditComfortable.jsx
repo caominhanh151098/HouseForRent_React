@@ -9,6 +9,7 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import HouseOfHostDetail from './HouseOfHostDetail';
 import './homeList.css';
+import NavbarHosting from '../../layout_hosting/NavbarHosting';
 
 function EditComfortable(){
     const [listType,setListType]=useState([])
@@ -19,14 +20,14 @@ function EditComfortable(){
    
     useEffect(() => {
         async function getData() {
-            let res = await axios.get(`http://localhost:8080/api/house/houseOfHostDetail/${houseID}`);
+            let res = await axios.get(`http://localhost:8080/api/host/house/houseOfHostDetail/${houseID}`);
             sethouseOfHostDetail(res.data)
         }
         getData();
     }, [render])
     useEffect(() => {
         async function getData() {
-            let res = await axios.get(`http://localhost:8080/api/comfortable`);
+            let res = await axios.get(`http://localhost:8080/api/host/comfortable`);
             setComfortableList(res.data)
         }
         
@@ -45,7 +46,7 @@ function EditComfortable(){
     }
     const handleAddComfortable = (comfortableID) => {
         async function getData() {
-            let res = await axios.get(`http://localhost:8080/api/house/addComfortable/${houseID}/${comfortableID}`);
+            let res = await axios.get(`http://localhost:8080/api/host/house/addComfortable/${houseID}/${comfortableID}`);
             setRender(render?false:true)
         }
         getData();
@@ -53,7 +54,7 @@ function EditComfortable(){
     }
     const handleDeleteComfortable = (comfortableID) => {
         async function getData() {
-            let res = await axios.get(`http://localhost:8080/api/house/deleteComfortable/${houseID}/${comfortableID}`);
+            let res = await axios.get(`http://localhost:8080/api/host/house/deleteComfortable/${houseID}/${comfortableID}`);
             setRender(render?false:true)
         }
          getData();
@@ -62,7 +63,7 @@ function EditComfortable(){
     }
     useEffect(() => {
         async function getData() {
-            let res = await axios.get(`http://localhost:8080/api/comfortable/getComfortableType`);
+            let res = await axios.get(`http://localhost:8080/api/host/comfortable/getComfortableType`);
             setListType(res.data)
            
         }
@@ -70,7 +71,9 @@ function EditComfortable(){
     }, [])
 
     return(
-        <>     <div className='fs-5 text-decoration-underline ms-5'><Link style={{color:'black'}} to={`/houseOfHostDetail/${houseID}`}> <i class="fa-solid fa-chevron-left fa-2xs"></i> Quay lại</Link></div>
+        <> 
+            <NavbarHosting></NavbarHosting>        
+            <div className='fs-5 text-decoration-underline ms-5'><Link style={{color:'black'}} to={`/houseOfHostDetail/${houseID}`}> <i class="fa-solid fa-chevron-left fa-2xs"></i> Quay lại</Link></div>
             <div style={{marginLeft:'200px'}} className='col-9'>
                 <div className='fs-2 mb-5'>Tiện nghi</div>
                 <div>
