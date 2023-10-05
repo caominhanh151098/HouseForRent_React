@@ -31,7 +31,7 @@ export default function OpenOTP() {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <FormLogin></FormLogin>
+          <FormLogin/>
         </Box>
       </Modal>
     </>
