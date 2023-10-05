@@ -382,13 +382,13 @@ function DashBoard() {
     const [reservations, setReservations] = useState([]);
     const [reservationTest, setReservationTest] = useState({});
 
-    useEffect(() => {
-        async function getData() {
-            const response = await axios.get("http://localhost:8080/api/admin/profits/findAll");
-            setReservations(response.data);
-        }
-        getData();
-    }, [])
+    // useEffect(() => {
+    //     async function getData() {
+    //         const response = await axios.get("http://localhost:8080/api/admin/profits/findAll");
+    //         setReservations(response.data);
+    //     }
+    //     getData();
+    // }, [])
 
     useEffect(() => {
         const socket = new SockJS('http://localhost:8080/ws');
