@@ -22,6 +22,8 @@ import Checkbox from '@mui/material/Checkbox';
 import { styled } from '@mui/material/styles';
 import format from 'date-fns/format';
 import { useHouse } from '../Header/HouseContext';
+import Pagination from './Pagination';
+import CustomPagination from './PaginationList';
 
 
 const itemsPerLoad = 7;
@@ -67,11 +69,15 @@ const Body = () => {
         hasFilterCategory: false
     })
 
-    const { houseSearchByCity } = useHouse();
+    const { houseSearchByCity, setHouseSearchByCity, loadingSearchByCity } = useHouse();
 
     useEffect(() => {
         console.log("houseSearchByCity", houseSearchByCity);
     }, [houseSearchByCity])
+
+    useEffect(() => {
+        console.log("loadingSearchByCity", loadingSearchByCity);
+    }, [loadingSearchByCity])
 
 
     useEffect(() => {
@@ -280,8 +286,13 @@ const Body = () => {
             Number(house.qquantityOfBathrooms) >= minBathrooms);
 
         setTimeout(() => {
+            if (houseFilterByComfortable && houseFilterByComfortable.length > 0) {
+                setHouseFilter(houseFilterByComfortable)
+            } else {
+                setHouseFilter(filteredHouses);
+            }
 
-            setHouseFilter(filteredHouses);
+
 
             if (filteredHouses.length === 0) {
                 setShowNoFilterResults(true)
@@ -361,6 +372,9 @@ const Body = () => {
                     hasFilterCategory: false
                 }))
             }
+            setHouseSearchByCity([]);
+
+            setComfortableSelected(null)
 
             setHouseFilterByComfortable([])
         }, 500)
@@ -507,6 +521,7 @@ const Body = () => {
     const [userLocation, setUserLocation] = useState(null);
 
     const [roomLocations, setRoomLocations] = useState([]);
+    const [roomLocationsByCity, setRoomLocationsByCity] = useState([]);
     const [showUserLocation, setShowUserLocation] = useState(false);
     const [showBtnCurrentLocation, setShowBtnCurrentLocation] = useState(false)
     const [showSpinner, setShowSpinner] = useState(false)
@@ -555,6 +570,38 @@ const Body = () => {
         }
     }, [houseList]);
 
+    useEffect(() => {
+        console.log("roomLocations", roomLocations);
+    }, [roomLocations])
+
+    useEffect(() => {
+        // console.log('house', houseList)
+
+        if (houseSearchByCity && houseSearchByCity.length > 0) {
+
+            const locations = houseSearchByCity && houseSearchByCity?.map(item => {
+                if (item.location && item.location.latitude && item.location.longitude) {
+                    return {
+
+                        lat: item.location.latitude,
+                        lng: item.location.longitude,
+                        info: {
+                            price: item.price,
+                            hotelName: item.hotelName,
+                            images: item.images.map(image => image.srcImg),
+                            id: item.id,
+                        }
+                    };
+                }
+                return null;
+            });
+            setRoomLocationsByCity(locations);
+        }
+    }, [houseSearchByCity]);
+
+    useEffect(() => {
+        console.log("roomLocationsByCity", roomLocationsByCity);
+    }, [roomLocationsByCity])
     // console.log("roomLocations", roomLocations);
 
     const mapRef = useRef();
@@ -609,8 +656,10 @@ const Body = () => {
     const handleFilterHouseByComfortable = async (comfortableId) => {
         const res = await axios.get(API_GET_HOUSES_BY_COMFORTABLE_ID + comfortableId);
         if (res.data.length && res.data.length > 0) {
-            setHouseFilterByComfortable(res.data)
+            setHouseFilterByComfortable(res.data);
+            setHouseSearchByCity([])
         }
+
     }
 
     useEffect(() => {
@@ -692,6 +741,34 @@ const Body = () => {
 
     const formattedToday = format(today, "'Ngày' dd");
     const formattedFutureDate = format(futureDate, "'Ngày' dd 'tháng' M");
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const housesPerPage = 4;
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    }
+
+    const startIdx = (currentPage - 1) * housesPerPage;
+    const endIdx = Math.min(currentPage * housesPerPage, houseSearchByCity.length);
+
+    const displayedHouses = houseSearchByCity && houseSearchByCity.slice(startIdx, endIdx);
+    const displayedLocations = roomLocationsByCity && roomLocationsByCity.slice(startIdx, endIdx);
+
+    const totalPages = Math.ceil(houseSearchByCity && houseSearchByCity.length / housesPerPage);
+    console.log("totalPages", totalPages);
+
+    const handleNextPage = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+        }
+    }
+
+    const handlePrevPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    }
 
     return (
         <div>
@@ -1056,88 +1133,178 @@ const Body = () => {
                         </MapContainer>
                     </div>
                 ) :
-                    houseSearchByCity.length > 0 ? (
-                        <div className="search-results">
-                            {houseSearchByCity.map((house, index) => (
-                                <div key={index} className="listing">
-                                    <div>
-                                        <div>
-                                            <div>
-                                                <HouseSlider house={house} />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div style={{ marginTop: '13px' }} className="listing-header">
-                                            <h3 className="hotel-name">{house?.location?.address}</h3>
-                                            <span className="review">
-                                                <i class="fa-solid fa-star"></i>&nbsp;{house?.review}</span>
-                                        </div>
-                                        <span>{formattedToday} - {formattedFutureDate}</span>
-                                        <p style={{ marginTop: '10px' }}><span style={{ fontWeight: 'bold' }}>${house.price} </span>/ đêm</p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )
-                        :
+                    loadingSearchByCity ?
                         (
-                            houseFilterByComfortable.length > 0 ? (
-                                <div className="search-results">
-                                    {houseFilterByComfortable.map((house, index) => (
-                                        <div key={index} className="listing">
-                                            <div>
+                            <div class="cssload-preloader">
+                                <span>L</span>
+                                <span>o</span>
+                                <span>a</span>
+                                <span>d</span>
+                                <span>i</span>
+                                <span>n</span>
+                                <span>g</span>
+
+                            </div>
+                        ) : houseSearchByCity.length > 0 ?
+                            (
+                                <div className='div-search'>
+                                    <div style={{ width: '47%' }}
+                                        className="search-results">
+                                        {displayedHouses.map((house, index) => (
+                                            <div style={{ width: '28%' }}
+                                                key={index} className="listing">
                                                 <div>
                                                     <div>
-                                                        <HouseSlider house={house} />
+                                                        <div>
+                                                            <HouseSlider house={house} />
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div>
-                                                <div style={{ marginTop: '13px' }} className="listing-header">
-                                                    <h3 className="hotel-name">{house?.location?.address}</h3>
-                                                    <span className="review">
-                                                        <i class="fa-solid fa-star"></i>&nbsp;{house?.review}</span>
+                                                <div>
+                                                    <div style={{ marginTop: '13px' }} className="listing-header">
+                                                        <h3 className="hotel-name">{house?.location?.address}</h3>
+                                                        {/* <span className="review">
+                                                    <i class="fa-solid fa-star"></i>&nbsp;{house?.review}</span> */}
+                                                    </div>
+                                                    <span>{formattedToday} - {formattedFutureDate}</span>
+                                                    <p style={{ marginTop: '10px' }}><span style={{ fontWeight: 'bold' }}>${house.price} </span>/ đêm</p>
                                                 </div>
-                                                <span>{formattedToday} - {formattedFutureDate}</span>
-                                                <p style={{ marginTop: '10px' }}><span style={{ fontWeight: 'bold' }}>${house.price} </span>/ đêm</p>
                                             </div>
+                                        ))}
+                                    </div>
+
+                                    <div style={{ width: '50%' }}>
+                                        <div id="map-container" style={{ height: '500px' }}>
+                                            <MapContainer
+                                                center={(userLocation) || [0, 0]}
+                                                zoom={10}
+                                                style={{ height: '163%', width: '100%' }}
+                                                ref={mapRef}
+                                            >
+                                                <TileLayer
+                                                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                                    attribution={`
+                                    &copy; <a href="https://www.openstreetmap.org/copyright">Điều khoản sử dụng</a>
+                                    `}
+                                                />
+                                                {displayedLocations.map((location, index) => (
+                                                    <Marker
+                                                        key={index}
+                                                        position={location}
+                                                        icon={customIcon(location.info.price)}
+                                                    >
+                                                        <Popup>
+                                                            <div style={{
+                                                                width: '115.3%', right: "21px",
+                                                                position: "relative",
+                                                                top: "-14px",
+                                                                borderRadius: "5px 5px 5px 5px"
+                                                            }}>
+                                                                <div>
+                                                                    <ImgSliderOnMap house={location.info} />
+                                                                </div>
+                                                                <div style={{ margin: '0px 20px' }}>
+                                                                    <h2>{location.info.hotelName}</h2>
+                                                                    <p style={{ fontSize: '17px' }}> <span style={{ fontWeight: 'bold' }}>${location.info.price}</span>  / đêm</p>
+                                                                </div>
+                                                            </div>
+                                                        </Popup>
+                                                    </Marker>
+                                                ))}
+                                                {
+                                                    showUserLocation && (
+                                                        <Marker
+                                                            position={userLocation}
+                                                            icon={customIconCurrent}
+                                                        >
+                                                        </Marker>
+                                                    )
+                                                }
+                                            </MapContainer>
                                         </div>
-                                    ))}
+                                    </div>
+                                    <div className='container-pagination'>
+                                        <Pagination
+                                            currentPage={currentPage}
+                                            totalPages={totalPages}
+
+                                            // itemsPerPage={housesPerPage}
+                                            onPageChange={handlePageChange}
+                                            handlePrevPage={handlePrevPage}
+                                            handleNextPage={handleNextPage}
+                                        />
+
+                                    </div>
+                                    <div className='show-result-count-by-city'>
+                                        <div className='div-img-show-result-count'>
+                                            <img src="https://a0.muscache.com/pictures/b887040f-0968-4174-9a4f-2d41f8728248.jpg" alt="" />
+                                            <p>Tìm kiếm</p>
+                                        </div>
+                                        <hr />
+                                        <div className='p-count-result-by-city'>
+                                            <p>{houseSearchByCity && houseSearchByCity.length} chỗ ở tại {houseSearchByCity && houseSearchByCity[0] && houseSearchByCity[0]?.location?.address}</p>
+                                        </div>
+                                    </div>
                                 </div>
-                            ) :
-                                showNoFilterResults ? (
-                                    <ShowNoFilterResult />
-                                ) :
-                                    houseFilter && houseFilter.length > 0 ? (
-                                        <div className="search-results">
-                                            {houseFilter.map((house, index) => (
-                                                <div key={index} className="listing">
+                            )
+                            :
+                            (
+                                houseFilterByComfortable.length > 0 ? (
+                                    <div className="search-results">
+                                        {houseFilterByComfortable.map((house, index) => (
+                                            <div key={index} className="listing">
+                                                <div>
                                                     <div>
                                                         <div>
-                                                            <div>
-                                                                <HouseSlider house={house} />
-                                                                {/* <i style={{color: "revert"}} className="fa-brands fa-gratipay icon-conmemya"></i> */}
-                                                            </div>
+                                                            <HouseSlider house={house} />
                                                         </div>
-                                                        {/* <i style={{color: "revert"}} class="fa-brands fa-gratipay icon-conmemya"></i> */}
-                                                    </div>
-                                                    <div>
-                                                        <div style={{ marginTop: '13px' }} className="listing-header">
-                                                            <h3 className="hotel-name">{house?.location?.address}</h3>
-                                                            <span className="review">
-                                                                <i class="fa-solid fa-star"></i>&nbsp;{house?.review}</span>
-                                                        </div>
-                                                        <span>{formattedToday} - {formattedFutureDate}</span>
-                                                        <p style={{ marginTop: '10px' }}><span style={{ fontWeight: 'bold' }}>${house.price} </span>/ đêm</p>
                                                     </div>
                                                 </div>
-                                            ))}
-                                        </div>
-                                    ) : (
-                                        <HouseList />
-                                    )
-                        )}
+                                                <div>
+                                                    <div style={{ marginTop: '13px' }} className="listing-header">
+                                                        <h3 className="hotel-name">{house?.location?.address}</h3>
+                                                        {/* <span className="review">
+                                                        <i class="fa-solid fa-star"></i>&nbsp;{house?.review}</span> */}
+                                                    </div>
+                                                    <span>{formattedToday} - {formattedFutureDate}</span>
+                                                    <p style={{ marginTop: '10px' }}><span style={{ fontWeight: 'bold' }}>${house.price} </span>/ đêm</p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) :
+                                    showNoFilterResults ? (
+                                        <ShowNoFilterResult />
+                                    ) :
+                                        houseFilter && houseFilter.length > 0 ? (
+                                            <div className="search-results">
+                                                {houseFilter.map((house, index) => (
+                                                    <div key={index} className="listing">
+                                                        <div>
+                                                            <div>
+                                                                <div>
+                                                                    <HouseSlider house={house} />
+                                                                    {/* <i style={{color: "revert"}} className="fa-brands fa-gratipay icon-conmemya"></i> */}
+                                                                </div>
+                                                            </div>
+                                                            {/* <i style={{color: "revert"}} class="fa-brands fa-gratipay icon-conmemya"></i> */}
+                                                        </div>
+                                                        <div>
+                                                            <div style={{ marginTop: '13px' }} className="listing-header">
+                                                                <h3 className="hotel-name">{house?.location?.address}</h3>
+                                                                {/* <span className="review">
+                                                                <i class="fa-solid fa-star"></i>&nbsp;{house?.review}</span> */}
+                                                            </div>
+                                                            <span>{formattedToday} - {formattedFutureDate}</span>
+                                                            <p style={{ marginTop: '10px' }}><span style={{ fontWeight: 'bold' }}>${house.price} </span>/ đêm</p>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <HouseList />
+                                        )
+                            )}
             </>
         </div>
     )

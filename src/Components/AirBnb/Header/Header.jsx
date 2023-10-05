@@ -26,7 +26,7 @@ const Header = () => {
 
   const API_URL = 'https://nominatim.openstreetmap.org/search';
 
-  const { setHouseSearchByCity } = useHouse();
+  const { setHouseSearchByCity, setLoadingSearchByCity } = useHouse();
 
   const handleInputChangee = async (e) => {
     const value = e.target.value;
@@ -148,18 +148,23 @@ const Header = () => {
   }
 
   const handleSearchButtonClick = () => {
-    if (inputValue){
-      axios.get(API_GET_HOUSE_BY_CITY+inputValue)
-      .then(resp => {
-        console.log(resp.data);
-        setHouseSearchByCity(resp.data);
-      })
-      .catch(error => {
-        console.error('Error fetching houses by city', error);
-      })
-    } else {
-      console.log("Chưa chọn thành phố");
-    }
+    setLoadingSearchByCity(true)
+    setTimeout(() => {
+      if (inputValue){
+        axios.get(API_GET_HOUSE_BY_CITY+inputValue)
+        .then(resp => {
+          console.log(resp.data);
+          setHouseSearchByCity(resp.data);
+        })
+        .catch(error => {
+          console.error('Error fetching houses by city', error);
+        })
+      } else {
+        console.log("Chưa chọn thành phố");
+      }
+      setLoadingSearchByCity(false)
+    }, 1300)
+    setShowFormHeader(prev => !prev)
   }
   // useEffect(() => {
   //   console.log("houseSearchByCity", houseSearchByCity);
