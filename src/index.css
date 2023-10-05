@@ -11,3 +11,18 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+.dark{
+  background-color: #ebe3e3cf !important;
+  /* color: white; */
+}
+.dark2{
+  background-color: black !important;
+   color: white;
+}
+.full-height-map {
+  height: 100vh;
+}
+.selected{
+  color: black !important;
+  border-bottom: black solid 2px;
+}
