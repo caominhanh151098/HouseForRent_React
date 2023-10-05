@@ -1,7 +1,7 @@
 import React from 'react'
 import '../main/CssHosting/reviews.css';
 import { useEffect, useState } from 'react';
-import MyAxios from '../../../services/MyAxios';
+import MyAxios from '../../../Services/MyAxios';
 import { arrayIncludes } from '@mui/x-date-pickers/internals/utils/utils';
 import NavbarHosting from '../../layout_hosting/NavbarHosting';
 function Reviews() {

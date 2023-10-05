@@ -10,8 +10,8 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateRangePicker } from '@mui/x-date-pickers-pro/DateRangePicker';
 import Dropdown from 'react-bootstrap/Dropdown';
 import "../main/CssHosting/Hosting.css"
-import MyAxios from '../../../services/MyAxios';
 import NavbarHosting from '../../layout_hosting/NavbarHosting';
+import MyAxios from './../../../Services/MyAxios';
 
 function AllReservation() {
     const [showList, setShowList] = useState([])

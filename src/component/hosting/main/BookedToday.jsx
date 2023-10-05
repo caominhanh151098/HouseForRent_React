@@ -5,8 +5,8 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
-import MyAxios from '../../../services/MyAxios';
 import NavbarHosting from '../../layout_hosting/NavbarHosting';
+import MyAxios from './../../../Services/MyAxios';
 
 function BookedToday() {
     const [type, setType] = useState("willCheckOut")

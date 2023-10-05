@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Await, Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import CreateRoom from "../../service/create_room_usestate";
-import FileServive from "../../services/fileService";
+import FileServive from "../../Services/fileService";
 import Navbar_create_room from "../layout_create_room/Navbar_create_room";
+import CreateRoom from './../../service/create_room_usestate';
 
 function B2_uploadImage() {
     const list = CreateRoom.getCreateRoom().imageList?.map((item, index) => (

@@ -3,7 +3,7 @@ import axios from 'axios';
 import '../main/CssHosting/revenueHost.css';
 
 import { useEffect, useState } from 'react';
-import MyAxios from '../../../services/MyAxios';
+import MyAxios from '../../../Services/MyAxios';
 import NavbarHosting from '../../layout_hosting/NavbarHosting';
 function RevenueHost() {
 

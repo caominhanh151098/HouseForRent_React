@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { toast } from "react-toastify";
-import FileServive from "../../../services/fileService";
+import FileServive from "../../../Services/fileService";
 import NavbarHosting from '../../layout_hosting/NavbarHosting';
 function HouseOfHostDetail() {
     const typeRoomList = ["ENTIRE_PLACE", "ROOM", "SHARED_ROOM"]
