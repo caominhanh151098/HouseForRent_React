@@ -139,6 +139,14 @@ body {
   background-color:black;
 }
 
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
 .button-next-modal:disabled {
   background-color: #cccccc !important;
   cursor: not-allowed !important
