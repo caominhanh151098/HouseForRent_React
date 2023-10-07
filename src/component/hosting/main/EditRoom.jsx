@@ -176,6 +176,8 @@ function EditRoom() {
         <>
             <NavbarHosting></NavbarHosting>
             <div className='col-9' style={{ marginLeft: '200px' }}>
+            <div className='fs-5 text-decoration-underline ms-5'><Link style={{color:'black'}} to={`/host/houseOfHostDetail/${houseID}`}> <i class="fa-solid fa-chevron-left fa-2xs"></i> Quay lại</Link></div>
+
                 <h3 className='mb-3'>Phòng và không gian</h3>
                 <p className='mb-5'>Thêm hoặc chỉnh sửa khu vực mà khách có thể sử dụng</p>
 

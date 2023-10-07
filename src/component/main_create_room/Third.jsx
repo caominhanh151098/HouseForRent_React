@@ -16,11 +16,11 @@ import Navbar_create_room from '../layout_create_room/Navbar_create_room';
             </div>
         </div>
         <div className='fixed-bottom d-flex justify-content-between'>
-    <Link className="btn btn-sm ms-5 ms-5 mb-5 fs-5" to={'/create/b2/description'}>
+    <Link className="btn btn-sm ms-5 ms-5 mb-5 fs-5" to={'/host/create/b2/description'}>
                             <i className="fa fa-arrow-left me-2" />
                             quay lại
                         </Link>
-                        <div><Link className="" to={'/create/b3/booknow'}> <button className='btn bg-dark text-white me-5 mb-5' >Tiếp theo</button></Link></div>
+                        <div><Link className="" to={'/host/create/b3/booknow'}> <button className='btn bg-dark text-white me-5 mb-5' >Tiếp theo</button></Link></div>
     </div>
    </>
       )

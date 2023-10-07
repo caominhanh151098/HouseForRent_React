@@ -47,7 +47,7 @@ Hoàn thiện và đăng mục cho thuê</p>
       </div>
       <div className='fixed-bottom d-flex justify-content-between'>
      <div></div>
-        <div><Link className="" to={'/create/b1/shareAdd'}> <button className='btn bg-dark text-white me-5 mb-5' >Tiếp theo</button></Link></div>
+        <div><Link className="" to={'/host/create/b1/shareAdd'}> <button className='btn bg-dark text-white me-5 mb-5' >Tiếp theo</button></Link></div>
     </div>
     </>
   )

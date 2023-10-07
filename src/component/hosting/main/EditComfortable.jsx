@@ -73,7 +73,7 @@ function EditComfortable(){
     return(
         <> 
             <NavbarHosting></NavbarHosting>        
-            <div className='fs-5 text-decoration-underline ms-5'><Link style={{color:'black'}} to={`/houseOfHostDetail/${houseID}`}> <i class="fa-solid fa-chevron-left fa-2xs"></i> Quay lại</Link></div>
+            <div className='fs-5 text-decoration-underline ms-5'><Link style={{color:'black'}} to={`/host/houseOfHostDetail/${houseID}`}> <i class="fa-solid fa-chevron-left fa-2xs"></i> Quay lại</Link></div>
             <div style={{marginLeft:'200px'}} className='col-9'>
                 <div className='fs-2 mb-5'>Tiện nghi</div>
                 <div>
@@ -161,7 +161,7 @@ function EditComfortable(){
                     }
                 </div>
             </div>
-            <div className='fs-5 text-decoration-underline ' style={{marginLeft:'1100px',marginTop:'50px'}}><Link style={{color:'black'}} to={`/houseOfHostDetail/${houseID}`}> <i class="fa-solid fa-chevron-left fa-2xs"></i> Quay lại</Link></div>      
+            <div className='fs-5 text-decoration-underline ' style={{marginLeft:'1100px',marginTop:'50px'}}><Link style={{color:'black'}} to={`/host/houseOfHostDetail/${houseID}`}> <i class="fa-solid fa-chevron-left fa-2xs"></i> Quay lại</Link></div>      
         </>
     )
 }export default EditComfortable

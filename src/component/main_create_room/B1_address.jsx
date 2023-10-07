@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import axios from "axios"
 import Navbar_create_room from '../layout_create_room/Navbar_create_room';
 
+
 function B1_address  () {
   const handleLog=()=>{
     console.log(location);
@@ -61,11 +62,11 @@ function B1_address  () {
           </div>
         
         <div className='fixed-bottom d-flex justify-content-between'>
-    <Link className="btn btn-sm ms-5 ms-5 mb-5 fs-5" to={'/create/b1/chooseTypeRoom'}>
+    <Link className="btn btn-sm ms-5 ms-5 mb-5 fs-5" to={'/host/create/b1/chooseTypeRoom'}>
                             <i className="fa fa-arrow-left me-2" />
                             quay lại
                         </Link>
-                        <div><Link className="" to={'/create/b1/infor'}> <button onClick={()=>{CreateRoom.setCreateRoom({...CreateRoom.getCreateRoom(), address:address,lon: location.lon ,lat:location.lat})}} className={`btn bg-dark text-white me-5 mb-5 ${address==''?'disabled':''}`} >Tiếp theo</button></Link></div>
+                        <div><Link className="" to={'/host/create/b1/infor'}> <button onClick={()=>{CreateRoom.setCreateRoom({...CreateRoom.getCreateRoom(), address:address,lon: location.lon ,lat:location.lat})}} className={`btn bg-dark text-white me-5 mb-5 ${address==''?'disabled':''}`} >Tiếp theo</button></Link></div>
     </div>
    
 

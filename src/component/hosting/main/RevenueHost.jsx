@@ -180,7 +180,10 @@ function RevenueHost() {
         async function getData() {
 
 
-            let res = await MyAxios(`http://localhost:8080/api/host/house/getHouseRevenueHost`).get();
+            let res = await axios.get(`http://localhost:8080/api/host/house/getHouseRevenueHost`,
+            {headers: {
+                'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+            }});
             setListHouse(res.data)
            
         }
@@ -190,7 +193,10 @@ function RevenueHost() {
         let startdate = start.year + '-' + start.month + '-01'
         let enddate = getLastDayOfMonth(end.year, end.month)
         async function getData() {
-            let res = await MyAxios(`http://localhost:8080/api/host/reservation/getReservationFinish/${house}/${startdate}/${enddate}?page=${currentPage}`).get();
+            let res = await axios.get(`http://localhost:8080/api/host/reservation/getReservationFinish/${house}/${startdate}/${enddate}?page=${currentPage}`,
+            {headers: {
+                'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+            }});
             setRevenue(res.data.content)
             setTotalPage(res.data.totalPages)
         }

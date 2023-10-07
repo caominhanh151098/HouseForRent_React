@@ -358,7 +358,7 @@ const Header = () => {
 
         </div>
         <div className="header-2">
-          <button className="header3">Cho thuê chỗ ở qua Airbnb</button>
+         <Link to={"/host/bookedToday"}> <button className="header3">Cho thuê chỗ ở qua Airbnb</button></Link>
           <span>
             <i className="fa-solid fa-globe world" />
           </span>

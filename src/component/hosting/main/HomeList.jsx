@@ -46,7 +46,7 @@ function HomeList () {
     {
         houseList.map((item)=>(
           <tr key={item.id}>
-               <th className='' scope="row"><Link style={{textDecoration :'none',color:'black'}} to={`/houseOfHostDetail/${item.id}`}>{item.hotelName}</Link></th>
+               <th className='' scope="row"><Link style={{textDecoration :'none',color:'black'}} to={`/host/houseOfHostDetail/${item.id}`}>{item.hotelName}</Link></th>
             <td className='td-homelist'><img style={{width: '100px',height:'70px',borderRadius:'7px'}} src={item.images[0].srcImg} alt="" /></td>
             <td className='td-homelist' style={{verticalAlign:'middle'}}>{item.status}</td>
             <td className='td-homelist'>{item.bookNow=="true"?'Bật':'Tắt'}</td>

@@ -15,7 +15,7 @@ function B1_share_add () {
                             <i className="fa fa-arrow-left me-2" />
                             quay lại
                         </Link>
-                        <div><Link className="" to={'/create/b1/chooseType'}> <button className='btn bg-dark text-white me-5 mb-5' >Tiếp theo</button></Link></div>
+                        <div><Link className="" to={'/host/create/b1/chooseType'}> <button className='btn bg-dark text-white me-5 mb-5' >Tiếp theo</button></Link></div>
     </div>
     </>
   )
