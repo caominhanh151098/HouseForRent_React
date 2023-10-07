@@ -30,6 +30,7 @@ const House = () => {
 
 
     const handlefilePDF = (item) => {
+        console.log(item);
         window.open(item.confirmPDF, "_blank");
     }
 

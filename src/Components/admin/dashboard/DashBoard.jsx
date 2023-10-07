@@ -17,12 +17,10 @@ import useFetchProfitsForThisMonth from "../../../Hooks/admin/dashboard/useFetch
 import useFetchProfitsForLastMonth from "../../../Hooks/admin/dashboard/useFetchProfitsForLastMonth";
 import useFetchProfitsForPreLastMonth from "../../../Hooks/admin/dashboard/useFetchProfitsForPreLastMonth";
 import SockJS from "sockjs-client";
-import { Stomp } from "@stomp/stompjs";
+// import { Stomp } from "@stomp/stompjs";
 import axios from "axios";
+import Stomp from "stompjs";
 
-
-// import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
-// import { TableVirtuoso } from "react-virtuoso";
 Chart.register(...registerables);
 var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
@@ -381,32 +379,45 @@ function DashBoard() {
     const [stompClient, setStompClient] = useState(null);
     const [reservations, setReservations] = useState([]);
     const [reservationTest, setReservationTest] = useState({});
-
-    // useEffect(() => {
-    //     async function getData() {
-    //         const response = await axios.get("http://localhost:8080/api/admin/profits/findAll");
-    //         setReservations(response.data);
-    //     }
-    //     getData();
-    // }, [])
+    const [isConnected, setIsConnected] = useState(false);
 
     useEffect(() => {
+        async function getData() {
+            const response = await axios.get("http://localhost:8080/api/admin/profits/findAll");
+            setReservations(response.data);
+        }
+        getData();
+    }, [])
+
+    useEffect(() => {
+
         const socket = new SockJS('http://localhost:8080/ws');
         const client = Stomp.over(socket);
 
-        client.connect({}, () => {
-            client.subscribe('/topic/dataUpdates', (response) => {
+        console.log(socket);
+        console.log(client);
 
-                const newData = JSON.parse(response.body);
-                setSocketData((prev) => [...prev, newData]);
-                
-                console.log(newData);
-            });
+
+
+        client.connect({}, () => {
+            if (client.connect()) {
+                console.log("Success");
+                client.subscribe('/topic/dataNew', (response) => {
+
+                    const newData = JSON.parse(response.body);
+                    setSocketData((prev) => [...prev, newData]);
+
+                    console.log(newData);
+                });
+            }
 
             setStompClient(client);
 
             return () => {
-                client.disconnect();
+                if (stompClient.connected) {
+                    stompClient.disconnect();
+                    console.log("Disconnected from WebSocket");
+                }
             }
         })
     }, [])
@@ -444,24 +455,24 @@ function DashBoard() {
         setReservationTest(test);
     }
 
-    // useEffect(() => {
-    //     async function updateData() {
-    //         try {
-    //             await axios.patch(`http://localhost:8080/api/admin/profits/update/${reservationTest.id}`, { status: reservationTest.status, totalPrice: reservationTest.totalPrice }, {
-    //                 headers: {
-    //                     'Content-Type': 'application/json'
-    //                 }
-    //             });
+    useEffect(() => {
+        async function updateData() {
+            try {
+                await axios.patch(`http://localhost:8080/api/admin/profits/update/${reservationTest.id}`, { status: reservationTest.status, totalPrice: reservationTest.totalPrice }, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
 
 
-    //             const data = { ...reservationTest };
-    //             stompClient.send("/app/sendData", {}, JSON.stringify(data));
-    //         } catch (error) {
-    //             console.error("Lỗi đổi status", error);
-    //         }
-    //     }
-    //     updateData()
-    // }, [reservationTest])
+                const data = { ...reservationTest };
+                stompClient.send("/app/sendData", {}, JSON.stringify(data));
+            } catch (error) {
+                console.error("Lỗi đổi status", error);
+            }
+        }
+        updateData()
+    }, [reservationTest])
 
     useEffect(() => {
         console.log(socketData);

@@ -1,13 +1,11 @@
 import React from 'react';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { BrowserRouter } from 'react-router-dom'
 import ReactDOM from 'react-dom/client';
-import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
-import "../node_modules/bootstrap/dist/js/bootstrap.min.js";
-import "../node_modules/@fortawesome/fontawesome-free/css/all.min.css";
 import "./assets/css/icons.min.css";
-import { BrowserRouter } from 'react-router-dom';
 import "./assets/css/app.min.css";
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
@@ -15,18 +13,23 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
 
+import BookingProvider from './Components/AirBnb/Book/Main/BookingProvider';
+import { HouseProvider } from './Components/AirBnb/Header/HouseContext';
 
+import './index.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <BookingProvider>
+      <HouseProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </HouseProvider>
+    </BookingProvider>
   </React.StrictMode>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+
+
