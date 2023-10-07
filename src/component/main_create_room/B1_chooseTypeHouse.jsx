@@ -40,11 +40,11 @@ function B1_chooseType  () {
                 </div>
     </div>
     <div className='fixed-bottom d-flex justify-content-between'>
-    <Link className="btn btn-sm ms-5 ms-5 mb-5 fs-5" to={'/create/b1/shareAdd'}>
+    <Link className="btn btn-sm ms-5 ms-5 mb-5 fs-5" to={'/host/create/b1/shareAdd'}>
                             <i className="fa fa-arrow-left me-2" />
                             quay lại
                         </Link>
-                        <div><Link className="" to={'/create/b1/chooseTypeRoom'}> <button onClick={()=>{CreateRoom.setCreateRoom({...CreateRoom.getCreateRoom(), categoryHotel:type})}} className={`btn bg-dark text-white me-5 mb-5 ${type==''?'disabled':''}`} >Tiếp theo</button></Link></div>
+                        <div><Link className="" to={'/host/create/b1/chooseTypeRoom'}> <button onClick={()=>{CreateRoom.setCreateRoom({...CreateRoom.getCreateRoom(), categoryHotel:type})}} className={`btn bg-dark text-white me-5 mb-5 ${type==''?'disabled':''}`} >Tiếp theo</button></Link></div>
     </div>
     </>
   )

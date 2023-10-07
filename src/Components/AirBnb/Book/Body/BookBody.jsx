@@ -424,7 +424,9 @@ const BookBody = () => {
     };
 
     try {
-      const response = await axios.post(API_CREATE_BOOK_HOUSE, requestData)
+      const response = await axios.post(API_CREATE_BOOK_HOUSE, requestData, {  headers: {
+        'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+    }   })
       console.log('Đã tạo hóa đơn:', response.data);
     } catch (error) {
       console.error('Lỗi khi gọi API:', error);

@@ -81,11 +81,11 @@ function B1_infor ()  {
             </div>
         </div>
         <div className='fixed-bottom d-flex justify-content-between'>
-    <Link className="btn btn-sm ms-5 ms-5 mb-5 fs-5" to={'/create/b1/address'}>
+    <Link className="btn btn-sm ms-5 ms-5 mb-5 fs-5" to={'/host/create/b1/address'}>
                             <i className="fa fa-arrow-left me-2" />
                             quay lại
                         </Link>
-                        <div><Link className="" to={'/create/second'}> <button onClick={()=>{CreateRoom.setCreateRoom({...CreateRoom.getCreateRoom(), quantityOfGuests:guestQuantity,quantityOfRooms:roomQuantity,quantityOfBeds:bedQuantity,quantityOfBathrooms:bathroomQuantity})}} className='btn bg-dark text-white me-5 mb-5' >Tiếp theo</button></Link></div>
+                        <div><Link className="" to={'/host/create/second'}> <button onClick={()=>{CreateRoom.setCreateRoom({...CreateRoom.getCreateRoom(), quantityOfGuests:guestQuantity,quantityOfRooms:roomQuantity,quantityOfBeds:bedQuantity,quantityOfBathrooms:bathroomQuantity})}} className='btn bg-dark text-white me-5 mb-5' >Tiếp theo</button></Link></div>
     </div>
         </>
   )

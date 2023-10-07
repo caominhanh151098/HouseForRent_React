@@ -16,11 +16,11 @@ function B3_price  () {
             </div>
         </div>
         <div className='fixed-bottom d-flex justify-content-between'>
-    <Link className="btn btn-sm ms-5 ms-5 mb-5 fs-5" to={'/create/b3/booknow'}>
+    <Link className="btn btn-sm ms-5 ms-5 mb-5 fs-5" to={'/host/create/b3/booknow'}>
                             <i className="fa fa-arrow-left me-2" />
                             quay lại
                         </Link>
-                        <div><Link className="" to={'/create/b3/discount'}> <button onClick={()=>{CreateRoom.setCreateRoom({...CreateRoom.getCreateRoom(), price:price})}} className={`btn bg-dark text-white me-5 mb-5 ${price==0?'disabled':''}`} >Tiếp theo</button></Link></div>
+                        <div><Link className="" to={'/host/create/b3/discount'}> <button onClick={()=>{CreateRoom.setCreateRoom({...CreateRoom.getCreateRoom(), price:price})}} className={`btn bg-dark text-white me-5 mb-5 ${price==0?'disabled':''}`} >Tiếp theo</button></Link></div>
     </div>
      </>   
   )

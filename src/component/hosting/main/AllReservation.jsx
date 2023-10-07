@@ -154,7 +154,10 @@ function AllReservation() {
     };
     useEffect(() => {
         async function getData() {
-            let res = await MyAxios(`http://localhost:8080/api/host/reservation/all/${type}/${startDate}/${endDate}?page=${currentPage}&size=5`).get();
+            let res = await axios.get(`http://localhost:8080/api/host/reservation/all/${type}/${startDate}/${endDate}?page=${currentPage}&size=5`,
+            {  headers: {
+                'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+            }});
             setShowList(res.data.content)
             setTotalPage(res.data.totalPages)
             renderPagination()
@@ -163,7 +166,10 @@ function AllReservation() {
     }, [])
     const handleShowList = (type) => {
         async function getData() {
-            let res = await MyAxios(`http://localhost:8080/api/host/reservation/all/${type}/${startDate}/${endDate}?page=${currentPage}&size=5`).get();
+            let res = await axios.get(`http://localhost:8080/api/host/reservation/all/${type}/${startDate}/${endDate}?page=${currentPage}&size=5`,
+            {  headers: {
+                'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+            }   });
             setShowList(res.data.content)
             setTotalPage(res.data.totalPages)
             renderPagination()
@@ -232,7 +238,7 @@ function AllReservation() {
            
                 <div className={`overlay ${showFilterForm ? 'active' : ''}`} >
                     <div className={`appearing-div ${showFilterForm ? 'active' : ''}`}>
-                    <div className="category-container">
+                    <div className="category-container d-block">
                         <div><h3>Bộ lọc</h3></div>
                         <div>Đặt phòng bắt đầu hoặc kết thúc trong phạm vi ngày như sau.</div>
                         <div className='col-12'><LocalizationProvider dateAdapter={AdapterDayjs}>

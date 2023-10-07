@@ -111,7 +111,7 @@ function EditRule() {
         
         async function getData() {
 
-            let res2 = await axios.post(`http://localhost:8080/api/host/rule/updateOther/${houseID}`, other,{ headers: {
+            let res2 = await axios.post(`http://localhost:8080/api/host/rule/updateOther/${houseID}`,{stringRequest:other} ,{ headers: {
                 'Authorization': `Bearer ${localStorage.getItem("jwt")}`
             }});
             setOpenOther(false)
@@ -122,7 +122,7 @@ function EditRule() {
         <>
             <NavbarHosting></NavbarHosting>
             <div style={{ marginLeft: '120px' }} className='col-10'>
-            <div className='fs-5 text-decoration-underline ms-5 mb-5'><Link style={{color:'black'}} to={`/houseOfHostDetail/${houseID}`}> <i class="fa-solid fa-chevron-left fa-2xs"></i> Quay lại</Link></div>
+            <div className='fs-5 text-decoration-underline ms-5 mb-5'><Link style={{color:'black'}} to={`/host/houseOfHostDetail/${houseID}`}> <i class="fa-solid fa-chevron-left fa-2xs"></i> Quay lại</Link></div>
                 <h3 style={{ paddingBottom: '30px' }} className='mb-5 border-bottom'>Chính sách và nội quy của nhà/ Phòng</h3>
                 <div className='fs-4 mb-3'>Chính sách :</div>
                 <div className='d-flex justify-content-between border-bottom mb-5' style={{ paddingBottom: '40px' }}>

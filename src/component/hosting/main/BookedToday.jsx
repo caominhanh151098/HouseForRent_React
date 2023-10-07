@@ -6,7 +6,6 @@ import { Link } from 'react-router-dom';
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import NavbarHosting from '../../layout_hosting/NavbarHosting';
-import MyAxios from './../../../Services/MyAxios';
 
 function BookedToday() {
     const [type, setType] = useState("willCheckOut")
@@ -19,35 +18,51 @@ function BookedToday() {
     const [detail,setDetail]=useState({})
     useEffect(() => {
         async function getData() {
-            let res = await MyAxios(`http://localhost:8080/api/host/reservation/willCheckOut`).get();
+            let res = await axios.get(`http://localhost:8080/api/host/reservation/willCheckOut`,{
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+                }
+            });
             setWillCheckOut(res.data)
         }
         getData();
     }, [render])
     useEffect(() => {
         async function getData() {
-            let res = await MyAxios(`http://localhost:8080/api/host/reservation/welcoming`).get();
+            let res = await axios.get(`http://localhost:8080/api/host/reservation/welcoming`,
+            { headers: {
+                'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+            }});
             setWelcoming(res.data)
         }
         getData();
     }, [render])
     useEffect(() => {
         async function getData() {
-            let res = await MyAxios(`http://localhost:8080/api/host/reservation/coming`).get();
+            let res = await axios.get(`http://localhost:8080/api/host/reservation/coming`,
+            { headers: {
+                'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+            }});
             setComing(res.data)
         }
         getData();
     }, [render])
     useEffect(() => {
         async function getData() {
-            let res = await MyAxios(`http://localhost:8080/api/host/reservation/upcoming`).get();
+            let res = await axios.get(`http://localhost:8080/api/host/reservation/upcoming`,
+            { headers: {
+                'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+            }});
             setUpComing(res.data)
         }
         getData();
     }, [render])
     useEffect(() => {
         async function getData() {
-            let res = await MyAxios(`http://localhost:8080/api/host/reservation/waitApproval`).get();
+            let res = await axios.get(`http://localhost:8080/api/host/reservation/waitApproval`,
+            { headers: {
+                'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+            }});
             setApproval(res.data)
         }
         getData();
@@ -63,7 +78,10 @@ function BookedToday() {
                     label: "Yes",
                     onClick: () => {
                         async function getData() {
-                            let res = await MyAxios(`http://localhost:8080/api/host/reservation/delete/${id}`).get();
+                            let res = await axios.get(`http://localhost:8080/api/host/reservation/delete/${id}`,
+                            { headers: {
+                                'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+                            }});
                             setRender(render ? false : true)
                         }
                         getData();
@@ -89,7 +107,10 @@ function BookedToday() {
                     label: "Yes",
                     onClick: () => {
                         async function getData() {
-                            let res = await axios.get(`http://localhost:8080/api/host/reservation/accept/${id}`);
+                            let res = await axios.get(`http://localhost:8080/api/host/reservation/accept/${id}`,
+                            { headers: {
+                                'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+                            }});
                             setRender(render ? false : true)
                         }
                         getData();
@@ -113,7 +134,10 @@ function BookedToday() {
                     label: "Yes",
                     onClick: () => {
                         async function getData() {
-                            let res = await MyAxios(`http://localhost:8080/api/host/reservation/delete/${id}`).get();
+                            let res = await axios.get(`http://localhost:8080/api/host/reservation/delete/${id}`,
+                            { headers: {
+                                'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+                            }});
                             setRender(render ? false : true)
                         }
                         getData();
@@ -130,7 +154,10 @@ function BookedToday() {
     const handleshowGuestDetail =(reservationId)=>{
        
         async function getData() {
-            let res = await MyAxios(`http://localhost:8080/api/host/reservation/getGuestDetail/${reservationId}`).get();
+            let res = await axios.get(`http://localhost:8080/api/host/reservation/getGuestDetail/${reservationId}`,
+            { headers: {
+                'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+            }});
             setDetail(res.data)
         }
         getData();

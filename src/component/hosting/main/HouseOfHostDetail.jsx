@@ -112,8 +112,8 @@ function HouseOfHostDetail() {
             let res = await axios.get(`https://mapquestapi.com/geocoding/v1/address?key=XH0jLaU2elxOJPVY7rBcFYs5UbVsly1p&location=${e.target.value}`);
             setNewLocation({
                 address: e.target.value,
-                latitude: res.data.results[0].locations[0].displayLatLng.lat,
-                longitude: res.data.results[0].locations[0].displayLatLng.lng,
+                latitude: res.data.results[0]?.locations[0]?.displayLatLng.lat,
+                longitude: res.data.results[0]?.locations[0]?.displayLatLng.lng,
             })
 
         }
@@ -224,6 +224,7 @@ function HouseOfHostDetail() {
             let res = await axios.post(`http://localhost:8080/api/host/house/edit/image/${houseID}`, uploadedAvatar, {
                 headers: { 'Content-Type': 'application/json' },
             });
+            setRender(reder?false:true)
 
         }
         getData();
@@ -231,7 +232,7 @@ function HouseOfHostDetail() {
     return (
         <>
         <NavbarHosting></NavbarHosting>
-        <div className='fs-5 text-decoration-underline ' style={{marginLeft:'1100px'}}><Link style={{color:'black'}} to={`/homeList`}> <i class="fa-solid fa-chevron-left fa-2xs"></i> Quay lại</Link></div>
+        <div className='fs-5 text-decoration-underline ' style={{marginLeft:'1100px'}}><Link style={{color:'black'}} to={`/host/homeList`}> <i class="fa-solid fa-chevron-left fa-2xs"></i> Quay lại</Link></div>
             <div style={{ marginLeft: '120px' }} className=' col-10' >
                 <div className='fs-3 '>{houseOfHostDetail.hotelName}</div>
                 <div className='fs-4'>Ảnh</div>
@@ -330,7 +331,7 @@ function HouseOfHostDetail() {
                  
                                 <div className='fs-4 '> Tiện nghi</div>
 
-                                <div className='fs-5 text-decoration-underline' ><Link style={{color:'black',textDecoration:'underline'}} to={`/editComfortable/${houseOfHostDetail.id}`}>Chỉnh sửa</Link> </div>
+                                <div className='fs-5 text-decoration-underline' ><Link style={{color:'black',textDecoration:'underline'}} to={`/host/editComfortable/${houseOfHostDetail.id}`}>Chỉnh sửa</Link> </div>
 
                 </div>
                 <div className='border-bottom pb-3 pt-3 d-flex justify-content-between'>
@@ -348,7 +349,7 @@ function HouseOfHostDetail() {
                                 <div>
                                     <div className='fs-4'>Vị trí</div>
                                     <div className='fs-5'> địa chỉ</div>
-                                    <div><textarea onBlur={(e) => { handleSetLocation(e) }} style={{ width: '1120px' }} className='form-control mb-4 mt-4 ' name="" id="" cols="150" rows="3" placeholder='Nhập địa chỉ mới'></textarea></div>
+                                    <div><textarea onInput={(e) => { handleSetLocation(e) }} style={{ width: '1120px' }} className='form-control mb-4 mt-4 ' name="" id="" cols="150" rows="3" placeholder='Nhập địa chỉ mới'></textarea></div>
                                     <div className='d-flex flex-row-reverse'>
                                         <div><button onClick={handleupdateLocation} style={{ backgroundColor: 'black', color: 'white', borderRadius: '5px', width: '60px', marginLeft: '30px' }}>Lưu</button></div>
                                         <div><button style={{ borderRadius: '5px' }} onClick={() => { setUpdateAddress(true) }}>Huỷ</button></div>
@@ -420,11 +421,11 @@ function HouseOfHostDetail() {
                         <div>Giường {houseOfHostDetail.quantityOfBeds}</div>
                         <div>Phòng tắm {houseOfHostDetail.quantityOfBathrooms}</div>
                     </div>
-                    <div className='fs-5 text-decoration-underline'><Link style={{color:'black',textDecoration:'underline'}} to={`/editRoom/${houseOfHostDetail.id}`}>Chỉnh sửa</Link> </div>
+                    <div className='fs-5 text-decoration-underline'><Link style={{color:'black',textDecoration:'underline'}} to={`/host/editRoom/${houseOfHostDetail.id}`}>Chỉnh sửa</Link> </div>
                 </div>
                 <div className='border-bottom pb-3 pt-3 d-flex justify-content-between '>
                     <div className='fs-4'>Chính sách và nội quy</div>    
-                    <div className='fs-5'><Link style={{color:'black',textDecoration:'underline'}} to={`/editRule/${houseOfHostDetail.id}`}>Chỉnh sửa</Link></div>
+                    <div className='fs-5'><Link style={{color:'black',textDecoration:'underline'}} to={`/host/editRule/${houseOfHostDetail.id}`}>Chỉnh sửa</Link></div>
                 </div>    
             </div>
 

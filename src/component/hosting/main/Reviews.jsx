@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import MyAxios from '../../../Services/MyAxios';
 import { arrayIncludes } from '@mui/x-date-pickers/internals/utils/utils';
 import NavbarHosting from '../../layout_hosting/NavbarHosting';
+import axios from 'axios';
 function Reviews() {
     const [listHouse, setListHouse] = useState([])
     const [house, setHouse] = useState(-1)
@@ -15,7 +16,10 @@ function Reviews() {
         async function getData() {
 
 
-            let res = await MyAxios(`http://localhost:8080/api/host/house/getHouseRevenueHost`).get();
+            let res = await axios.get(`http://localhost:8080/api/host/house/getHouseRevenueHost`,
+            {  headers: {
+                'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+            }});
             setListHouse(res.data)
             
         }
@@ -25,7 +29,10 @@ function Reviews() {
        
         if(house==-1){
             async function getData() {
-                let res = await MyAxios(`http://localhost:8080/api/host/user/client/detail/review/31/1?page=0&size=${size}`).get();
+                let res = await axios.get(`http://localhost:8080/api/host/user/client/detail/review/by-guest?page=0&size=${size}`,
+                {  headers: {
+                    'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+                }});
                 setListReview(res.data.content)
     
                 
@@ -35,7 +42,10 @@ function Reviews() {
         }else{
      
             async function getData() {
-                let res = await MyAxios(`http://localhost:8080/api/host/house/detail/reviews/${house}?page=0&size=${size}`).get();
+                let res = await axios.get(`http://localhost:8080/api/host/house/detail/reviews/${house}?page=0&size=${size}`,
+                {  headers: {
+                    'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+                }});
                 setListReview(res.data.content)
                 console.log(res.data.content);
                
@@ -76,7 +86,7 @@ function Reviews() {
                 {
                     listReview.length == 0 ?
                         <>
-                            <div className='container-not-review'>
+                            <div className='container-not-review col-8'>
                                 <div className='fs-3 mb-2'>Đánh giá đầu tiên của bạn sẽ hiển thị ở đây</div>
                                 <div className='fs-5'>Chúng tôi sẽ thông báo cho bạn khi khách gửi phản hồi.</div>
                             </div>
