@@ -1,0 +1,13 @@
+.rmdp-calendar {
+    width: 500px;
+}
+.rmdp-top-class {
+    width: 100%;
+}
+.rmdp-header {
+    width: 400px;
+}
+.rmdp-day-picker {
+    display: block !important;
+    width: 480px;
+}
