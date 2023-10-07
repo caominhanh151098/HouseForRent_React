@@ -820,14 +820,14 @@ const Body = () => {
                                             <div className="price-range">
                                                 <Slider
                                                     range
-                                                    min={13}
-                                                    max={148}
+                                                    min={0}
+                                                    max={456}
                                                     step={1}
                                                     value={rangeValue}
                                                     onChange={handleSliderChange}
                                                 />
                                                 <div className="building-icons">
-                                                    {Array.from({ length: 148 - 13 + 1 }, (_, index) => (
+                                                    {Array.from({ length: 456 - 13 + 1 }, (_, index) => (
                                                         <div
                                                             key={index}
                                                             className={`building-icon ${index + 13 >= rangeValue[0] && index + 13 <= rangeValue[1] ? 'active' : ''}`}
@@ -941,7 +941,7 @@ const Body = () => {
                                                                                     onChange={(e) => handleCheckboxChange(e, item.id)}
                                                                                 />
                                                                                 <p>{item.name}</p>
-                                                                                <p>{item.id}</p>
+                                                                                <p style={{opacity:'0'}}>{item.id}</p>
                                                                             </div>
                                                                         ))}
                                                                 </div>
