@@ -26,17 +26,24 @@ function RoutesAdmin() {
   
 
   return (
-    <>
-      <Layout>
-        <Routes>
-          <Route path='/admin' element={<DashBoard/>}/>
-          <Route path='/admin/tickets' element = {<TicketList/>}/>
-          <Route path='/admin/houses' element = {<House/>}/>
-          <Route path='/admin/users' element={<UserList/>}/>
-          <Route path='/admin/reports' element={<Reports/>}/>
-        </Routes>
-      </Layout>
-    </>
+    <React.Fragment>
+      <Routes>
+        <Route
+          path='/admin/*'
+          element={
+            <Layout>
+              <Routes>
+                <Route index element={<DashBoard />} />
+                <Route path='tickets' element={<TicketList />} />
+                <Route path='houses' element={<House />} />
+                <Route path='users' element={<UserList />} />
+                <Route path='reports' element={<Reports />} />
+              </Routes>
+            </Layout>
+          }
+        />
+      </Routes>
+    </React.Fragment>
   );
 }
 

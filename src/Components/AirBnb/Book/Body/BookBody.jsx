@@ -30,7 +30,7 @@ const BookBody = () => {
   const [housePrice, setHousePrice] = useState({})
   const [selectedDivPayment, setIsSelectedDivPayment] = useState('all');
   const [selectedPhoneLogIn, setSelectedPhoneLogIn] = useState(null)
-  const [userLogin, setUserLogin] = useState(true);
+  const [userLogin, setUserLogin] = useState(false);
   const [isOverlayVisible, setIsOverlayVisible] = useState(false);
   const [isOverlayVisible2, setIsOverlayVisible2] = useState(false);
   const [isOverlayVisible3, setIsOverlayVisible3] = useState(false);
@@ -691,7 +691,7 @@ const BookBody = () => {
         </div>
         <hr style={{ width: '82%' }} />
         {
-          userLogin && (
+          !userLogin && (
             <div>
               <h2 style={{padding:"0px 56px"}}>Đăng nhập hoặc đăng ký để đặt phòng/đặt chỗ</h2>
               <div className='payment-text-body'>
@@ -702,7 +702,7 @@ const BookBody = () => {
                     <p>Việt nam (+84)</p>
                   </div>
                   <div>
-                    <svg className='svg-book-body' style={{ width: '20px' }} viewBox="0 0 18 18" role="presentation" aria-hidden="true" focusable="false"><path d="m16.29 4.3a1 1 0 1 1 1.41 1.42l-8 8a1 1 0 0 1 -1.41 0l-8-8a1 1 0 1 1 1.41-1.42l7.29 7.29z" fill-rule="evenodd"></path></svg>
+                    <svg className='svg-book-body' style={{ width: '20px' }} viewBox="0 0 18 18" role="presentation" aria-hidden="true" focusable="false"><path d="m16.29 4.3a1 1 0 1 1 1.41 1.42l-8 8a1 1 0 0 1 -1.41 0l-8-8a1 1 0 1 1 1.41-1.42l7.29 7.29z" fillRule="evenodd"></path></svg>
                   </div>
                 </div>
                 <div onClick={() => { handleClickDivPhoneLogIn('phone') }}
@@ -727,7 +727,7 @@ const BookBody = () => {
                   )}
                   {phoneInput.length >= 10 && phoneInput.length <= 11 && (
                     <span style={{ color: 'red', bottom: '5px', right: '5px' }}>
-                      <i class="fa-solid fa-check" style={{ fontSize: '30px', marginRight: '8px', color: 'black' }}></i>
+                      <i className="fa-solid fa-check" style={{ fontSize: '30px', marginRight: '8px', color: 'black' }}></i>
                     </span>
                   )}
                 </div>
@@ -788,7 +788,7 @@ const BookBody = () => {
                           <p>Việt nam (+84)</p>
                         </div>
                         <div>
-                          <svg className='svg-book-body' style={{ width: '20px' }} viewBox="0 0 18 18" role="presentation" aria-hidden="true" focusable="false"><path d="m16.29 4.3a1 1 0 1 1 1.41 1.42l-8 8a1 1 0 0 1 -1.41 0l-8-8a1 1 0 1 1 1.41-1.42l7.29 7.29z" fill-rule="evenodd"></path></svg>
+                          <svg className='svg-book-body' style={{ width: '20px' }} viewBox="0 0 18 18" role="presentation" aria-hidden="true" focusable="false"><path d="m16.29 4.3a1 1 0 1 1 1.41 1.42l-8 8a1 1 0 0 1 -1.41 0l-8-8a1 1 0 1 1 1.41-1.42l7.29 7.29z" fillRule="evenodd"></path></svg>
                         </div>
                       </div>
                       <div onClick={() => { handleClickDivPhoneLogIn('phone') }}
@@ -863,7 +863,7 @@ const BookBody = () => {
               {
                 house && (
                   <p style={{ display: 'flex', alignItems: 'center', padding: '9px 0px' }}>
-                    <svg style={{ width: '20px', padding: '0px 5px' }} className='svg-tag-login-text-body' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" role="presentation" focusable="false" ><path fill-rule="evenodd" d="m15.1 1.58-4.13 8.88-9.86 1.27a1 1 0 0 0-.54 1.74l7.3 6.57-1.97 9.85a1 1 0 0 0 1.48 1.06l8.62-5 8.63 5a1 1 0 0 0 1.48-1.06l-1.97-9.85 7.3-6.57a1 1 0 0 0-.55-1.73l-9.86-1.28-4.12-8.88a1 1 0 0 0-1.82 0z"></path></svg>
+                    <svg style={{ width: '20px', padding: '0px 5px' }} className='svg-tag-login-text-body' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" role="presentation" focusable="false" ><path fillRule="evenodd" d="m15.1 1.58-4.13 8.88-9.86 1.27a1 1 0 0 0-.54 1.74l7.3 6.57-1.97 9.85a1 1 0 0 0 1.48 1.06l8.62-5 8.63 5a1 1 0 0 0 1.48-1.06l-1.97-9.85 7.3-6.57a1 1 0 0 0-.55-1.73l-9.86-1.28-4.12-8.88a1 1 0 0 0-1.82 0z"></path></svg>
                     {house?.reviewPoint} ({house?.numReview} đánh giá) </p>
                 )
               }

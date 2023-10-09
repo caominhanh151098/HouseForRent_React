@@ -172,11 +172,13 @@ body {
   font-weight: 500;
 }
 
-.input-otp {
-  width: 40%;
+.div-confirm-otp-phone {
+  width: 50%;
+}
+
+.input-confirm-otp-phone {
   letter-spacing: 18px;
-  border-radius: 10px;
-  border: 1px solid;
+  font-size: 20px;
 }
 
 .input-data {
