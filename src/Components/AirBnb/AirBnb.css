@@ -211,6 +211,8 @@ header {
 .header-2 {
     font-size: 20px;
     cursor: pointer;
+    align-items: center;
+    display: flex;
 }
 
 .fa-solid:hover {
@@ -1873,7 +1875,7 @@ span:nth-last-child(3) {
 }
 
 .dropdown-menu-choice:hover{
-    background: rgb(216, 216, 216);
+    background: #ececec;
     border-radius: 20px;
 }
 
@@ -1958,4 +1960,21 @@ span:nth-last-child(3) {
 }
 .btn-continue-with-otp-phone:hover{
     background: #383636;
+}
+
+.avatar-login{
+    width: 28px;
+    border-radius: 50%;
+    height: 25px;
+}
+
+.grecaptcha-badge{
+    position: absolute !important;
+    bottom: 0 !important;
+    left: 0 !important;
+}
+
+.link-user-login{
+    color: black;
+    text-decoration: none;
 }

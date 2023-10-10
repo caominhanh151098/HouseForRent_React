@@ -11,3 +11,5 @@ export const API_GET_HOUSES_BY_COMFORTABLE_ID = 'http://localhost:8080/api/comfo
 export const API_GET_LIST_FILTER = 'http://localhost:8080/api/comfortable/list-filter';
 export const API_GET_HOUSE_BY_CITY = 'http://localhost:8080/api/house/search/';
 export const API_USER_AUTH_URL = 'http://localhost:8080/api/user'
+export const API_GET_USER_INFO = 'http://localhost:8080/api/guest/user/get-info';
+export const API_UPDATE_USER_INFO ='http://localhost:8080/api/guest/user/update-info';

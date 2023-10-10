@@ -22,7 +22,7 @@
 }
 
 .book-body {
-    height: 2188px;
+    height: 1900px;
     margin-right: 15%;
     margin-left: 15%;
     display: flex;
@@ -460,3 +460,14 @@
         transform: scale(0);
     }
 }
+
+
+.bookday-detail-confirm-pay{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-left: 15px;
+    margin-right: 15px;
+    margin-bottom: 15px;
+}
+

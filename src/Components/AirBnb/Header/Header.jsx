@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import "../AirBnb.css"
 import FormHeader from "./FormHeader";
 import CalenderPicker from "./CalenderPicker";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../../../../node_modules/@fortawesome/fontawesome-free/css/all.min.css"
 import axios from "axios";
-import { API_GET_HOUSE_BY_CITY } from './../../../Services/common';
+import { API_GET_HOUSE_BY_CITY, API_GET_USER_INFO } from './../../../Services/common';
 import { useHouse } from "./HouseContext";
 import _debounce from 'lodash.debounce';
 import GradientButton from './../Detail/GradientButton';
@@ -21,7 +21,6 @@ import UserService from "../../../Services/UserService";
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import { auth } from "../../../Hooks/FireBase.config";
 
-
 const Header = () => {
   const [showFormHeader, setShowFormHeader] = useState(false);
   const [isSelectLocation, setIsSelectLocation] = useState(false);
@@ -36,9 +35,22 @@ const Header = () => {
   const [inputValue, setInputValue] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [isOpenDropMenuLogin, setIsOpenDropMenuLogin] = useState(false);
+  const [isOpenDropMenuLoginWithJWT, setIsOpenDropMenuLoginWithJWT] = useState(false);
   const [isOverLayLoginForm, setIsOpenLayLoginForm] = useState(false);
   const [isOverLayContinueWithPhone, setIsOpenLayContinueWithPhone] = useState(false);
   // const [houseSearchByCity, setHouseSearchByCity] = useState([])
+
+  const jwtValue = localStorage.getItem("jwt");
+
+  const userInfo = JSON.parse(localStorage.getItem('userInfo'))
+  const [render, setRender] = useState(false);
+
+useEffect(() => {
+  console.log("welcoming", userInfo);
+}, [userInfo])
+
+
+  const navigate = useNavigate();
 
 
   const API_URL = 'https://nominatim.openstreetmap.org/search';
@@ -191,6 +203,16 @@ const Header = () => {
   //   console.log("houseSearchByCity", houseSearchByCity);
   // }, [houseSearchByCity])
 
+  const handleLogOut = () => {
+    localStorage.removeItem('jwt');
+    navigate('/loggout', { replace: true });
+    window.location.reload();
+  }
+
+  const handleOpenMenuDropdownLoginWithJWT = () => {
+    setIsOpenDropMenuLoginWithJWT(!isOpenDropMenuLoginWithJWT)
+  }
+
   const handleOpenMenuDropdownLogin = () => {
     setIsOpenDropMenuLogin(!isOpenDropMenuLogin)
   }
@@ -209,6 +231,9 @@ const Header = () => {
     }
     if (!isOverLayLoginForm) {
       setIsOpenLayLoginForm(true)
+    }
+    if (jwtValue && jwtValue) {
+      setIsOpenLayLoginForm(false);
     }
   }
 
@@ -232,7 +257,9 @@ const Header = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [valueOTP, setValueOTP] = useState("");
 
-  function onOTPVerify() {
+  const isButtonDisabled = valueOTP && valueOTP.length !== 6;
+
+  const onOTPVerify = async () => {
     window.confirmationResult
       .confirm(valueOTP)
       .then(async (res) => {
@@ -240,7 +267,17 @@ const Header = () => {
         if (await UserService.loginUser(res.user.phoneNumber)) {
           console.log("Can't find! Register pls!");
         }
-        else toggleContinueWithPhone();
+        else {
+          setIsOpenLayLoginForm(false);
+          if (isOverLayContinueWithPhone){
+            setIsOpenLayContinueWithPhone(false);
+          }
+          let res = await axios.get(API_GET_USER_INFO,
+          { headers: {
+              'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+          }});
+          localStorage.setItem('userInfo', JSON.stringify(res.data))
+        }
       }).catch((err) => {
         console.log(err)
       })
@@ -277,6 +314,19 @@ const Header = () => {
   const handleChange = (event, value) => {
     setSelectedCountry(value);
   };
+
+  
+  if (userInfo){
+    console.log("Giá trị userInfo được tìm thấy: " + userInfo);
+  } else {
+    console.log("Không có giá trị userInfo trong Local Storage.");
+  }
+
+  if (jwtValue) {
+    console.log("Giá trị jwt được tìm thấy: " + jwtValue);
+  } else {
+    console.log("Không có giá trị jwt trong Local Storage.");
+  }
 
   const countries = [
     { code: 'AD', label: 'Andorra', phone: '376' },
@@ -893,13 +943,60 @@ const Header = () => {
 
         </div>
         <div className="header-2">
-          <Link to={"/host/bookedToday"}> <button className="header3">Cho thuê chỗ ở qua Airbnb</button></Link>
+          {
+            jwtValue && jwtValue ? (
+              <Link to={"/host/bookedToday"}>
+                <button className="header3">Đón tiếp khách</button>
+              </Link>
+            ) : (
+              <Link to={"/host/bookedToday"}>
+                <button className="header3">Cho thuê chỗ ở qua Airbnb</button>
+              </Link>
+            )
+          }
+
           <span>
             <i className="fa-solid fa-globe world" />
           </span>
-          <span onClick={handleOpenMenuDropdownLogin}>
-            <i className="fa-solid fa-circle-user" />
-          </span>
+
+          {
+            jwtValue && jwtValue ? userInfo && userInfo.avatar ? (
+              <img
+                onClick={handleOpenMenuDropdownLoginWithJWT}
+                className="avatar-login"
+                src={userInfo.avatar} alt="" />
+            ) : (
+              <img
+                onClick={handleOpenMenuDropdownLoginWithJWT}
+                className="avatar-login"
+                src="https://vnn-imgs-a1.vgcloud.vn/image1.ictnews.vn/_Files/2020/03/17/trend-avatar-1.jpg" alt="" />
+            ) : (
+              <span onClick={handleOpenMenuDropdownLogin}>
+                <i className="fa-solid fa-circle-user" />
+              </span>
+            )
+          }
+          {
+            isOpenDropMenuLoginWithJWT && (
+              <div className="dropdown-menu-login">
+                <div className="dropdown-menu-choice">Tin nhắn</div>
+                <div className="dropdown-menu-choice">Chuyến đi</div>
+                <div className="dropdown-menu-choice">Danh sách yêu thích</div>
+                <hr />
+                <div className="dropdown-menu-choice">Quản lý nhà/phòng cho thuê</div>
+                <Link className="link-user-login"
+                 to={'/account-settings'}>
+                  <div className="dropdown-menu-choice">Tài khoản</div>
+                </Link>
+                <hr />
+                <div className="dropdown-menu-choice">Trung tâm trợ giúp</div>
+                <div
+                  onClick={handleLogOut}
+                  className="dropdown-menu-choice">Đăng xuất</div>
+              </div>
+            )
+          }
+
           {
             isOpenDropMenuLogin && (
               <div className="dropdown-menu-login">
@@ -914,102 +1011,103 @@ const Header = () => {
           }
         </div>
         {(
-          <div>
-            <div id="recaptcha-container" />
-            <div className={`overlay2 ${isOverLayLoginForm ? '' : 'd-none'}`} >
-              <div className={`appearing-div ${isOverLayLoginForm ? 'active' : ''}`}>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <i style={{ marginRight: '25%' }}
-                    onClick={toggleLoginForm} class="fa-solid fa-xmark close-description" ></i>
-                  <h2>Đăng nhập hoặc đăng ký</h2>
-                </div>
-                <hr />
-                <div className='container-login-form'>
-                  <h1>Chào mừng bạn đến với Airbnb</h1>
-                  <p>Chúng tôi sẽ gọi điện hoặc nhắn tin cho bạn để xác nhận số điện thoại. Có áp dụng phí dữ liệu và phí tin nhắn tiêu chuẩn.
-                    <a style={{ color: 'black' }} href=""> Chính sách về quyền riêng tư</a></p>
-                  <Autocomplete
-                    id="country-select-demo"
-                    sx={{ width: 300 }}
-                    options={countries}
-                    autoHighlight
-                    getOptionLabel={(option) => ` ${option.label} (+${option.phone})`}
-                    value={selectedCountry}
-                    onChange={handleChange}
-                    renderOption={(props, option) => (
-                      <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
-                        <img
-                          loading="lazy"
-                          width="20"
-                          srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
-                          src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
-                          alt=""
-                        />
-                        {option.label} ({option.code}) +{option.phone}
-                      </Box>
-                    )}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="Quốc gia/Khu vực"
-                        inputProps={{
-                          ...params.inputProps,
-                          autoComplete: 'new-password', // disable autocomplete and autofill
-                        }}
+
+
+          <div className={`overlay2 ${isOverLayLoginForm ? '' : 'd-none'}`} >
+            <div className={`appearing-div ${isOverLayLoginForm ? 'active' : ''}`}>
+              <div id="recaptcha-container" />
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <i style={{ marginRight: '25%' }}
+                  onClick={toggleLoginForm} class="fa-solid fa-xmark close-description" ></i>
+                <h2>Đăng nhập hoặc đăng ký</h2>
+              </div>
+              <hr />
+              <div className='container-login-form'>
+                <h1>Chào mừng bạn đến với Airbnb</h1>
+                <p>Chúng tôi sẽ gọi điện hoặc nhắn tin cho bạn để xác nhận số điện thoại. Có áp dụng phí dữ liệu và phí tin nhắn tiêu chuẩn.
+                  <a style={{ color: 'black' }} href=""> Chính sách về quyền riêng tư</a></p>
+                <Autocomplete
+                  id="country-select-demo"
+                  sx={{ width: 300 }}
+                  options={countries}
+                  autoHighlight
+                  getOptionLabel={(option) => ` ${option.label} (+${option.phone})`}
+                  value={selectedCountry}
+                  onChange={handleChange}
+                  renderOption={(props, option) => (
+                    <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
+                      <img
+                        loading="lazy"
+                        width="20"
+                        srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
+                        src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
+                        alt=""
                       />
-                    )}
-                  />
-                  <Box
-                    component="form"
-                    noValidate
-                    sx={{
-                      display: 'grid',
-                      gridTemplateColumns: { sm: '1fr 1fr' },
-                      gap: 2,
-                    }}
-                  >
-                    <ValidationTextField
-                      label="Số điện thoại"
-                      required
-                      variant="outlined"
-                      // defaultValue="Success"
-                      id="validation-outlined-input"
-                      defaultValue={selectedCountry ? `(+${selectedCountry?.phone}) ${phoneNumber}` : ''}
-                      onBlur={(e) => {
-                        const newValue = e.target.value.replace(`(+${selectedCountry?.phone})`, '').trim();
-                        setPhoneNumber(newValue);
+                      {option.label} ({option.code}) +{option.phone}
+                    </Box>
+                  )}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Quốc gia/Khu vực"
+                      inputProps={{
+                        ...params.inputProps,
+                        autoComplete: 'new-password', // disable autocomplete and autofill
                       }}
                     />
-                  </Box>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'center' }}
-                  onClick={onSignup}>
-                  <GradientButton style={{ width: '97%' }}>Tiếp tục</GradientButton>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <hr style={{ width: '36%' }} />
-                  <div>Hoặc</div>
-                  <hr style={{ width: '36%' }} />
-                </div>
-                <div className="div-method-login-form">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" role="presentation" focusable="false" style={{ display: "block", height: "22px", width: "22px", marginRight: '30%' }}><path fill="#1877F2" d="M32 0v32H0V0z"></path><path fill="#FFF" d="M22.94 16H18.5v-3c0-1.27.62-2.5 2.6-2.5h2.02V6.56s-1.83-.31-3.58-.31c-3.65 0-6.04 2.21-6.04 6.22V16H9.44v4.63h4.06V32h5V20.62h3.73l.7-4.62z"></path></svg>
-                  Tiếp tục với Facebook
-                </div>
-                <div className="div-method-login-form">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" role="presentation" focusable="false" style={{ display: "block", height: "22px", width: "22px", marginRight: '32%' }}><path fill="#4285f4" d="M24.12 25c2.82-2.63 4.07-7 3.32-11.19H16.25v4.63h6.37A5.26 5.26 0 0 1 20.25 22z"></path><path fill="#34a853" d="M5.62 21.31A12 12 0 0 0 24.12 25l-3.87-3a7.16 7.16 0 0 1-10.69-3.75z"></path><path fill="#fbbc02" d="M9.56 18.25c-.5-1.56-.5-3 0-4.56l-3.94-3.07a12.08 12.08 0 0 0 0 10.7z"></path><path fill="#ea4335" d="M9.56 13.69c1.38-4.32 7.25-6.82 11.19-3.13l3.44-3.37a11.8 11.8 0 0 0-18.57 3.43l3.94 3.07z"></path></svg>
-                  Tiếp tục với Google
-                </div>
-                <div className="div-method-login-form">
-                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" role="presentation" aria-hidden="true" focusable="false" style={{ display: "block", height: "22px", width: "22px", marginRight: '33%' }}><path d="m13.3 2.1a5.1 5.1 0 0 1 3.8-2.1 5.1 5.1 0 0 1 -1.2 3.8 4.1 4.1 0 0 1 -3.6 1.7 4.5 4.5 0 0 1 1-3.4zm-5 3.7c-2.8 0-5.8 2.5-5.8 7.3 0 4.9 3.5 10.9 6.3 10.9 1 0 2.5-1 4-1s2.6.9 4 .9c3.1 0 5.3-6.4 5.3-6.4a5.3 5.3 0 0 1 -3.2-4.9 5.2 5.2 0 0 1 2.6-4.5 5.4 5.4 0 0 0 -4.7-2.4c-2 0-3.5 1.1-4.3 1.1-.9 0-2.4-1-4.2-1z"></path></svg>
-                  Tiếp tục với Apple
-                </div>
-                <div className="div-method-login-form">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" role="presentation" focusable="false" style={{ display: "block", height: "22px", width: "22px", marginRight: '33%' }}><path d="M30.51 5.88A5.06 5.06 0 0 0 26 3H6a5.06 5.06 0 0 0-4.51 2.88A4.94 4.94 0 0 0 1 8v16a5 5 0 0 0 5 5h20a5 5 0 0 0 5-5V8a4.94 4.94 0 0 0-.49-2.12ZM6 5h20a2.97 2.97 0 0 1 1.77.6L17.95 14a2.98 2.98 0 0 1-3.9 0L4.23 5.6A2.97 2.97 0 0 1 6 5Zm23 19a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V8a2.97 2.97 0 0 1 .1-.74l9.65 8.27a4.97 4.97 0 0 0 6.5 0l9.65-8.27A2.97 2.97 0 0 1 29 8Z"></path></svg>
-                  Tiếp tục với Email
-                </div>
+                  )}
+                />
+                <Box
+                  component="form"
+                  noValidate
+                  sx={{
+                    display: 'grid',
+                    gridTemplateColumns: { sm: '1fr 1fr' },
+                    gap: 2,
+                  }}
+                >
+                  <ValidationTextField
+                    label="Số điện thoại"
+                    required
+                    variant="outlined"
+                    // defaultValue="Success"
+                    id="validation-outlined-input"
+                    defaultValue={selectedCountry ? `(+${selectedCountry?.phone}) ${phoneNumber}` : ''}
+                    onBlur={(e) => {
+                      const newValue = e.target.value.replace(`(+${selectedCountry?.phone})`, '').trim();
+                      setPhoneNumber(newValue);
+                    }}
+                  />
+                </Box>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'center' }}
+                onClick={onSignup}>
+                <GradientButton style={{ width: '97%' }}>Tiếp tục</GradientButton>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <hr style={{ width: '36%' }} />
+                <div>Hoặc</div>
+                <hr style={{ width: '36%' }} />
+              </div>
+              <div className="div-method-login-form">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" role="presentation" focusable="false" style={{ display: "block", height: "22px", width: "22px", marginRight: '30%' }}><path fill="#1877F2" d="M32 0v32H0V0z"></path><path fill="#FFF" d="M22.94 16H18.5v-3c0-1.27.62-2.5 2.6-2.5h2.02V6.56s-1.83-.31-3.58-.31c-3.65 0-6.04 2.21-6.04 6.22V16H9.44v4.63h4.06V32h5V20.62h3.73l.7-4.62z"></path></svg>
+                Tiếp tục với Facebook
+              </div>
+              <div className="div-method-login-form">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" role="presentation" focusable="false" style={{ display: "block", height: "22px", width: "22px", marginRight: '32%' }}><path fill="#4285f4" d="M24.12 25c2.82-2.63 4.07-7 3.32-11.19H16.25v4.63h6.37A5.26 5.26 0 0 1 20.25 22z"></path><path fill="#34a853" d="M5.62 21.31A12 12 0 0 0 24.12 25l-3.87-3a7.16 7.16 0 0 1-10.69-3.75z"></path><path fill="#fbbc02" d="M9.56 18.25c-.5-1.56-.5-3 0-4.56l-3.94-3.07a12.08 12.08 0 0 0 0 10.7z"></path><path fill="#ea4335" d="M9.56 13.69c1.38-4.32 7.25-6.82 11.19-3.13l3.44-3.37a11.8 11.8 0 0 0-18.57 3.43l3.94 3.07z"></path></svg>
+                Tiếp tục với Google
+              </div>
+              <div className="div-method-login-form">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" role="presentation" aria-hidden="true" focusable="false" style={{ display: "block", height: "22px", width: "22px", marginRight: '33%' }}><path d="m13.3 2.1a5.1 5.1 0 0 1 3.8-2.1 5.1 5.1 0 0 1 -1.2 3.8 4.1 4.1 0 0 1 -3.6 1.7 4.5 4.5 0 0 1 1-3.4zm-5 3.7c-2.8 0-5.8 2.5-5.8 7.3 0 4.9 3.5 10.9 6.3 10.9 1 0 2.5-1 4-1s2.6.9 4 .9c3.1 0 5.3-6.4 5.3-6.4a5.3 5.3 0 0 1 -3.2-4.9 5.2 5.2 0 0 1 2.6-4.5 5.4 5.4 0 0 0 -4.7-2.4c-2 0-3.5 1.1-4.3 1.1-.9 0-2.4-1-4.2-1z"></path></svg>
+                Tiếp tục với Apple
+              </div>
+              <div className="div-method-login-form">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" role="presentation" focusable="false" style={{ display: "block", height: "22px", width: "22px", marginRight: '33%' }}><path d="M30.51 5.88A5.06 5.06 0 0 0 26 3H6a5.06 5.06 0 0 0-4.51 2.88A4.94 4.94 0 0 0 1 8v16a5 5 0 0 0 5 5h20a5 5 0 0 0 5-5V8a4.94 4.94 0 0 0-.49-2.12ZM6 5h20a2.97 2.97 0 0 1 1.77.6L17.95 14a2.98 2.98 0 0 1-3.9 0L4.23 5.6A2.97 2.97 0 0 1 6 5Zm23 19a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V8a2.97 2.97 0 0 1 .1-.74l9.65 8.27a4.97 4.97 0 0 0 6.5 0l9.65-8.27A2.97 2.97 0 0 1 29 8Z"></path></svg>
+                Tiếp tục với Email
               </div>
             </div>
           </div>
+
         )}
         {(
           <div className={`overlay2 ${isOverLayContinueWithPhone ? '' : 'd-none'}`} >
@@ -1025,12 +1123,17 @@ const Header = () => {
               </div>
               <div className="div-confirm-otp-phone">
                 <input className="input-confirm-otp-phone"
+
                   type="tel" placeholder="------" maxLength="6" value={valueOTP} onChange={(e) => setValueOTP(e?.target?.value)} />
               </div>
               <hr />
               <div className="continue-with-otp-phone">
                 <h3 className="another-choice-continue-with-otp">Lựa chọn khác</h3>
-                <button onClick={onOTPVerify} className="btn-continue-with-otp-phone">Tiếp tục</button>
+                <button
+                  onClick={onOTPVerify}
+                  className="btn-continue-with-otp-phone"
+
+                >Tiếp tục</button>
               </div>
             </div>
           </div>

@@ -51,9 +51,9 @@ const Body = () => {
     const [isCheckedPetAllow, setIsCheckedPetAllow] = useState(false);
     const [isCheckedShowTotal, setIsCheckedShowTotal] = useState(false);
     const [isCheckedStayWithHost, setIsCheckedStayWithHost] = useState(false);
-    const [rangeValue, setRangeValue] = useState([13, 148]);
+    const [rangeValue, setRangeValue] = useState([13, 456]);
     const [minRange, setMinrange] = useState(13)
-    const [maxRange, setMaxrange] = useState(148)
+    const [maxRange, setMaxrange] = useState(456)
     const [countLocation, setCountLocation] = useState(houseList ? houseList.length : 0);
     const [houseFilter, setHouseFilter] = useState([])
     const [loadingFilterHouse, setLoadingFilterHouse] = useState(false)

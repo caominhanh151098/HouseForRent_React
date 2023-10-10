@@ -152,7 +152,7 @@ body {
   cursor: not-allowed !important
 }
 
-.button-next-login {
+/* .button-next-login {
   width: 100%;
   border-radius: 8px;
   background-color: #e61e4d;
@@ -170,7 +170,7 @@ body {
   border: 1px solid;
   font-size: 14px;
   font-weight: 500;
-}
+} */
 
 .div-confirm-otp-phone {
   width: 50%;
@@ -250,8 +250,11 @@ body {
   user-select: none;
 }
 
-@media (min-width: 768px) {
+/* @media (min-width: 768px) {
   .bd-placeholder-img-lg {
     font-size: 3.5rem;
   }
-}
+} */
+/* .ftOGKY{
+  margin: 0px !important;
+} */
