@@ -3,6 +3,7 @@ import "./User.css"
 import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
 
+
 const HeaderFormUser = () => {
   const navigate = useNavigate();
   var jwtValue = localStorage.getItem("jwt");
@@ -13,6 +14,7 @@ const HeaderFormUser = () => {
 
   const handleLogOut = () => {
     localStorage.removeItem('jwt');
+    localStorage.removeItem('userInfo')
     navigate('/loggout', { replace: true });
     window.location.reload();
   }

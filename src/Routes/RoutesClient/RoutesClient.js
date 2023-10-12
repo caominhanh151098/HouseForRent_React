@@ -6,6 +6,7 @@ import BookHouse from '../../Components/AirBnb/Book/Main/BookHouse';
 import ErrorBookBody from '../../Components/AirBnb/Book/Body/ErrorBookBody';
 import AccountSetting from '../../Components/User/AccountSetting';
 import PersonalInfo from '../../Components/User/PersonalInfo/PersonalInfo';
+import Identity from './../../Components/User/PersonalInfo/Identity';
 const RoutesClient = () => {
   return (
     <Routes>
@@ -13,6 +14,7 @@ const RoutesClient = () => {
       <Route path='/loggout' element={<Home />} />
       <Route path='/account-settings' element={<AccountSetting/>} />
       <Route path='/account-settings/personal-info' element={<PersonalInfo/>} />
+      <Route path='/identity-verification' element={<Identity/>} />
       <Route path='/house/:houseID' element={<HouseDetail />} />
       <Route path='/house/:houseID/:CountOld/:CountYoung/:CountBaby/:CountPet/:GoDay/:BackDay' element={<HouseDetail />} />
       {/* <Route path='/house' element={<Home />} /> */}

@@ -205,6 +205,7 @@ useEffect(() => {
 
   const handleLogOut = () => {
     localStorage.removeItem('jwt');
+    localStorage.removeItem('userInfo')
     navigate('/loggout', { replace: true });
     window.location.reload();
   }
@@ -253,7 +254,7 @@ useEffect(() => {
     },
   });
 
-  const [selectedCountry, setSelectedCountry] = useState(null);
+  const [selectedCountry, setSelectedCountry] = useState({ code: 'VN', label: 'Vietnam', phone: '84' });;
   const [phoneNumber, setPhoneNumber] = useState('');
   const [valueOTP, setValueOTP] = useState("");
 
