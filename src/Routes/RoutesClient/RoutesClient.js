@@ -11,6 +11,7 @@ const RoutesClient = () => {
   return (
     <Routes>
       <Route path='/' element={<Home />} />
+      <Route path='/verify/:status' element={<Home />} />
       <Route path='/loggout' element={<Home />} />
       <Route path='/account-settings' element={<AccountSetting/>} />
       <Route path='/account-settings/personal-info' element={<PersonalInfo/>} />
@@ -19,6 +20,7 @@ const RoutesClient = () => {
       <Route path='/house/:houseID/:CountOld/:CountYoung/:CountBaby/:CountPet/:GoDay/:BackDay' element={<HouseDetail />} />
       {/* <Route path='/house' element={<Home />} /> */}
       <Route path='/book/:houseID/:CountOld/:CountYoung/:CountBaby/:CountPet/:GoDay/:BackDay' element={<BookHouse />} />
+      <Route path='/book/:houseID/:CountOld/:CountYoung/:CountBaby/:CountPet/:GoDay/:BackDay/:paymentID/:tnxRef' element={<BookHouse />} />
       <Route path='/error/:houseID/:CountOld/:CountYoung/:CountBaby/:CountPet/:GoDay/:BackDay' element={<ErrorBookBody />} />
     </Routes>
   );

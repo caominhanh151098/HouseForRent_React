@@ -9,7 +9,7 @@ import { useContext } from 'react';
 import BookingProvider from '../Main/BookingProvider';
 import BookingContext from '../Main/BookingContext';
 import { useParams, useHistory, Link } from 'react-router-dom';
-import { API_HOUSE_DETAIL_URL, API_HOUSE_DETAIL_PRICE, API_CREATE_BOOK_HOUSE } from '../../../../Services/common';
+import { API_HOUSE_DETAIL_URL, API_HOUSE_DETAIL_PRICE, API_CREATE_BOOK_HOUSE, API_RESERVATION_HOUSE } from '../../../../Services/common';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { DateRangeCalendar, DateRangePickerDay } from '@mui/x-date-pickers-pro';
@@ -22,11 +22,13 @@ import { useNavigate } from 'react-router-dom';
 import "../../../../../node_modules/@fortawesome/fontawesome-free/css/all.min.css"
 import OpenOTP from '../../../otp/OpenOTP';
 import { format } from 'date-fns';
+import { async } from '@firebase/util';
+import MyAxios from '../../../../Services/MyAxios';
 
 
 const BookBody = () => {
   const { bookingInfo } = useContext(BookingContext)
-  const { houseID, CountOld, CountYoung, CountBaby, CountPet, GoDay, BackDay } = useParams();
+  const { houseID, CountOld, CountYoung, CountBaby, CountPet, GoDay, BackDay, paymentID, tnxRef } = useParams();
   const [house, setHouse] = useState({})
   const [housePrice, setHousePrice] = useState({})
   const [selectedDivPayment, setIsSelectedDivPayment] = useState('all');
@@ -56,6 +58,7 @@ const BookBody = () => {
   const [loadingBtnSaveBookDay, setLoadingBtnSaveBookDay] = useState(false);
   const [loadingBtnSaveCountGuests, setLoadingBtnSaveCountGuests] = useState(false)
   const [isUpdatingUrl, setIsUpdatingUrl] = useState(false);
+  const [formConfirm, setFormConfirm] = useState(false);
 
 
 
@@ -66,6 +69,18 @@ const BookBody = () => {
   const timeDifference = goDay && backDay ? backDay.getTime() - goDay.getTime() : null;
   console.log("timeDifference", timeDifference);
 
+  useEffect(() => {
+    async function checkTransaction() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const transactionNo = urlParams.get("vnp_TransactionNo");
+      const statusTransaction = urlParams.get("vnp_TransactionStatus");
+      if (statusTransaction == '00' && paymentID && tnxRef && transactionNo) {
+        const reps = await MyAxios.axiosWithHeader(API_RESERVATION_HOUSE).get(`/check-transaction/${paymentID}/${tnxRef}?vnp_TransactionNo=${transactionNo}`);
+        if (reps.data) setFormConfirm(true);
+      }
+    }
+    checkTransaction();
+  }, [])
 
   useEffect(() => {
     async function getHouseDetail() {
@@ -428,29 +443,33 @@ const BookBody = () => {
     setIsOpenAveragePriceDayDetail(!isOpenAveragePriceDayDetail)
   }
 
-
+  const handleBackToHome = () => {
+    window.open("http://localhost:3000", '_self');
+  }
 
   const handleConfirmPayment = async () => {
     const requestData = {
       "checkInDate": bookDay ? bookDay[0].format('YYYY-MM-DD') : null,
       "checkOutDate": bookDay ? bookDay[1].format('YYYY-MM-DD') : null,
       "guestDetail": {
-        "numAdults": countYoung ? countYoung : null,
-        "numChildrenAbove2": countOld ? countOld : null,
-        "numBabies": countBaby ? countBaby : null,
-        "numPets": countPets ? countPets : null
+        "numAdults": countYoung ? countYoung : 0,
+        "numChildrenAbove2": countOld ? countOld : 0,
+        "numBabies": countBaby ? countBaby : 0,
+        "numPets": countPets ? countPets : 0
       },
-      "userId": 1,
       "houseId": houseID ? houseID : null
     };
 
     try {
-      const response = await axios.post(API_CREATE_BOOK_HOUSE, requestData, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem("jwt")}`
-        }
-      })
+      const response = await axios.post(API_CREATE_BOOK_HOUSE, requestData,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+          }
+        })
       console.log('Đã tạo hóa đơn:', response.data);
+      if (response.data.status == 'OK')
+        window.open(response.data.url, '_self');
     } catch (error) {
       console.error('Lỗi khi gọi API:', error);
     }
@@ -792,7 +811,6 @@ const BookBody = () => {
             <div>
               <button className='add-telephone-to-your-trip' onClick={toggleAddTelephone}>Thêm</button>
             </div>
-            <OpenOTP />
             {(
               <div className={`overlay2 ${isOverlayVisible3 ? '' : 'd-none'}`} >
                 <div className={`appearing-div ${isOverlayVisible3 ? 'active' : ''}`} style={{ width: '550px' }}>
@@ -1111,11 +1129,258 @@ const BookBody = () => {
               </div>
               <hr />
               <div style={{ textAlign: 'center' }}>
-                <GradientButton>Thanh toán</GradientButton>
+                <GradientButton onClick={handleConfirmPayment}>Thanh toán</GradientButton>
                 {/* <button className='btn-confirm-pay-money'>Thanh toán</button> */}
               </div>
             </div>
           </div>
+        )}
+        {(
+          (
+            <div className={`overlay2 ${formConfirm ? '' : 'd-none'}`} >
+              <div className={`appearing-div ${formConfirm ? 'active' : ''}`} style={{ width: '650px' }}>
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                  <h1>Thanh toán thành công</h1>
+                </div>
+                <hr />
+                <div>
+                  <div style={{ display: 'contents', border: 'none' }}
+                    className='fixed-div-payment-book-body'>
+                    <div className='title-details-fix-book-body'>
+                      <div>
+                        {
+                          house.images && (
+                            <img className='img-div-fixed-book-body'
+                              src={house?.images[0]?.srcImg} alt="" />
+                          )
+                        }
+                      </div>
+                      <div>
+                        {
+                          house && (
+                            <p>{house?.hotelName}</p>
+                          )
+                        }
+                        <p>{house?.title}</p>
+                        {
+                          house && (
+                            <p style={{ display: 'flex', alignItems: 'center', padding: '9px 0px' }}>
+                              <svg style={{ width: '20px', padding: '0px 5px' }} className='svg-tag-login-text-body' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" role="presentation" focusable="false" ><path fill-rule="evenodd" d="m15.1 1.58-4.13 8.88-9.86 1.27a1 1 0 0 0-.54 1.74l7.3 6.57-1.97 9.85a1 1 0 0 0 1.48 1.06l8.62-5 8.63 5a1 1 0 0 0 1.48-1.06l-1.97-9.85 7.3-6.57a1 1 0 0 0-.55-1.73l-9.86-1.28-4.12-8.88a1 1 0 0 0-1.82 0z"></path></svg>
+                              {house?.reviewPoint} ({house?.numReview} đánh giá) </p>
+                          )
+                        }
+                      </div>
+                    </div>
+                    <hr style={{ width: '95%', margin: '-10px 10px' }} />
+                    <div style={{ marginTop: '30px' }}
+                      className='price-detail-fixed-book-detail'>
+                      <h2>Ngày đi - Ngày trả phòng</h2>
+                      <div className='bookday-detail-confirm-pay'>
+                        <p>{bookDay[0].format('D [tháng] M YYYY')}</p>
+                        <i class="fa-solid fa-arrow-right"></i>
+                        <p>{bookDay[1].format('D [tháng] M YYYY')}</p>
+                      </div>
+                    </div>
+                    <hr style={{ width: '95%', margin: '-10px 10px' }} />
+                    {/* <div style={{ marginTop: '30px', marginBottom: '20px' }}
+                      className='price-detail-fixed-book-detail'>
+                      <h2>Chi tiết giá</h2>
+                      {
+                        housePrice && numberOfNights && numberOfNights - countWeekendDay > 0 && (
+                          <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
+                            <div>
+                              {
+                                housePrice && (
+                                  <p onClick={handleOpenAveragePriceDayDetail}
+                                    className='detail-text-payment-book-body'>${housePrice.price} x {numberOfNights - countWeekendDay} đêm (Trong tuần)  </p>
+                                )
+                              }
+                            </div>
+                            <div>
+                              <p>${housePrice && numberOfNights ? housePrice?.price * (numberOfNights - countWeekendDay) : 'Tối thiểu 1 ngày'}</p>
+                            </div>
+                            {
+                              isOpenAveragePriceDayDetail && (
+                                <div className={`show-weekend-days-details ${isOpenAveragePriceDayDetail ? '' : 'hide-weekend-details'}`}>
+                                  <div className='title-weekend-days-detail'>
+                                    <i onClick={handleOpenAveragePriceDayDetail}
+                                      class="fa-solid fa-xmark"></i>
+                                    <h3>Giá trung bình hàng đêm được làm tròn</h3>
+                                    <p></p>
+
+                                  </div>
+                                </div>
+                              )
+                            }
+                          </div>
+                        )
+                      }
+
+                      {
+                        housePrice && countWeekendDay > 0 && (
+                          <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
+                            <div>
+                              {
+                                housePrice && countWeekendDay > 0 && (
+                                  <p onClick={handleOpenWeekendDayDetail}
+                                    className='detail-text-payment-book-body'>${housePrice?.weekendDays ? housePrice.weekendPrice : housePrice.price} x {countWeekendDay} đêm (Cuối tuần)</p>
+                                )
+                              }
+                            </div>
+                            <div>
+                              <p>{housePrice && countWeekendDay > 0 && housePrice?.weekendPrice ? '$' + housePrice?.weekendPrice * countWeekendDay : housePrice?.price * countWeekendDay}</p>
+                            </div>
+                            {
+                              isOpenWeekendDetail && (
+                                <div className={`show-weekend-days-details ${isOpenWeekendDetail ? '' : 'hide-weekend-details'}`}>
+                                  <div className='title-weekend-days-detail'>
+                                    <i onClick={handleOpenWeekendDayDetail}
+                                      class="fa-solid fa-xmark"></i>
+                                    <h2>Các ngày cuối tuần</h2>
+                                    <p></p>
+                                  </div>
+                                  <div className='weekend-days-details'>
+                                    {
+                                      weekendDayDetails.map((day, index) => (
+                                        <p key={index}>{index + 1}. {day}</p>
+                                      ))
+                                    }
+                                  </div>
+                                </div>
+                              )
+                            }
+                          </div>
+                        )
+                      }
+                      <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
+                        <div>
+                          {
+                            housePrice &&
+                            housePrice?.feeHouses &&
+                            numberOfNights >= 3 &&
+                            housePrice.feeHouses[0] &&
+                            (
+                              <p className='detail-text-payment-book-body'>{housePrice?.feeHouses[0]?.fee.name}</p>
+                            )
+                          }
+                        </div>
+                        <div>
+                          {
+                            housePrice &&
+                            housePrice?.feeHouses &&
+                            numberOfNights >= 3 &&
+                            housePrice.feeHouses[0] &&
+                            (
+                              <p>${housePrice?.feeHouses[0]?.price}</p>
+                            )
+                          }
+                        </div>
+                      </div>
+                      <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
+                        <div>
+                          {
+                            housePrice &&
+                            housePrice?.feeHouses &&
+                            numberOfNights === 2 &&
+                            housePrice.feeHouses[0] &&
+                            (
+                              <p className='detail-text-payment-book-body'>{housePrice?.feeHouses[1]?.fee.name}</p>
+                            )
+                          }
+                        </div>
+                        <div>
+                          {
+                            housePrice &&
+                            housePrice?.feeHouses &&
+                            numberOfNights === 2 &&
+                            housePrice.feeHouses[0] &&
+                            (
+                              <p>${housePrice?.feeHouses[1]?.price}</p>
+                            )
+                          }
+                        </div>
+                      </div>
+                      <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
+                        <div>
+                          {
+                            housePrice &&
+                            housePrice?.feeHouses &&
+                            housePrice.feeHouses[2] &&
+                            countPets > 0 && (
+                              <p className='detail-text-payment-book-body'>{housePrice?.feeHouses[2]?.fee.name}</p>
+                            )
+                          }
+                        </div>
+                        <div>
+                          {
+                            housePrice &&
+                            housePrice?.feeHouses &&
+                            housePrice.feeHouses[0] &&
+                            countPets > 0 && (
+                              <p>${housePrice?.feeHouses[2]?.price}</p>
+                            )
+                          }
+                        </div>
+                      </div>
+                      <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
+                        <div>
+                          {
+                            housePrice &&
+                            housePrice?.feeHouses &&
+                            housePrice.feeHouses[3] &&
+                            housePrice?.feeHouses[3]?.other &&
+                            ((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other) > 0) && (
+                              <p className='detail-text-payment-book-body'>{housePrice?.feeHouses[3]?.fee.name}</p>
+                            )
+                          }
+                        </div>
+                        <div>
+                          {
+                            housePrice &&
+                            housePrice?.feeHouses &&
+                            housePrice.feeHouses[3] &&
+                            housePrice?.feeHouses[3]?.other &&
+                            ((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other) > 0) && (
+                              <p>${((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other)) * housePrice?.feeHouses[3]?.price}</p>
+                            )
+                          }
+                        </div>
+                      </div>
+                    </div> */}
+                    {/* <hr style={{ width: '95%', margin: '-10px 10px' }} /> */}
+                    <div className='price-detail-fixed-book-detail'>
+                      <div className='total-fixed-book-detail' style={{ margin: '20px 11px' }}>
+                        <div>
+                          <h2>Tổng <span className='span-tag-text-body'>(USD)</span> </h2>
+                        </div>
+                        <div>
+                          <h3>
+                            {
+                              housePrice &&
+                              housePrice.feeHouses &&
+                              numberOfNights && '$' + (
+                                housePrice.price * (numberOfNights - countWeekendDay) +
+                                (countWeekendDay > 0 && housePrice.weekendPrice ? housePrice.weekendPrice * countWeekendDay : housePrice.price * countWeekendDay) +
+                                (numberOfNights >= 3 && housePrice.feeHouses[0]?.price || 0) +
+                                (numberOfNights === 2 && housePrice.feeHouses[1]?.price || 0) +
+                                (countPets > 0 && housePrice.feeHouses[2]?.price || 0) +
+                                ((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other) > 0 &&
+                                  ((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other)) * housePrice.feeHouses[3]?.price || 0)
+                              ).toFixed(2)
+                            }
+                          </h3>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <hr />
+                <div style={{ textAlign: 'center' }}>
+                  <GradientButton onClick={handleBackToHome}>Xác nhận</GradientButton>
+                </div>
+              </div>
+            </div>
+          )
         )}
       </div>
       <div className='devide-book-body'>
@@ -1155,7 +1420,7 @@ const BookBody = () => {
                     {
                       housePrice && (
                         <p onClick={handleOpenAveragePriceDayDetail}
-                        className='detail-text-payment-book-body'>${housePrice.price} x {numberOfNights - countWeekendDay} đêm (Trong tuần)  </p>
+                          className='detail-text-payment-book-body'>${housePrice.price} x {numberOfNights - countWeekendDay} đêm (Trong tuần)  </p>
                       )
                     }
                   </div>

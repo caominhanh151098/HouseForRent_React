@@ -1734,12 +1734,13 @@ span:nth-last-child(3) {
     padding: 8px 12px;
     font-size: 26px;
 }
+
 /* .pagination li.active-page:hover {
     background-color: #0a0a0a !important;
     color: #fff !important;
 } */
 
-.not-active:hover{
+.not-active:hover {
     background: #b8b6b6;
     border-radius: 50%;
     font-size: 26px;
@@ -1750,19 +1751,19 @@ span:nth-last-child(3) {
     color: #fff;
     border-radius: 50%;
 } */
-.not-active{
+.not-active {
     padding: 6px 5px;
 }
 
-.active-page{
-     background-color: #0a0a0a;
+.active-page {
+    background-color: #0a0a0a;
     color: #fff;
     border-radius: 50%;
     padding: 6px 5px;
     font-size: 26px;
 }
 
-.active-page-a{
+.active-page-a {
     color: white !important;
 }
 
@@ -1774,10 +1775,12 @@ span:nth-last-child(3) {
     font-size: 25px;
     padding: 7px 15px;
 }
-.next-pagination:hover{
+
+.next-pagination:hover {
     background: #e1e4e7;
     border-radius: 50%;
 }
+
 .next-pagination[disabled] {
     cursor: not-allowed;
     opacity: 0.5;
@@ -1790,16 +1793,18 @@ span:nth-last-child(3) {
     font-size: 25px;
     padding: 7px 15px;
 }
-.previous-pagination:hover{
+
+.previous-pagination:hover {
     background: #e1e4e7;
     border-radius: 50%;
 }
-.previous-pagination[disabled]{
+
+.previous-pagination[disabled] {
     cursor: not-allowed;
     opacity: 0.3;
 }
 
-.container-pagination{
+.container-pagination {
     width: 50%;
     display: flex;
     justify-items: center;
@@ -1808,14 +1813,14 @@ span:nth-last-child(3) {
     top: 117%;
 }
 
-.show-result-count-by-city{
+.show-result-count-by-city {
     position: absolute;
     top: 25%;
     margin-left: 52px;
     display: flex;
 }
 
-.div-img-show-result-count{
+.div-img-show-result-count {
     justify-content: center;
     justify-items: center;
     display: flex;
@@ -1823,18 +1828,18 @@ span:nth-last-child(3) {
     align-items: center;
 }
 
-.show-result-count-by-city img{
+.show-result-count-by-city img {
     width: 50%;
     margin-bottom: -6px;
 }
 
-.show-result-count-by-city hr{
+.show-result-count-by-city hr {
     height: 60px;
     border: 2px solid black;
     width: 0px;
 }
 
-.p-count-result-by-city{
+.p-count-result-by-city {
     margin-left: 10px;
     align-items: center;
     justify-content: center;
@@ -1844,7 +1849,7 @@ span:nth-last-child(3) {
     font-weight: bold;
 }
 
-.dropdown-menu-login{
+.dropdown-menu-login {
     position: absolute;
     background: white;
     border: 1px solid #dedcdc;
@@ -1859,37 +1864,83 @@ span:nth-last-child(3) {
 
 @keyframes scaleIn {
     0% {
-      transform: scale(0);
-      opacity: 0;
+        transform: scale(0);
+        opacity: 0;
     }
-    100% {
-      transform: scale(1);
-      opacity: 1;
-    }
-  }
 
-.dropdown-menu-choice{
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.dropdown-menu-choice {
     padding: 15px 15px;
     margin: 0px -22px;
     font-size: 24px;
 }
 
-.dropdown-menu-choice:hover{
+.dropdown-menu-choice:hover {
     background: #ececec;
     border-radius: 20px;
 }
 
-.container-login-form{
+.container-login-form {
     text-align: left;
     margin-left: 5%;
     margin-right: 5%;
 }
 
-.css-c97oj3-MuiFormControl-root-MuiTextField-root{
+.container-register-form {
+    text-align: left;
+    margin-left: 3%;
+    margin-right: 3%;
+}
+
+.mesage-register-form {
+    padding-top: 14px;
+    padding-bottom: 28px;
+    color: #999;
+}
+
+.mesage-register-form.error {
+    color: red;
+}
+
+.error-message-register {
+    color: red;
+    display: flex;
+}
+
+.icon-error-message {
+    display: block;
+    padding: 14px 8px 0 0;
+    width: 16px;
+    fill: currentColor;
+}
+
+.input-register-form {
+    width: 95.5%;
+    border-radius: 5px;
+    border-width: 0.5px;
+    height: 35px;
+    padding: 10px;
+    font-size: 16px
+}
+
+.input-register-form.error {
+    border-color: red;
+}
+
+.input-register-form.error :focus .input-register-form.error:invalid {
+    border-color: red;
+}
+
+.css-c97oj3-MuiFormControl-root-MuiTextField-root {
     width: 204%;
 }
 
-.div-method-login-form{
+.div-method-login-form {
     height: 50px;
     margin-right: 5%;
     margin-left: 5%;
@@ -1905,52 +1956,56 @@ span:nth-last-child(3) {
     font-weight: 700;
     cursor: pointer;
 }
-.div-method-login-form:hover{
+
+.div-method-login-form:hover {
     background: #d0d0d0;
 }
 
 
-.css-1wuilmg-MuiAutocomplete-root{
+.css-1wuilmg-MuiAutocomplete-root {
     width: 99.5% !important;
     margin-bottom: 10px !important;
 }
 
-.css-1q60rmi-MuiAutocomplete-endAdornment{
+.css-1q60rmi-MuiAutocomplete-endAdornment {
     top: 9px !important;
     right: 7px !important;
 }
 
-.div-confirm-otp-phone{
+.div-confirm-otp-phone {
     background: white;
-    width: 27%;
+    width: 30%;
     height: 60px;
     align-items: center;
     display: flex;
-    justify-content: center;
     border: 2px solid black;
     border-radius: 14px;
     margin-bottom: 20px;
-    margin-left: 33px;
+    margin-left: 35px;
 }
 
-.input-confirm-otp-phone{
+.input-confirm-otp-phone {
     border: none;
     outline: none;
+    width: 90%;
+    font-size: 18px;
+    letter-spacing: 16px;
+    margin-left: 16px;
 }
 
-.continue-with-otp-phone{
+.continue-with-otp-phone {
     display: flex;
     justify-content: space-between;
     margin-left: 33px;
     margin-right: 33px;
 }
 
-.another-choice-continue-with-otp{
+.another-choice-continue-with-otp {
     text-decoration: underline;
     cursor: pointer;
 }
 
-.btn-continue-with-otp-phone{
+.btn-continue-with-otp-phone {
     background: black;
     color: white;
     border-radius: 15px;
@@ -1958,23 +2013,24 @@ span:nth-last-child(3) {
     font-size: 23px;
     cursor: pointer;
 }
-.btn-continue-with-otp-phone:hover{
+
+.btn-continue-with-otp-phone:hover {
     background: #383636;
 }
 
-.avatar-login{
+.avatar-login {
     width: 28px;
     border-radius: 50%;
     height: 25px;
 }
 
-.grecaptcha-badge{
+.grecaptcha-badge {
     position: absolute !important;
     bottom: 0 !important;
     left: 0 !important;
 }
 
-.link-user-login{
+.link-user-login {
     color: black;
     text-decoration: none;
 }
@@ -2056,3 +2112,58 @@ span:nth-last-child(3) {
   transform-origin: 0 0; /* see note above */
 }
 .ldio-8ew4rgpfv3q div { box-sizing: content-box; }
+.button-verify-email {
+    display: flex;
+    padding: 20px;
+    margin-top: 8px;
+    width: 100%;
+    border: 0px;
+    background-color: white;
+}
+
+.button-verify-email :hover {
+    cursor: pointer;
+}
+
+.button-verify-email>h3 {
+    width: 100%;
+    text-align: left;
+}
+
+.icon-veriry-email {
+    font-size: 32px;
+    margin: 8px 8px 0 0;
+}
+
+hr {
+    border-style: ridge;
+}
+
+.registration-terms {
+    margin: 10px 0;
+}
+
+.button-form {
+    width: 90%;
+    height: 45px;
+    margin-left: 1.6%;
+    border-width: 0.5px;
+    border-radius: 5px;
+    font-size: 18px;
+    font-weight: bold;
+    background-color: white;
+}
+
+.button-next-modal {
+    margin-top: 5%;
+    background-color: #252525;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    height: 45px;
+}
+
+.button-next-modal:hover {
+    background-color: black;
+}

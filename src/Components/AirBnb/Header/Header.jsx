@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import "../AirBnb.css"
 import FormHeader from "./FormHeader";
 import CalenderPicker from "./CalenderPicker";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import "../../../../node_modules/@fortawesome/fontawesome-free/css/all.min.css"
 import axios from "axios";
-import { API_GET_HOUSE_BY_CITY, API_GET_USER_INFO } from './../../../Services/common';
+import { API_GET_HOUSE_BY_CITY, API_GET_USER_INFO, API_USER_AUTH_URL } from './../../../Services/common';
 import { useHouse } from "./HouseContext";
 import _debounce from 'lodash.debounce';
 import GradientButton from './../Detail/GradientButton';
@@ -18,8 +18,33 @@ import FormControl from '@mui/material/FormControl';
 import Autocomplete from '@mui/material/Autocomplete';
 import Typography from '@mui/material/Typography';
 import UserService from "../../../Services/UserService";
-import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
+import { RecaptchaVerifier, sendSignInLinkToEmail, signInWithPhoneNumber } from "firebase/auth";
 import { auth } from "../../../Hooks/FireBase.config";
+import * as yup from 'yup';
+import { yupResolver } from "@hookform/resolvers/yup"
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import { toggle } from "ionicons/icons";
+import MyAxios from "../../../Services/MyAxios";
+
+const schema = yup.object({
+  firstName: yup.string().required("Bắt buộc điền tên."),
+  lastName: yup.string().required("Bắt buộc phải điền họ."),
+  // dob: yup.string().date().required("Chọn ngày sinh của bạn để tiếp tục."),
+  dob: yup.string().required("Chọn ngày sinh của bạn để tiếp tục.").test('is-over-18', 'Bạn phải từ 18 tuổi trở lên để có thể dùng Airbnb. Những người khác sẽ không thấy được ngày sinh của bạn.', (value) => {
+    const currentDate = new Date();
+    const selectedDate = new Date(value);
+    const minAgeDate = new Date();
+    minAgeDate.setFullYear(currentDate.getFullYear() - 18);
+
+    return (
+      selectedDate instanceof Date &&
+      !isNaN(selectedDate) &&
+      selectedDate <= minAgeDate
+    );
+  }),
+  email: yup.string().email("Nhập địa chỉ email hợp lệ.").required("Bắt buộc phải điền email.")
+})
 
 const Header = () => {
   const [showFormHeader, setShowFormHeader] = useState(false);
@@ -39,7 +64,51 @@ const Header = () => {
   const [isOverLayLoginForm, setIsOpenLayLoginForm] = useState(false);
   const [isOverLayContinueWithPhone, setIsOpenLayContinueWithPhone] = useState(false);
   const [isOverlayLoginSuccess, setIsOverlayLoginSuccess] = useState(false);
+  const [isOverLayRegisterForm, setIsOverLayRegisterForm] = useState(false);
+  const [isOverFormFinishRegister, setIsOverFormFinishRegister] = useState(false);
+  const [isOverLayVerifyEmail, setIsOverLayVerifyEmail] = useState(false);
+  const [isOverFormSuccess, setIsOverFormSuccess] = useState(false);
+
+  const [selectedCountry, setSelectedCountry] = useState(null);
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [valueOTP, setValueOTP] = useState("");
+  const [user, setUser] = useState({});
   // const [houseSearchByCity, setHouseSearchByCity] = useState([])
+
+  const { register, formState: { errors }, handleSubmit, reset, setValue } = useForm({
+    resolver: yupResolver(schema)
+  })
+
+  const { status } = useParams();
+
+  const handleAcceptRegistrationTermsAndCreateUser = () => {
+    console.log(user);
+    UserService.register(user);
+    toggleVerifyEmailForm();
+  }
+
+  const handleCreateUser = (data) => {
+    data = {
+      ...data,
+      phone: phoneNumber
+    }
+    console.log(data);
+    setUser(data);
+    toggleFormFinishRegister();
+  }
+
+  const handleVerifyEmail = () => {
+    sendSignInLinkToEmail(auth, user?.email, {
+      // this is the URL that we will redirect back to after clicking on the link in mailbox
+      url: 'http://localhost:3000/verify/success',
+      handleCodeInApp: true,
+    }).then(() => {
+      console.log("Đã gửi mail để verify");
+    }).catch(err => {
+      console.log("LỖI! không gửi được " + user?.email);
+    })
+    toggleFormSuccess();
+  }
 
   const jwtValue = localStorage.getItem("jwt");
 
@@ -50,9 +119,18 @@ const Header = () => {
     console.log("welcoming", userInfo);
   }, [userInfo])
 
+  useEffect(() => {
+    async function verifyEmail() {
+      const resp = await MyAxios.axiosWithHeader(API_USER_AUTH_URL).post("/verify-email");
+      if (resp.data) {
+        toggleFormSuccess();
+      }
+    }
+    if (status == "success") 
+      verifyEmail();
+  }, [])
 
   const navigate = useNavigate();
-
 
   const API_URL = 'https://nominatim.openstreetmap.org/search';
 
@@ -226,6 +304,37 @@ const Header = () => {
     }
   }
 
+  const toggleRegisterForm = () => {
+    reset();
+    setIsOverLayRegisterForm(!isOverLayRegisterForm)
+    if (isOpenDropMenuLogin) {
+      setIsOpenDropMenuLogin(false);
+    }
+    if (isOverLayLoginForm) {
+      setIsOpenLayLoginForm(false);
+    }
+  }
+
+  const toggleFormFinishRegister = () => {
+    setIsOverFormFinishRegister(!isOverFormFinishRegister)
+    if (isOverLayContinueWithPhone)
+      setIsOpenLayContinueWithPhone(false);
+  }
+
+  const toggleVerifyEmailForm = () => {
+    setIsOverLayVerifyEmail(!isOverLayVerifyEmail)
+    if (isOverFormFinishRegister) {
+      setIsOverLayRegisterForm(false);
+    }
+  }
+
+  const toggleFormSuccess = () => {
+    setIsOverFormSuccess(!isOverFormSuccess)
+    if (isOverLayVerifyEmail) {
+      setIsOverLayVerifyEmail(false);
+    }
+  }
+
   const toggleContinueWithPhone = () => {
     setIsOpenLayContinueWithPhone(!isOverLayContinueWithPhone)
     if (isOverLayLoginForm) {
@@ -261,10 +370,6 @@ const Header = () => {
     },
   });
 
-  const [selectedCountry, setSelectedCountry] = useState({ code: 'VN', label: 'Vietnam', phone: '84' });;
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [valueOTP, setValueOTP] = useState("");
-
   const isButtonDisabled = valueOTP && valueOTP.length !== 6;
 
   const [loadingSingup, setLoadingSingup] = useState(false);
@@ -274,10 +379,10 @@ const Header = () => {
     window.confirmationResult
       .confirm(valueOTP)
       .then(async (res) => {
-        console.log(await UserService.loginUser(res.user.phoneNumber));
         if (await UserService.loginUser(res.user.phoneNumber)) {
           console.log("Can't find! Register pls!");
           setLoadingSingup(false);
+          toggleRegisterForm();
         }
         else {
           setIsOpenLayLoginForm(false);
@@ -1178,26 +1283,219 @@ const Header = () => {
             </div>
           </div>
         )}
-
         {(
-          <div className={`overlay2 ${isOverlayLoginSuccess ? '' : 'd-none'}`} >
-            <div className={`appearing-div ${isOverlayLoginSuccess ? 'active' : ''}`} style={{ width: '666px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                {/* <i style={{ marginRight: '21%' }}
-                  onClick={toggleLoginSuccess} class="fa-solid fa-chevron-left close-description" ></i> */}
-                <h1>Đăng nhập thành công</h1>
+          <div className={`overlay2 ${isOverLayRegisterForm ? '' : 'd-none'}`} >
+            <div className={`appearing-div ${isOverLayRegisterForm ? 'active' : ''}`} style={{ width: "600px" }}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <i style={{ marginRight: '31%' }}
+                  onClick={toggleRegisterForm} class="fa-solid fa-xmark close-description" ></i>
+                <h3>Hoàn tất đăng ký</h3>
               </div>
               <hr />
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <img style={{ width: '12%' }} src="https://www.seekpng.com/png/full/957-9571167_airbnb-png.png" alt="" />
-                <h2>Chào mừng bạn đến với Airbnb</h2>
-                <p>Khám phá các nơi ở và trải nghiệm độc đáo trên thế giới</p>
-                <button className="btn-continue-with-toggle-login-success" onClick={toggleLoginSuccess}>Tiếp tục</button>
+              <div className='container-register-form'>
+                <form onSubmit={handleSubmit(handleCreateUser)} id="form-register">
+                  <Box
+                    component="form"
+                    noValidate
+                    sx={{
+                      display: 'grid',
+                      gridTemplateColumns: { sm: '1fr 1fr' },
+                      gap: 2,
+                    }}
+                  >
+                    <ValidationTextField
+                      label="Tên"
+                      placeholder="Tên"
+                      required
+                      error={errors?.firstName ? true : false}
+                      variant="outlined"
+                      {...register("firstName")}
+                    />
+                  </Box>
+                  <Box
+                    component="form"
+                    noValidate
+                    sx={{
+                      display: 'grid',
+                      gridTemplateColumns: { sm: '1fr 1fr' },
+                      gap: 2,
+                      marginTop: "6px"
+                    }}
+                  >
+                    <ValidationTextField
+                      label="Họ"
+                      placeholder="Họ"
+                      required
+                      error={errors?.lastName ? true : false}
+                      variant="outlined"
+                      {...register("lastName")}
+                    />
+                  </Box>
+                  {errors?.firstName?.message &&
+                    <div className='error-message-register'>
+                      <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" aria-label="Lỗi" role="img" focusable="false" className="icon-error-message">
+                          <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zm0 10.2a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm.8-6.6H7.2v5.2h1.6z" />
+                        </svg>
+                      </span>
+                      <div className="mesage-register-form error">{errors?.firstName?.message}</div>
+                    </div>
+                  }
+                  {errors?.lastName?.message && !errors?.firstName?.message &&
+                    <div className='error-message-register'>
+                      <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" aria-label="Lỗi" role="img" focusable="false" className="icon-error-message">
+                          <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zm0 10.2a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm.8-6.6H7.2v5.2h1.6z" />
+                        </svg>
+                      </span>
+                      <div className="mesage-register-form error">{errors?.lastName?.message}</div>
+                    </div>}
+                  {errors?.lastName?.message || errors?.firstName?.message ? "" : (<div className="mesage-register-form">Đảm bảo rằng tên bạn nhập khớp với tên trên giấy tờ tùy thân do chính phủ cấp của bạn.</div>)}
+                  <Box
+                    component="form"
+                    noValidate
+                    sx={{
+                      display: 'grid',
+                      gridTemplateColumns: { sm: '1fr 1fr' },
+                      gap: 2,
+                    }}
+                  >
+                    <ValidationTextField
+                      label="Ngày sinh"
+                      type="date"
+                      required
+                      error={errors?.dob ? true : false}
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                      variant="outlined"
+                      {...register("dob")}
+                    />
+                  </Box>
+                  {errors?.dob?.message ?
+                    <div className='error-message-register'>
+                      <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" aria-label="Lỗi" role="img" focusable="false" className="icon-error-message">
+                          <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zm0 10.2a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm.8-6.6H7.2v5.2h1.6z" />
+                        </svg>
+                      </span>
+                      <div className="mesage-register-form error">{errors?.dob?.message}</div>
+                    </div>
+                    :
+                    <div className="mesage-register-form">Để đăng ký, bạn phải đủ 18 tuổi trở lên. Ngày sinh của bạn sẽ không được chia sẻ với người dùng Airbnb khác.</div>
+                  }
+                  <Box
+                    component="form"
+                    noValidate
+                    sx={{
+                      display: 'grid',
+                      gridTemplateColumns: { sm: '1fr 1fr' },
+                      gap: 2,
+                      display: "block"
+                    }}
+                  >
+                    <input
+                      label="Email"
+                      placeholder="Email"
+                      required
+                      variant="outlined"
+                      {...register("email")}
+                      className={`input-register-form ${errors?.email ? "error" : ""}`}
+                    />
+                  </Box>
+                  {errors?.email?.message ?
+                    <div className='error-message-register'>
+                      <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" aria-label="Lỗi" role="img" focusable="false"
+                          className="icon-error-message">
+                          <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zm0 10.2a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm.8-6.6H7.2v5.2h1.6z" />
+                        </svg>
+                      </span>
+                      <div className="mesage-register-form error">{errors?.email?.message}</div>
+                    </div>
+                    :
+                    <div className="mesage-register-form">Chúng tôi sẽ gửi phiếu thu và xác nhận chuyến đi qua email cho bạn.</div>
+                  }
+                  <div className="registration-terms">Bằng việc chọn <span style={{ fontWeight: "bold" }}>Đồng ý và tiếp tục,</span> tôi đồng ý với <Link>Điều khoản dịch vụ</Link>, <Link>Điều khoảng dịch vụ thanh toán </Link>và <Link>Chính sách không phân biệt </Link>của Airbnb, đồng thời chấp nhận <Link>Chính sách về quyền riêng tư</Link></div>
+                  <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    <GradientButton>Tiếp tục</GradientButton>
+                  </div>
+                </form>
               </div>
             </div>
           </div>
         )}
-      </header >
+        {(
+          <div className={`overlay2 ${isOverFormFinishRegister ? '' : 'd-none'}`} >
+            <div className={`appearing-div ${isOverFormFinishRegister ? 'active' : ''}`} style={{ width: "650px" }}>
+              <div style={{ margin: "32px 16px" }}>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" role="presentation" focusable="false" style={{ display: "block", height: "42px", width: "42px", fill: "rgb(255, 90, 95)", marginBottom: "10%" }}>
+                  <path d="M16 1c2 0 3.46.96 4.75 3.27l.53 1.02a424.58 424.58 0 0 1 7.1 14.84l.15.35c.67 1.6.9 2.48.96 3.4v.41l.01.23c0 4.06-2.88 6.48-6.36 6.48-2.22 0-4.55-1.26-6.7-3.39l-.26-.26-.17-.17h-.02l-.17.18c-2.05 2.1-4.27 3.42-6.42 3.62l-.28.01-.26.01c-3.48 0-6.36-2.42-6.36-6.48v-.47c.03-.93.23-1.77.83-3.24l.22-.53c.97-2.3 6.08-12.98 7.7-16.03C12.55 1.96 14 1 16 1zm0 2c-1.24 0-2.05.54-2.99 2.21l-.52 1a422.57 422.57 0 0 0-7.03 14.7l-.35.84a6.86 6.86 0 0 0-.6 2.24l-.01.33v.2C4.5 27.4 6.41 29 8.86 29c1.77 0 3.87-1.24 5.83-3.35-2.3-2.94-3.86-6.45-3.86-8.91 0-2.92 1.94-5.39 5.18-5.42 3.22.03 5.16 2.5 5.16 5.42 0 2.45-1.56 5.96-3.86 8.9 1.97 2.13 4.06 3.36 5.83 3.36 2.45 0 4.36-1.6 4.36-4.48v-.4a7.07 7.07 0 0 0-.72-2.63l-.25-.6C25.47 18.41 20.54 8.12 19 5.23 18.05 3.53 17.24 3 16 3zm.01 10.32c-2.01.02-3.18 1.51-3.18 3.42 0 1.8 1.18 4.58 2.96 7.04l.2.29.18-.24c1.73-2.38 2.9-5.06 3-6.87v-.22c0-1.9-1.17-3.4-3.16-3.42z"></path>
+                </svg>
+                <h4>Cam kết cộng đồng chúng tôi</h4>
+                <h1>Airbnb là nơi mà tất cả mọi người đều có thể cảm thấy là một cộng đồng dành cho họ.</h1>
+                <div style={{ margin: "24px 0px", color: "gray" }}>Để đảm bảo điều này, chúng tôi đề nghị bạn cam kết như sau:</div>
+                <div style={{ margin: "24px 0px", color: "gray" }}>Tôi đồng ý sẽ đối xử với tất cả mọi người trong cộng đồng Airbnb một cách tôn trọng và không phán xét hay thành kiến, bất kể chủng tộc, tôn giáo, nguồn gốc quốc gia, dân tộc, màu da, tình trạng khuyết tật, giới tính, bản dạng giới, khuynh hướng tình dục hoặc tuổi tác.</div>
+                <div>Tìm hiểu thêm <i class="fa-solid fa-chevron-right"></i></div>
+                <div style={{ display: "flex", justifyContent: 'center', flexDirection: "column", width: "111.5%", marginLeft: "-2%", marginTop: "32px" }}>
+                  <GradientButton onClick={handleAcceptRegistrationTermsAndCreateUser}>Đồng ý và tiếp tục</GradientButton>
+                  <button className="button-form" onClick={toggleFormFinishRegister}>Từ chối</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        {(
+          <div className={`overlay2 ${isOverLayVerifyEmail ? '' : 'd-none'}`} >
+            <div className={`appearing-div ${isOverLayVerifyEmail ? 'active' : ''}`} style={{ width: "600px" }}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <i style={{ marginRight: '25%' }}
+                  onClick={toggleVerifyEmailForm} class="fa-solid fa-xmark close-description" ></i>
+                <h2>Xác nhận tài khoản</h2>
+              </div>
+              <hr />
+              <div className='container-register-form'>
+                <h2>Giúp chúng tôi xác minh danh tính của bạn</h2>
+                <div>Để tiếp tục, bạn cần xác nhận tài khoản của mình thông qua một trong các tùy chọn sau.</div>
+                <button className="button-verify-email" onClick={handleVerifyEmail}>
+                  <i class="fa-regular fa-envelope icon-veriry-email" ></i>
+                  <h3>Email</h3>
+                  <i class="fa-solid fa-chevron-right icon-veriry-email"></i>
+                </button>
+              </div>
+              <hr />
+            </div>
+
+          </div>
+        )}
+        {(
+          <div className={`overlay2 ${isOverFormSuccess ? '' : 'd-none'}`} >
+            <div className={`appearing-div ${isOverFormSuccess ? 'active' : ''}`} style={{ width: "600px" }}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <i style={{ marginRight: '26%' }}
+                  onClick={toggleFormSuccess} class="fa-solid fa-xmark close-description" ></i>
+                <h2>Đăng ký tài khoản</h2>
+              </div>
+              <hr />
+              <div className='container-register-form'>
+                <div style={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" role="presentation" focusable="false" style={{ height: "75px", width: "75px", fill: "rgb(255, 90, 95)", marginBottom: "5%" }}>
+                    <path d="M16 1c2 0 3.46.96 4.75 3.27l.53 1.02a424.58 424.58 0 0 1 7.1 14.84l.15.35c.67 1.6.9 2.48.96 3.4v.41l.01.23c0 4.06-2.88 6.48-6.36 6.48-2.22 0-4.55-1.26-6.7-3.39l-.26-.26-.17-.17h-.02l-.17.18c-2.05 2.1-4.27 3.42-6.42 3.62l-.28.01-.26.01c-3.48 0-6.36-2.42-6.36-6.48v-.47c.03-.93.23-1.77.83-3.24l.22-.53c.97-2.3 6.08-12.98 7.7-16.03C12.55 1.96 14 1 16 1zm0 2c-1.24 0-2.05.54-2.99 2.21l-.52 1a422.57 422.57 0 0 0-7.03 14.7l-.35.84a6.86 6.86 0 0 0-.6 2.24l-.01.33v.2C4.5 27.4 6.41 29 8.86 29c1.77 0 3.87-1.24 5.83-3.35-2.3-2.94-3.86-6.45-3.86-8.91 0-2.92 1.94-5.39 5.18-5.42 3.22.03 5.16 2.5 5.16 5.42 0 2.45-1.56 5.96-3.86 8.9 1.97 2.13 4.06 3.36 5.83 3.36 2.45 0 4.36-1.6 4.36-4.48v-.4a7.07 7.07 0 0 0-.72-2.63l-.25-.6C25.47 18.41 20.54 8.12 19 5.23 18.05 3.53 17.24 3 16 3zm.01 10.32c-2.01.02-3.18 1.51-3.18 3.42 0 1.8 1.18 4.58 2.96 7.04l.2.29.18-.24c1.73-2.38 2.9-5.06 3-6.87v-.22c0-1.9-1.17-3.4-3.16-3.42z"></path>
+                  </svg>
+                  <h2>Chào mừng bạn đến với Airbnb</h2>
+                  <div>Khám phá các nơi ở và trải nghiệm độc đáo trên khắp thế giới</div>
+                </div>
+
+                <button className="button-next-modal" onClick={toggleFormSuccess}>
+                  Tiếp tục
+                </button>
+              </div>
+              <hr />
+            </div>
+
+          </div>
+        )}
+      </header>
     </>
   )
 }

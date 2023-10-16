@@ -39,6 +39,7 @@ export default function FormLogin() {
     })
 
     const handleCreateUser = async (data) => {
+        data.preventDefault();
         data = {
             ...data,
             phone: phone
