@@ -1,14 +1,12 @@
-import React from "react";
-import '../history/HouseCSS.css'
-import { Button, Dropdown, DropdownButton, Form, InputGroup, Modal, Table } from "react-bootstrap";
-import useFetchListHouseAccepted from "../../../Hooks/admin/listHouse/useFetchListHouseAccepted";
-import { useState } from "react";
-import { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Typography from '@mui/material/Typography';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
+import { Button, Dropdown, DropdownButton, Form, InputGroup, Table } from "react-bootstrap";
+import useFetchListHouseCancel from "../../../Hooks/admin/listHouse/useFetchListHouseCancel";
 import axios from "axios";
 import emailjs from '@emailjs/browser';
+
 
 const reloadPage = () => {
     window.location.reload();
@@ -16,88 +14,47 @@ const reloadPage = () => {
 const SERVICE_ID = "service_jvlas79";
 const TEMPLATE_ID = "template_ui2iuli";
 const PUBLIC_KEY = "ZrnhuJTlDmN2xJsgA";
-const House = () => {
-
+const HouseBan = () => {
     const [houses, setHouses] = useState([]);
     const [totalPage, setTotalPage] = useState(1);
     const [page, setPage] = useState(1);
     const [size, setSize] = useState(3);
     const [search, setSearch] = useState("");
-    const [nameField, setNameField] = useState("hotelName");
+    const [nameField, setNameField] = useState("id");
     const [type, setType] = useState('DESC');
-    const [houseBlock, setHouseBlock] = useState({});
+    const [houseUnlock, setHouseUnlock] = useState({})
 
-    const data = useFetchListHouseAccepted(page, size);
+    const data = useFetchListHouseCancel(search, page, size, nameField, type);
+
+    useEffect(() => {
+        let timeout;
+
+        if (data) {
+            timeout = setTimeout(() => {
+                setHouses(data.content);
+                setTotalPage(data.totalPages)
+
+            }, 200)
+        }
+        return (() => {
+            clearTimeout(timeout);
+        })
+
+
+    }, [data])
 
     const handleChange = (event, value) => {
         setPage(value);
     };
 
-
-
-    useEffect(() => {
-        if (data) {
-            setHouses(data.content);
-            setTotalPage(data.totalPages);
-        }
-    }, [data])
-
-
-    const handlefilePDF = (item) => {
-        console.log(item);
-        window.open(item.confirmPDF, "_blank");
-    }
-
-    const handlePagination = () => {
-
-        const pages = [];
-
-        const startPage = Math.max(1, page - Math.floor(size / 2));
-        const endPage = Math.min(totalPage, startPage + size - 1);
-
-        for (let i = startPage; i <= endPage; i++) {
-            pages.push(
-
-                <Pagination.Item active={page === i} onClick={() => handelClickPage(i)}>{i}</Pagination.Item>
-            )
-        }
-        return pages;
-    }
-
-    const handelClickPage = (number) => {
-        setPage(number);
-    }
-    const handleNextPage = () => {
-        if (page < totalPage) {
-            setPage(page + 1);
-        }
-    }
-
-    const handlePrePage = () => {
-        if (page >= 0) {
-            setPage(page - 1)
-        }
-    }
-
     const handleSearch = (value) => {
         setSearch(value)
-    }
 
-    const handleStartPage = () => {
-        if (page >= 0) {
-            setPage(1)
-        }
-    }
-
-    const handleEndPage = () => {
-        if (page < totalPage) {
-            setPage(totalPage);
-        }
     }
 
     const handleSortAtoZ = () => {
         setNameField("hotelName");
-        setType("ASC");
+        setType("ASC")
     }
 
     const handleSortZtoA = () => {
@@ -105,73 +62,46 @@ const House = () => {
         setType("DESC");
     }
 
-    useEffect(() => {
-        let timeout;
+    const handleUnlockHouse = async (item) => {
+        item.status = 'ACCEPTED';
 
-        if (search) {
-            timeout = setTimeout(async () => {
-                await axios.get(`http://localhost:8080/api/admin/houses/accepted?search=${search}&page=${page - 1}&size=${size}&sort=${nameField},${type}`, {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                }).then(response => {
-                    const data = response.data.content;
-                    setHouses(data);
-                    setTotalPage(response.data.totalPages);
-                }).catch((e) => {
-                    console.error("Lỗi search", e);
-                })
-            }, 200);
-        }
-        return () => {
-            clearTimeout(timeout)
-        }
-    }, [search, page, size, nameField, type])
-
-    const handleBlock = async (item) => {
-        item.status = 'CANCEL'
         await emailjs.send(SERVICE_ID, TEMPLATE_ID, {
             admin: "AirBnb",
             name: item.user.lastName || item.user.firstName,
-            message: `We're so sorry to report this news.
-            Your house ${item.hotelName} have been banned to business on our platform for violating our terms.
-            We will update the reason here: 
-    
+            message: `We're so glad to report this news.
+            Your house ${item.hotelName} have been unlocked to business on our platform.
+            
             If you have any response, please call 00000000
             `
         }, PUBLIC_KEY).then((result) => {
             console.log("Send Email Success", result);
-            setHouseBlock(item);
+            setHouseUnlock(item)
         }).catch(error => {
             console.log("Send Email Fail", error);
         })
+
+
     }
 
     useEffect(() => {
         const sendData = async () => {
-            console.log(houseBlock);
-            if (houseBlock && houseBlock.id) {
-                const id = houseBlock.id;
-                await axios.patch(`http://localhost:8080/api/admin/houses/set-status/${id}`, houseBlock).then((response) => {
-                    console.log(response);
-                }).catch(error => {
-                    console.log("Patch Error", error);
-                });
-            }
-        }
+            await axios.patch(`http://localhost:8080/api/admin/houses/set-status/${houseUnlock.id}`, houseUnlock).then((response) => {
+                console.log(response);
+            }).catch(error => {
+                console.log("Patch Error", error);
+            });
 
-        if (houseBlock && houseBlock.id) {
+        }
+        if (houseUnlock && houseUnlock.id) {
             sendData();
             reloadPage();
         }
-    }, [houseBlock])
-
+    }, [houseUnlock])
 
     return (
-
         <div className="container">
             <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 className="h2">List Houses</h1>
+                <h1 className="h2">Houses Ban</h1>
             </div>
             <div className="col-5">
                 <InputGroup className="mb-3">
@@ -211,8 +141,10 @@ const House = () => {
                                 <td>{house.user.firstName || ""} {house.user.lastName || ""}</td>
                                 <td>{house.user.email || ""}</td>
                                 <td>
-                                    <button onClick={() => handlefilePDF(house)} className="btn btn-outline-success me-2">Records Confirm</button>
-                                    <button className="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target={`#staticDeny${index}`}>Block</button>
+                                    <button className="btn btn-outline-success" data-bs-toggle="modal" data-bs-target={`#staticDeny${index}`}>
+                                        <i className="fa-solid fa-lock-open me-2"></i>
+                                        Unlock
+                                    </button>
 
 
                                     <div
@@ -242,7 +174,7 @@ const House = () => {
                                                     />
                                                 </div>
                                                 <div className="modal-body">
-                                                    <p>Do you want to block this {house.hotelName}?</p>
+                                                    <p>Do you want to unlock this {house.hotelName}?</p>
                                                 </div>
                                                 <div className="modal-footer">
                                                     <button
@@ -252,8 +184,8 @@ const House = () => {
                                                     >
                                                         Close
                                                     </button>
-                                                    <button onClick={() => handleBlock(house)} type="button" className="btn btn-danger">
-                                                        Block
+                                                    <button onClick={() => handleUnlockHouse(house)} type="button" className="btn btn-success">
+                                                        Unlock
                                                     </button>
                                                 </div>
                                             </div>
@@ -266,15 +198,15 @@ const House = () => {
                         ))}
                     </tbody>
                 </Table>
-                <div className="d-flex justify-content-center">
-                    <Stack spacing={2}>
-                        <Typography>Page: {page}</Typography>
-                        <Pagination count={totalPage} page={page} onChange={handleChange} color="secondary" />
-                    </Stack>
-                </div>
+            </div>
+            <div className="d-flex justify-content-center">
+                <Stack spacing={2}>
+                    <Typography>Page: {page}</Typography>
+                    <Pagination count={totalPage} page={page} onChange={handleChange} color="secondary" />
+                </Stack>
             </div>
         </div>
     )
 }
 
-export default House;
+export default HouseBan;

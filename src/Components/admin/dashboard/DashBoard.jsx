@@ -6,6 +6,7 @@ import { Table } from "react-bootstrap";
 import { Card } from "react-bootstrap";
 import "../dashboard/DashBoardCSS.css"
 import us from "../../../assets/images/animat-rocket-color.gif";
+import defaultAva from "../../../assets/images/avatar-1577909_1280.webp";
 import useFetchProfitsForQuarterAndYear from "../../../Hooks/admin/dashboard/useFetchProfitsForQuarterAndYear";
 import useFetchTotalUsersThisMonth from "../../../Hooks/admin/dashboard/useFetchTotalUsersThisMonth";
 import useFetchTotalUsersLastMonth from "../../../Hooks/admin/dashboard/useFetchTotalUsersLastMonth";
@@ -20,6 +21,7 @@ import SockJS from "sockjs-client";
 // import { Stomp } from "@stomp/stompjs";
 import axios from "axios";
 import Stomp from "stompjs";
+import useFetchReservationToday from "../../../Hooks/admin/dashboard/useFetchReservationToday";
 
 Chart.register(...registerables);
 var CanvasJS = CanvasJSReact.CanvasJS;
@@ -39,6 +41,7 @@ function DashBoard() {
                 total += data.y
             }
         }
+        console.log(total);
         const dataLastMonth = profitsLastMonth[0]?.dataPoints;
         let total1 = 0;
         if (dataLastMonth) {
@@ -46,7 +49,9 @@ function DashBoard() {
                 total1 += data.y
             }
         }
+        console.log(total1);
         const percent = ((total - total1) / total1) * 100;
+        console.log(percent);
         const newPercent = percent.toFixed(2);
 
         return newPercent;
@@ -62,12 +67,16 @@ function DashBoard() {
         }
         const dataPreLastMonth = profitsPreLastMonth[0]?.dataPoints;
         let total1 = 0;
+        let percent = 0;
         if (dataPreLastMonth) {
             for (const data of dataPreLastMonth) {
                 total1 += data.y
             }
+
+            percent = ((total - total1) / total1) * 100;
+        } else {
+            percent = total * 100;
         }
-        const percent = ((total - total1) / total1) * 100;
         const newPercent = percent.toFixed(2);
 
         return newPercent;
@@ -373,13 +382,49 @@ function DashBoard() {
         data: dataForYear
     }
 
+    const data = {
+        labels: ['KPI', 'Profit'],
+        datasets: [
+            {
+                label: '# of Votes',
+                data: [1000 - 0, 0],
+                backgroundColor: ["#377dff", "rgba(55, 125, 255, 0.35)"],
+                borderColor: ["#ffffff", "#ffffff"],
+                borderWidth: 4,
+                hoverBorderColor: "#ffffff"
+            },
+        ],
+    };
 
+
+    const dataToday = useFetchReservationToday();
+    console.log(dataToday);
 
     const [socketData, setSocketData] = useState([]);
     const [stompClient, setStompClient] = useState(null);
     const [reservations, setReservations] = useState([]);
+    const [dataChart, setDataChart] = useState(data);
+    const [dataShow, setDataShow] = useState([])
+    const [totalShow, setTotalShow] = useState(0);
     const [reservationTest, setReservationTest] = useState({});
-    const [isConnected, setIsConnected] = useState(false);
+
+
+
+    useEffect(() => {
+        if (dataToday) {
+            let total = 0;
+            dataToday.forEach((item) => {
+                item?.bookingFees.forEach((e) => {
+                    if (e.type === 'SERVICE_FEE') {
+                        const fee = parseFloat(e.value) / 100;
+                        total += fee * item.totalPrice;
+                    }
+                })
+            })
+            setDataShow(dataToday);
+            setTotalShow(total.toFixed(2))
+        }
+    }, [dataToday])
 
     useEffect(() => {
         async function getData() {
@@ -394,20 +439,14 @@ function DashBoard() {
         const socket = new SockJS('http://localhost:8080/ws');
         const client = Stomp.over(socket);
 
-        console.log(socket);
-        console.log(client);
-
-
-
         client.connect({}, () => {
             if (client.connect()) {
                 console.log("Success");
-                client.subscribe('/topic/dataNew', (response) => {
+                client?.subscribe('/topic/dataNew', (response) => {
 
                     const newData = JSON.parse(response.body);
                     setSocketData((prev) => [...prev, newData]);
 
-                    console.log(newData);
                 });
             }
 
@@ -422,19 +461,7 @@ function DashBoard() {
         })
     }, [])
 
-    const data = {
-        labels: ['KPI', 'Profit'],
-        datasets: [
-            {
-                label: '# of Votes',
-                data: [1000000 - 100000, 100000],
-                backgroundColor: ["#377dff", "rgba(55, 125, 255, 0.35)"],
-                borderColor: ["#ffffff", "#ffffff"],
-                borderWidth: 4,
-                hoverBorderColor: "#ffffff"
-            },
-        ],
-    };
+
     const option = {
         plugins: {
             tooltip: {
@@ -466,7 +493,7 @@ function DashBoard() {
 
 
                 const data = { ...reservationTest };
-                stompClient.send("/app/sendData", {}, JSON.stringify(data));
+                stompClient?.send("/app/sendData", {}, JSON.stringify(data));
             } catch (error) {
                 console.error("Lỗi đổi status", error);
             }
@@ -475,11 +502,31 @@ function DashBoard() {
     }, [reservationTest])
 
     useEffect(() => {
-        console.log(socketData);
+
+        socketData.pop();
+        let total = 0;
+
+        socketData[socketData.length - 1]?.bookingFees?.forEach((e) => {
+            if (e.type === 'SERVICE_FEE') {
+                const fee = parseFloat(e.value) / 100;
+                total = socketData[socketData.length - 1].totalPrice * fee;
+            }
+        })
+
+        const newChart = { ...dataChart };
+        const newArr = [...newChart.datasets[0].data];
+        newArr[0] = parseInt(1000 - total);
+        newArr[1] = parseInt(total);
+        newChart.datasets[0].data = newArr;
+
+        setDataShow((prev) => [socketData[socketData.length - 1], ...prev])
+        setTotalShow(prev => (parseFloat(prev) + parseFloat(total.toFixed(2))).toFixed(2));
+        setDataChart(newChart)
+    }, [socketData]);
 
 
 
-    }, [socketData])
+
 
     return (
         <div className="container">
@@ -563,7 +610,7 @@ function DashBoard() {
 
                         </div>
                     </div>
-                    <div style={{ width: '25%', height: 'auto' }}>
+                    <div style={{ width: '25% ', height: 'auto' }}>
                         <div style={{ width: "75%", height: "50%" }}>
                             <Card className="card-profit">
                                 <Card.Body>
@@ -571,7 +618,7 @@ function DashBoard() {
                                     <Card.Subtitle className="mb-2 text-muted d-flex">
 
                                         <div style={{ width: "33%" }}>{calculatePercentofProfitsThisMonth()}%</div>
-                                        <div style={{ width: "33%" }}>{calculatePercentGrowthForProfits()}</div>
+                                        <div style={{ width: "36%" }}>{calculatePercentGrowthForProfits()}</div>
                                         <div style={{ width: "33%" }}><span className="ms-1" style={{ fontWeight: "lighter" }}>from {calculatePercentofProfitsLastMonth()}%</span></div>
 
                                     </Card.Subtitle>
@@ -587,10 +634,10 @@ function DashBoard() {
                 <div style={{ height: '75%', display: 'flex' }} >
                     <div style={{ width: '30%', height: 'auto' }}>
                         <div style={{ position: "relative" }}>
-                            <Doughnut data={data} options={option} />
+                            <Doughnut data={dataChart} options={option} />
                             <div style={{ position: 'absolute', bottom: '70px', left: '105px', textAlign: "center" }}>
                                 <small style={{ fontSize: "15px", textTransform: "uppercase", letterSpacing: ".03125rem", fontWeight: "600" }}>Project balance</small> <br />
-                                <span style={{ fontSize: "1.4109375rem", fontWeight: "600", lineHeight: "1.2" }}>$150,238.00</span>
+                                <span style={{ fontSize: "1.4109375rem", fontWeight: "600", lineHeight: "1.2" }}>${totalShow || 0}</span>
                             </div>
                         </div>
                         {/* <Line config={config} data={data} /> */}
@@ -604,7 +651,28 @@ function DashBoard() {
                                 </tr>
                             </thead>
                             <tbody>
+                                {dataShow?.map((data) => (
+                                    <tr>
+                                        <td>
+                                            <div className='d-flex align-items-center justify-content-center'>
+                                                <img className="img-tbody" src={data?.user?.avatar || defaultAva} />
+                                                {data?.house?.hotelName}
+                                            </div>
+                                        </td>
+                                        <td className="align-middle">
+                                            <span className="span-completed">
+                                                Finished
+                                            </span>
+
+                                        </td>
+                                        <td className="align-middle " style={{ color: "lightgreen", fontFamily: "monospace", fontWeight: "bolder", fontSize: "23px" }}>
+                                            ${data?.totalPrice}
+                                        </td>
+                                    </tr>
+
+                                ))}
                                 <tr>
+
                                     <td>
                                         <div className='d-flex align-items-center justify-content-center'>
                                             <img className="img-tbody" src="https://res.cloudinary.com/didieklbo/image/upload/f_auto,q_auto/v1/AvatarUser/jig2yadz7mfmrc01qtje" />
@@ -613,7 +681,7 @@ function DashBoard() {
                                     </td>
                                     <td className="align-middle">
                                         <span className="span-completed">
-                                            Completed
+                                            Finished
                                         </span>
                                         <span className="span-waiting">
                                             Waiting

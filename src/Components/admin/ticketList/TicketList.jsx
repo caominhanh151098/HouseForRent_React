@@ -6,10 +6,25 @@ import img2 from "../../../assets/images/users/avatar-2.jpg"
 import axios from "axios";
 import jsPDF from "jspdf";
 import moment from "moment/moment";
+import emailjs from '@emailjs/browser';
+import CircularProgress from '@mui/material/CircularProgress';
+import Box from '@mui/material/Box';
+import { green } from '@mui/material/colors';
+import Button from '@mui/material/Button';
+import Fab from '@mui/material/Fab';
+import CheckIcon from '@mui/icons-material/Check';
+import SaveIcon from '@mui/icons-material/Save';
 import { Dropdown, DropdownButton, Form, InputGroup } from "react-bootstrap";
+
+
+const SERVICE_ID = "service_jvlas79";
+const TEMPLATE_ID = "template_hsk232n";
+const PUBLIC_KEY = "ZrnhuJTlDmN2xJsgA";
 
 function TicketList() {
 
+    const [loading, setLoading] = useState(false);
+    const [success, setSuccess] = useState(false);
     const [houses, setHouses] = useState([]);
     const [listImg, setListImg] = useState([]);
     const [house, setHouse] = useState({});
@@ -32,6 +47,14 @@ function TicketList() {
     const handleSetListImg = (data) => {
         setListImg(data);
     }
+    const buttonSx = {
+        ...(success && {
+            bgcolor: green[500],
+            '&:hover': {
+                bgcolor: green[700],
+            },
+        }),
+    };
 
     const handleRenderListImg = () => {
         const elements = listImg.map((img, i) => {
@@ -67,39 +90,61 @@ function TicketList() {
         }, 5000);
     };
 
-    const handleExportPDF = (item) => {
+    const handleExportPDF = async (item) => {
+        if (!loading) {
+            setSuccess(false);
+            setLoading(true);
+            const doc = new jsPDF();
+            doc.setFontSize(40);
+            doc.text("Biên bản xác nhận!", 10, 10);
 
-        const doc = new jsPDF();
-        doc.setFontSize(40);
-        doc.text("ggbxbxcbzxcfbzxcbfzbczfbzfbzdbd!", 10, 10);
+            const pdfData = doc.output('arraybuffer');
 
-        const pdfData = doc.output('arraybuffer');
+            const pdfBlob = new Blob([pdfData], { type: 'application/pdf' });
 
-        const pdfBlob = new Blob([pdfData], { type: 'application/pdf' });
+            const formData = new FormData();
+            formData.append("file", pdfBlob);
 
-        const formData = new FormData();
-        formData.append("file", pdfBlob);
-
-        axios.post('https://api.cloudinary.com/v1_1/dunzabaf5/upload', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            },
-            params: {
-                upload_preset: 'b6kmzeig'
-            }
-        })
-            .then(response => {
-                console.log('Upload thành công:', response.data);
-                const newHouse = {
-                    id: item.id,
-                    status: 'ACCEPTED',
-                    confirmPDF: response.data.url
+            await axios.post('https://api.cloudinary.com/v1_1/dunzabaf5/upload', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                },
+                params: {
+                    upload_preset: 'b6kmzeig'
                 }
-                setHouse(newHouse);
             })
-            .catch(error => {
-                console.error('Lỗi khi tải lên:', error);
-            });
+                .then(async response => {
+                    // item.preventDefault();
+                    console.log('Upload success:', response.data);
+                    const newHouse = {
+                        id: item.id,
+                        status: 'ACCEPTED',
+                        confirmPDF: response.data.url
+                    }
+
+                    await emailjs.send(SERVICE_ID, TEMPLATE_ID, {
+                        admin: "AirBNB",
+                        name: item.user.lastName,
+                        message: `Welcome to AirBnb.
+                    Your house ${item.hotelName} have been accepted to business on our platform.
+                    Hope you will successfull and make money with us.
+                    Here's your confirm: ${response.data.url} `
+                    }, PUBLIC_KEY).then((result) => {
+                        console.log('Send Email success', result);
+                    }).catch((error) => {
+                        console.log('error send email', error);
+                    })
+
+                    setHouse(newHouse);
+                    setSuccess(true);
+                    setLoading(false);
+                })
+                .catch(error => {
+                    console.error('error upload PDF:', error);
+                });
+        }
+
+
     };
 
     const handleDenyHouse = (item) => {
@@ -126,7 +171,7 @@ function TicketList() {
                 });
 
             } catch (error) {
-                console.error("Lỗi", error);
+                console.error("error patch", error);
             }
         }
 
@@ -181,7 +226,7 @@ function TicketList() {
 
     useEffect(() => {
         let timeout;
-        
+
         if (search) {
             timeout = setTimeout(() => {
                 axios.get(`http://localhost:8080/api/admin/houses?search=${search}`, {
@@ -484,6 +529,53 @@ function TicketList() {
                                             >
                                                 Close
                                             </button>
+                                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                                <Box sx={{ m: 1, position: 'relative' }}>
+                                                    <Fab
+                                                        aria-label="save"
+                                                        color="primary"
+                                                        sx={buttonSx}
+                                                        onClick={() => handleExportPDF(house)}
+                                                    >
+                                                        {success ? <CheckIcon /> : <SaveIcon />}
+                                                    </Fab>
+                                                    {loading && (
+                                                        <CircularProgress
+                                                            size={68}
+                                                            sx={{
+                                                                color: green[500],
+                                                                position: 'absolute',
+                                                                top: -6,
+                                                                left: -6,
+                                                                zIndex: 1,
+                                                            }}
+                                                        />
+                                                    )}
+                                                </Box>
+                                                <Box sx={{ m: 1, position: 'relative' }}>
+                                                    <Button
+                                                        variant="contained"
+                                                        sx={buttonSx}
+                                                        disabled={loading}
+                                                        onClick={() => handleExportPDF(house)}
+                                                    >
+                                                        Accept terms
+                                                    </Button>
+                                                    {loading && (
+                                                        <CircularProgress
+                                                            size={24}
+                                                            sx={{
+                                                                color: green[500],
+                                                                position: 'absolute',
+                                                                top: '50%',
+                                                                left: '50%',
+                                                                marginTop: '-12px',
+                                                                marginLeft: '-12px',
+                                                            }}
+                                                        />
+                                                    )}
+                                                </Box>
+                                            </Box>
                                             <button onClick={() => handleExportPDF(house)} type="button" className="btn btn-success">
                                                 Accept
                                             </button>

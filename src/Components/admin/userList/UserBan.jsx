@@ -1,80 +1,49 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import us from "../../../assets/images/animat-rocket-color.gif";
-import emailjs from '@emailjs/browser';
-import { result } from "lodash";
 import Typography from '@mui/material/Typography';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
+import emailjs from '@emailjs/browser';
+import { Button, Dropdown, DropdownButton, Form, InputGroup, Modal, Table } from "react-bootstrap";
 
 
 const SERVICE_ID = "service_jvlas79";
 const TEMPLATE_ID = "template_ui2iuli";
 const PUBLIC_KEY = "ZrnhuJTlDmN2xJsgA";
-
-function UserList() {
+const UserBan = () => {
     const [users, setUsers] = useState([]);
     const [page, setPage] = useState(1);
     const [totalPage, setTotalPage] = useState(1);
     const [size, setSize] = useState(3);
     const [user, setUser] = useState({});
+    const [search, setSearch] = useState("");
+    const [nameField, setNameField] = useState("id");
+    const [type, setType] = useState("ASC");
 
     useEffect(() => {
         async function getData() {
-            const response = await axios.get(`http://localhost:8080/api/admin/users?page=${page - 1}&size=${size}`);
+            const response = await axios.get(`http://localhost:8080/api/admin/users/user_ban?search=${search}&page=${page - 1}&size=${size}&sort=${nameField},${type}`);
             setUsers(response.data.content);
             setTotalPage(response.data.totalPages);
         };
         getData()
-    }, [page, size]);
+    }, [page, size, search, nameField, type]);
 
-    const handleRenderPagination = () => {
-        const pages = [];
-
-        // const pageToShow = 3;
-
-        const startPage = Math.max(1, page - Math.floor(size / 2));
-        const endPage = Math.min(totalPage, startPage + size - 1);
-        for (let i = startPage; i <= endPage; i++) {
-            pages.push(
-                <li role="button" className={`${page === i ? "page-item active" : "page-item"}`} key={i}>
-                    <a className="page-link" onClick={() => handelClickPage(i)}>
-                        {i}
-                    </a>
-                </li>)
-        }
-        return pages;
-    }
-
-    const handelClickPage = (number) => {
-        setPage(number);
-    }
-    const handleNextPage = () => {
-        if (page < totalPage) {
-            setPage(page + 1);
-        }
-    }
-
-    const handlePrePage = () => {
-        if (page >= 0) {
-            setPage(page - 1)
-        }
-    }
-    const reloadPage = () => {
-        window.location.reload();
+    const handleChange = (event, value) => {
+        setPage(value);
     };
 
-    const handleLock = async (item) => {
-        item.status = 'false';
+    const handleUnlock = async (item) => {
+        item.status = 'true';
 
         await emailjs.send(SERVICE_ID, TEMPLATE_ID, {
             admin: "AirBNB",
             name: item.lastName || item.firstName,
-            message: `We're so sorry to report this news.
-        Your account have been banned to business on our platform for violating our terms.
-        We will update the reason here: 
-
-        Hope you will respond to us as soon as possible.
+            message: `We're so glad to report this news.
+        Your account have been unlocked to business on our platform.
+        
+        If you have any response, please call 00000000.
          `
         }, PUBLIC_KEY).then((result) => {
             console.log('Send email success', result);
@@ -83,12 +52,7 @@ function UserList() {
             console.log('Send email fail', error);
         })
 
-
     }
-
-    const handleChange = (event, value) => {
-        setPage(value);
-    };
 
     useEffect(() => {
         async function sendData() {
@@ -103,16 +67,47 @@ function UserList() {
             }
         }
 
-        if (user.id) {
-            sendData();
-            reloadPage();
-        }
-    }, [user])
+        sendData();
+    }, [user]);
+
+    const handleSearch = (value) => {
+        setSearch(value)
+    }
+
+    const handleSortAtoZ = () => {
+        setNameField("firstName");
+        setType("ASC");
+    }
+
+    const handleSortZtoA = () => {
+        setNameField("firstName");
+        setType("DESC");
+    }
 
     return (
         <div className="container">
             <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 className='h2'>Customers</h1>
+            </div>
+            <div className="col-5">
+                <InputGroup className="mb-3">
+                    <DropdownButton
+                        variant="outline-secondary"
+                        title="Sort"
+                        id="input-group-dropdown-1"
+                    >
+                        <Dropdown.Item
+                            onClick={() => handleSortAtoZ()}
+                        >A-Z
+                        </Dropdown.Item>
+                        <Dropdown.Item
+                            onClick={() => handleSortZtoA()}
+                        >Z-A
+                        </Dropdown.Item>
+                        <Dropdown.Divider />
+                    </DropdownButton>
+                    <Form.Control onChange={(e) => handleSearch(e.target.value || " ")} />
+                </InputGroup>
             </div>
             <div className='table-responsive'>
                 <table className='table table-striped table-sm text-center '>
@@ -126,7 +121,7 @@ function UserList() {
                         </tr>
                     </thead>
                     <tbody>
-                        {users.map((user , index) => (
+                        {users.map((user, index) => (
                             <tr>
                                 <td className='align-middle'>{user.id}</td>
                                 <td>
@@ -138,8 +133,8 @@ function UserList() {
                                 <td className='align-middle'>{user.lastName}</td>
                                 <td className='align-middle'>{user.email}</td>
                                 <td className='align-middle'>
-                                    <button className='btn btn-danger me-2' data-bs-toggle="modal" data-bs-target={`#staticDeny${index}`}>
-                                        <span className='fa-solid fa-user-lock'></span>
+                                    <button className='btn btn-success' data-bs-toggle="modal" data-bs-target={`#staticDeny${index}`}>
+                                        <span className="fa-solid fa-unlock" style={{ color: "white" }}></span>
                                     </button>
 
                                     <div
@@ -169,7 +164,7 @@ function UserList() {
                                                     />
                                                 </div>
                                                 <div className="modal-body">
-                                                    <p>Do you want to block {user.firstName || user.lastName} account?</p>
+                                                    <p>Do you want to unlock {user.firstName || user.lastName} account?</p>
                                                 </div>
                                                 <div className="modal-footer">
                                                     <button
@@ -179,7 +174,7 @@ function UserList() {
                                                     >
                                                         Close
                                                     </button>
-                                                    <button onClick={() => handleLock(user)} type="button" className="btn btn-success">
+                                                    <button onClick={() => handleUnlock(user)} type="button" className="btn btn-success">
                                                         Unlock
                                                     </button>
                                                 </div>
@@ -194,12 +189,13 @@ function UserList() {
                 <div className="d-flex justify-content-center">
                     <Stack spacing={2}>
                         <Typography>Page: {page}</Typography>
-                        <Pagination count={totalPage} page={page} onChange={handleChange} siblingCount={3} color="secondary" />
+                        <Pagination count={totalPage} page={page} onChange={handleChange} siblingCount={3} color="primary" />
                     </Stack>
                 </div>
             </div>
         </div>
     )
+
 }
 
-export default UserList;
+export default UserBan;

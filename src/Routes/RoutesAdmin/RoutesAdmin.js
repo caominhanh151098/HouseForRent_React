@@ -15,6 +15,10 @@ import "../../../node_modules/@fortawesome/fontawesome-free/css/all.min.css";
 import "../../assets/css/app.min.css";
 import "../../assets/css/icons.min.css";
 import "../../App.css";
+import HeaderItem from '../../Components/admin/layout/HeaderItem';
+import UserBan from '../../Components/admin/userList/UserBan';
+import Refund from '../../Components/admin/process/Refund';
+import HouseBan from '../../Components/admin/history/HouseBan';
 
 
 
@@ -27,24 +31,25 @@ function RoutesAdmin() {
 
   return (
     <>
-     <React.Fragment>
       <Routes>
         <Route
           path='/admin/*'
           element={
             <Layout>
               <Routes>
-                <Route index element={<DashBoard />} />
-                <Route path='tickets' element={<TicketList />} />
-                <Route path='houses' element={<House />} />
-                <Route path='users' element={<UserList />} />
-                <Route path='reports' element={<Reports />} />
+                <Route path='/' element={<DashBoard />} />
+                <Route path='/tickets' element={<TicketList />} />
+                <Route path='/houses' element={<House />} />
+                <Route path='/houseBan' element={<HouseBan />} />
+                <Route path='/users' element={<UserList />} />
+                <Route path='/banList' element={<UserBan />} />
+                <Route path='/reports' element={<Reports />} />
+                <Route path='/refund' element={<Refund />} />
               </Routes>
             </Layout>
           }
         />
       </Routes>
-    </React.Fragment>
     </>
   );
 }
