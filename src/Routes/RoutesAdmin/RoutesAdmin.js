@@ -9,8 +9,8 @@ import UserList from '../../Components/admin/userList/UserList';
 import Reports from '../../Components/admin/report/Reports';
 import useScript from '../../Hooks/custom/useScript';
 import Layout from '../../Components/admin/layout/Layout';
-import "../../../node_modules/bootstrap/dist/css/bootstrap.min.css";
-import "../../../node_modules/bootstrap/dist/js/bootstrap.min.js";
+// import "../../../node_modules/bootstrap/dist/css/bootstrap.min.css";
+// import "../../../node_modules/bootstrap/dist/js/bootstrap.min.js";
 import "../../../node_modules/@fortawesome/fontawesome-free/css/all.min.css";
 import "../../assets/css/app.min.css";
 import "../../assets/css/icons.min.css";
@@ -26,7 +26,8 @@ function RoutesAdmin() {
 
 
   return (
-    <React.Fragment>
+    <>
+     <React.Fragment>
       <Routes>
         <Route
           path='/admin/*'
@@ -44,6 +45,7 @@ function RoutesAdmin() {
         />
       </Routes>
     </React.Fragment>
+    </>
   );
 }
 

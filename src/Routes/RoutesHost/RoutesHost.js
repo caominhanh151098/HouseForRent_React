@@ -26,12 +26,17 @@ import EditComfortable from './../../component/hosting/main/EditComfortable';
 import NavbarHosting from './../../component/layout_hosting/NavbarHosting';
 import BookedToday from './../../component/hosting/main/BookedToday';
 import AllReservation from './../../component/hosting/main/AllReservation';
-import ShowCalendar from './../../component/hosting/main/ShowCalendar.jsx';
+// import ShowCalendar from './../../component/hosting/main/ShowCalendar.jsx';
 import RevenueHost from './../../component/hosting/main/RevenueHost';
 import Reviews from './../../component/hosting/main/Reviews';
-import '../../../node_modules/bootstrap/dist/css/bootstrap.min.css';
-import '../../../node_modules/bootstrap/dist/js/bootstrap.min.js'
-import '../../../node_modules/@fortawesome/fontawesome-free/css/all.min.css';
+// import '../../../node_modules/bootstrap/dist/css/bootstrap.min.css';
+// import '../../../node_modules/bootstrap/dist/js/bootstrap.min.js'
+// import '../../../node_modules/@fortawesome/fontawesome-free/css/all.min.css';
+ import 'bootstrap/dist/css/bootstrap.css';
+import OpenOTP from './../../Components/otp/OpenOTP';
+import MultiCalendar from '../../Components/calendar/MultiCalendar';
+// import MultiCalendar from './../../Components/calendar/MultiCalendar';
+
 const RoutesHost = () => {
   return (
     <Routes>
@@ -59,11 +64,12 @@ const RoutesHost = () => {
         <Route path='/host/editComfortable/:houseID' element={<EditComfortable/>}/>
         <Route path='/host/bookedToday' element={<BookedToday/>}/>
         <Route path='/host/AllReservation' element={<AllReservation/>}/>
-        <Route path='/host/calendar' element={<ShowCalendar/>}/>
+        <Route path='/host/calendar' element={<MultiCalendar/>}/>
         <Route path='/host/revenueHost' element={<RevenueHost/>}/>
         <Route path='/host/reviews' element={<Reviews/>}/>
+        <Route path='/host/otp' element={<OpenOTP/>}></Route>
       </Routes>
   )
-}
+} 
 
 export default RoutesHost

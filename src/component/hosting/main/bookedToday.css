@@ -4,3 +4,7 @@
     border-color:rgb(218, 215, 215);
     
 }
+.table-striped{
+    border-radius: 7px !important;
+    border-color: gray !important;
+}

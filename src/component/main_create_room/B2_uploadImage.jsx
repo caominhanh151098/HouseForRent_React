@@ -95,7 +95,7 @@ function B2_uploadImage() {
                 }
 
 
-            } else if(element.id != selectAvatar.length - 1) {
+            } else if(element.id != selectAvatar.length - 1) { 
                 list=([...list,element.fakeUrl])
                 setUploadedAvatar([...list])
                 if(element.id==selectAvatar.length-2){setUploading(false)}

@@ -11,3 +11,38 @@
     display: block !important;
     width: 480px;
 }
+input {
+    border: none;
+}
+
+input:focus {
+    outline: none; /* Ẩn cả border và đường viền xung quanh khi được chọn */
+}
+.container-btn-price{
+    height: 100px;
+}
+.btn-luu {
+    color: white;
+    height: 50px;
+    width: 80%;
+    border-radius: 7px;
+    border: 'solid 1px gray';
+    background-color: black;
+}
+.btn-huy {
+    color: gray;
+    height: 50px;
+    width: 80%;
+    border-radius: 7px;
+    border: 'solid 1px gray';
+    background-color: white;
+}
+.rounded-3{
+    border-radius: 20px !important;
+}
+.pt-200{
+    padding-top:80px;
+}
+.pb-80{
+    padding-bottom: 80px;
+}

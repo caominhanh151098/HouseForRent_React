@@ -45,3 +45,6 @@
      color: white;
      
 }
+.pagination a {
+  padding: 0px 6px !important
+}
