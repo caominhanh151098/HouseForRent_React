@@ -330,6 +330,12 @@ const PersonalInfo = () => {
             })
     }
 
+    const [isOverLayVerifyIdentification, setIsOverLayVerifyIdentification] = useState(false);
+
+    const toggleVerifyIdentification = () => {
+        setIsOverLayVerifyIdentification(!isOverLayVerifyIdentification)
+    }
+
     const [selectedCountry, setSelectedCountry] = useState({ code: 'VN', label: 'Vietnam', phone: '84' });
 
     const handleChange = (event, value) => {
@@ -819,12 +825,54 @@ const PersonalInfo = () => {
                         <div className='detail-div-personal-info'>
                             <div>
                                 <h2>Giấy tờ tùy thân do chính phủ cấp</h2>
-                                <p>Chưa được cung cấp</p></div>
-                            <div>
-                                <Link className='link-to-choice-account-setting' to={'/identity-verification'}>
-                                    <h3 className='edit-tag-personal-info'>Chỉnh sửa</h3>
-                                </Link>
+                                {
+                                    userInfo.identity ? (
+                                        <p>Đã xác minh</p>
+                                    ) : (
+                                        <p>Chưa được cung cấp</p>
+                                    )
+                                }
                             </div>
+                            <div>
+                                {
+                                    userInfo.identity ? (
+                                        <h3 onClick={toggleVerifyIdentification}
+                                            className='edit-tag-personal-info'>Xem</h3>
+                                    ) : (
+                                        <Link className='link-to-choice-account-setting' to={'/identity-verification'}>
+                                            <h3 className='edit-tag-personal-info'>Thêm</h3>
+                                        </Link>
+                                    )
+                                }
+                            </div>
+                            {(
+                                <div className={`overlay2 ${isOverLayVerifyIdentification ? '' : 'd-none'}`} >
+                                    <div className={`appearing-div ${isOverLayVerifyIdentification ? 'active' : ''}`}>
+                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                            <i style={{ marginRight: '20%' }}
+                                                onClick={toggleVerifyIdentification} class="fa-solid fa-chevron-left close-description" ></i>
+                                            <h2>Giấy tờ tuỳ thân của bạn</h2>
+                                        </div>
+                                        <hr />
+                                        <div style={{ display: 'flex', justifyContent: 'space-between',marginTop:'5%' }}>
+                                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                                <img className='img-display-on-verify-identity' src={userInfo.identity.srcImgFrontSide} alt="" />
+                                                <h4>Ảnh mặt trước</h4>
+                                            </div>
+                                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                                <img className='img-display-on-verify-identity' src={userInfo.identity.srcImgBackSide} alt="" />
+                                                <h4>Ảnh mặt sau</h4>
+                                            </div>
+                                        </div>
+                                        <hr />
+                                        <div style={{textAlign:'end'}}>
+                                            <Link className='link-to-choice-account-setting' to={'/identity-verification'}>
+                                                <h3 className='edit-tag-personal-info'>Chỉnh sửa</h3>
+                                            </Link>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         <hr />

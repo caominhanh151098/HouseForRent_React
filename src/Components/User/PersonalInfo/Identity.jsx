@@ -8,39 +8,86 @@ import ListItemDecorator from '@mui/joy/ListItemDecorator';
 import Radio from '@mui/joy/Radio';
 import RadioGroup from '@mui/joy/RadioGroup';
 import * as faceapi from 'face-api.js';
-
+import axios from 'axios';
+import { API_UPDATE_USER_INFO } from '../../../Services/common';
+import { Link } from 'react-router-dom';
 
 const Identity = () => {
     const [result, setResult] = useState(null);
 
+    const [loadingCheckImg, setIsLoadingCheckImg] = useState(false);
+
     const checkSimilarity = async () => {
+        setIsLoadingCheckImg(true);
+        console.log("uploadedImageFront", uploadedImageFront);
+        console.log(typeof (uploadedImageFront[0]));
+        console.log("uploadedImageBack", uploadedImageBack);
+
+        // const blob = new Blob([uploadedImageFront], { type: uploadedImageFront.type });
+        // const file = new File([blob], uploadedImageFront.name, { type: uploadedImageFront.type });
+        // const blob2 = new Blob([uploadedImageBack], { type: uploadedImageFront.type });
+        // const file2 = new File([blob2], uploadedImageBack.name, { type: uploadedImageBack.type });
+        // console.log(typeof(file));
+        const up1 = await uploadImgToCloud(uploadedImageFront[0])
+        console.log("up1.data.url", up1.data.url);
+        const up2 = await uploadImgToCloud(uploadedImageBack[0])
+        console.log("up2.data.url", up2.data.url)
+
+
+        // console.log(up2);
         const imageFront = document.getElementById('imageFront');
         console.log("imageFront", imageFront);
         const imageWebcam = document.getElementById('imageWebcam');
         console.log("imageWebcam", imageWebcam);
 
-        if (imageFront && imageWebcam){
+        if (imageFront && imageWebcam) {
             await faceapi.nets.tinyFaceDetector.loadFromUri('/models');
             await faceapi.nets.faceLandmark68Net.loadFromUri('/models');
             await faceapi.nets.faceRecognitionNet.loadFromUri('/models');
-    
+
             const detectionFront = await faceapi.detectSingleFace(imageFront, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
             const detectionWebcam = await faceapi.detectSingleFace(imageWebcam, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
-    
+
+            console.log("detectionFront", detectionFront);
+            console.log("detectionWebcam", detectionWebcam);
             if (detectionFront && detectionWebcam) {
                 const faceMatcher = new faceapi.FaceMatcher([detectionFront.descriptor]);
                 const match = faceMatcher.findBestMatch(detectionWebcam.descriptor);
                 console.log("match", match);
-    
-                setResult(`Sự tương tự: ${match.toString()}`);
-                console.log('nhận diện được khuôn mặt', `${match.toString()}`);
+
+                const similarityPercentage = (1 - match._distance) * 100;
+                console.log(`Sự tương tự: ${similarityPercentage.toFixed(2)}%`);
+
+                if (match.distance <= 0.6) {
+                    setResult(`Sự tương tự: ${match.toString()}`);
+                    console.log('nhận diện được khuôn mặt', `${match.toString()}`);
+
+                    const srcImgFrontSide = up1.data.url;
+                    const srcImgBackSide = up2.data.url;
+
+                    await handleSaveChanges(srcImgFrontSide, srcImgBackSide)
+
+                    const updateUserInfo = JSON.parse(localStorage.getItem('userInfo'));
+
+                    updateUserInfo.identity.srcImgFrontSide = srcImgFrontSide || null;
+                    updateUserInfo.identity.srcImgBackSide = srcImgBackSide || null;
+
+                    localStorage.setItem('userInfo', JSON.stringify(updateUserInfo))
+
+                    setIsLoadingCheckImg(false);
+                } else {
+                    setResult('Không nhận diện được khuôn mặt');
+                    console.log('Không nhận diện được khuôn mặt');
+                    setIsLoadingCheckImg(false);
+                }
             } else {
                 setResult('Không nhận diện được khuôn mặt');
                 console.log('Không nhận diện được khuôn mặt');
+                setIsLoadingCheckImg(false);
             }
         }
 
-        
+
     };
 
     const webcamRef = useRef(null);
@@ -145,6 +192,13 @@ const Identity = () => {
         }, 1000)
     }
 
+    const uploadImgToCloud = (avatarFile) => {
+        const formData = new FormData();
+        formData.append("file", avatarFile);
+        formData.append("upload_preset", "iywrjs6b");
+        return axios.post('https://api-ap.cloudinary.com/v1_1/dw6kopnfo/image/upload', formData)
+    }
+
     const handleCapture = () => {
         if (isWebcamActive) {
             const screenshot = webcamRef.current.getScreenshot();
@@ -157,6 +211,31 @@ const Identity = () => {
         setCapturedImage(null);
 
         setIsWebcamActive(true);
+    }
+
+    const handleSaveChanges = async (value, value2) => {
+        try {
+            const token = localStorage.getItem('jwt');
+            const response = await axios.patch(API_UPDATE_USER_INFO, {
+                identity: {
+                    "srcImgFrontSide": value,
+                    "srcImgBackSide": value2
+                }
+            }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.status === 200) {
+                console.log('Cập nhật thành công');
+            } else {
+                console.error('Cập nhật không thành công');
+            }
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     useEffect(() => {
@@ -220,7 +299,9 @@ const Identity = () => {
                                         </List>
                                     </RadioGroup>
                                     <div className='div-contains-btn-continue-and-back'>
-                                        <button className='btn-back-to-step-identity'><i class="fa-solid fa-angle-left"></i> Quay lại</button>
+                                        <Link to={'/account-settings/personal-info'}>
+                                            <button className='btn-back-to-step-identity'><i class="fa-solid fa-angle-left"></i> Quay lại</button>
+                                        </Link>
                                         <button onClick={() => handleToggleStep('step2')}
                                             className='btn-continue-to-step-identity'>Tiếp tục</button>
                                     </div>
@@ -364,14 +445,14 @@ const Identity = () => {
                             <div className='detail-div-personal-info'>
                                 <div>
                                     <h2>Hãy tự chụp ảnh mình</h2>
-                                    <div style={{display: 'none'}}>
-                                                        {Object.values(uploadedImageFront).map((file, index) => (
-                                                            <div key={index}>
-                                                                <img id='imageFront' className='img-uploaded-indentity'
-                                                                    src={URL.createObjectURL(file)} alt={`Uploaded Image ${index}`} />
-                                                            </div>
-                                                        ))}
-                                                    </div>
+                                    <div style={{ display: 'none' }}>
+                                        {Object.values(uploadedImageFront).map((file, index) => (
+                                            <div key={index}>
+                                                <img id='imageFront' className='img-uploaded-indentity'
+                                                    src={URL.createObjectURL(file)} alt={`Uploaded Image ${index}`} />
+                                            </div>
+                                        ))}
+                                    </div>
                                     <p>Hãy thử giữ thiết bị thẳng trước mặt bạn hoặc nhờ bạn bè chụp cho bạn. Đảm bảo toàn bộ khuôn mặt đều hiện trong khung hình.</p>
                                     <div>
                                         <h3 onClick={toggleWebcam} className='edit-tag-personal-info'>
@@ -406,10 +487,22 @@ const Identity = () => {
                                 capturedImage ? (
                                     <div className='div-contains-btn-continue-and-back'>
                                         <button onClick={(() => handleDeleteCapture())}
-                                            className='btn-back-to-step-identity'>Chụp lại ảnh</button>
-                                        <button onClick={
-                                            checkSimilarity}
-                                            className=' btn-continue-to-step-identity'><i class="fa-solid fa-camera"></i> Gửi ảnh</button>
+                                            className='btn-back-to-step-identity'>Chụp lại ảnh
+                                        </button>
+                                        {
+                                            loadingCheckImg ? (
+                                                <div class="loadingio-spinner-ellipsis-9qckgagjpyq"><div class="ldio-mqwte4ljm49">
+                                                    <div></div><div></div><div></div><div></div><div></div>
+                                                </div></div>
+                                            ) : (
+                                                <button onClick={
+                                                    checkSimilarity
+                                                }
+                                                    className=' btn-continue-to-step-identity'><i class="fa-solid fa-camera"></i> Gửi ảnh
+                                                </button>
+                                            )
+                                        }
+
 
                                     </div>
                                 ) : countdown > 0 ? (
@@ -427,13 +520,12 @@ const Identity = () => {
                                     </div>
                                 )
                             }
-
-                        </div>
+                        </div >
                     )
                 }
 
 
-            </div>
+            </div >
         </>
     )
 }

@@ -38,6 +38,7 @@ const Header = () => {
   const [isOpenDropMenuLoginWithJWT, setIsOpenDropMenuLoginWithJWT] = useState(false);
   const [isOverLayLoginForm, setIsOpenLayLoginForm] = useState(false);
   const [isOverLayContinueWithPhone, setIsOpenLayContinueWithPhone] = useState(false);
+  const [isOverlayLoginSuccess, setIsOverlayLoginSuccess] = useState(false);
   // const [houseSearchByCity, setHouseSearchByCity] = useState([])
 
   const jwtValue = localStorage.getItem("jwt");
@@ -45,9 +46,9 @@ const Header = () => {
   const userInfo = JSON.parse(localStorage.getItem('userInfo'))
   const [render, setRender] = useState(false);
 
-useEffect(() => {
-  console.log("welcoming", userInfo);
-}, [userInfo])
+  useEffect(() => {
+    console.log("welcoming", userInfo);
+  }, [userInfo])
 
 
   const navigate = useNavigate();
@@ -238,6 +239,12 @@ useEffect(() => {
     }
   }
 
+  const toggleLoginSuccess = () => {
+    if (isOverlayLoginSuccess) {
+      setIsOverlayLoginSuccess(false)
+    }
+  }
+
   const ValidationTextField = styled(TextField)({
     '& input:valid + fieldset': {
       borderColor: 'black',
@@ -260,31 +267,43 @@ useEffect(() => {
 
   const isButtonDisabled = valueOTP && valueOTP.length !== 6;
 
+  const [loadingSingup, setLoadingSingup] = useState(false);
+
   const onOTPVerify = async () => {
+    setLoadingSingup(true);
     window.confirmationResult
       .confirm(valueOTP)
       .then(async (res) => {
         console.log(await UserService.loginUser(res.user.phoneNumber));
         if (await UserService.loginUser(res.user.phoneNumber)) {
           console.log("Can't find! Register pls!");
+          setLoadingSingup(false);
         }
         else {
           setIsOpenLayLoginForm(false);
-          if (isOverLayContinueWithPhone){
+          if (isOverLayContinueWithPhone) {
             setIsOpenLayContinueWithPhone(false);
           }
           let res = await axios.get(API_GET_USER_INFO,
-          { headers: {
-              'Authorization': `Bearer ${localStorage.getItem("jwt")}`
-          }});
+            {
+              headers: {
+                'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+              }
+            });
           localStorage.setItem('userInfo', JSON.stringify(res.data))
+          setLoadingSingup(false);
+          setIsOverlayLoginSuccess(true);
         }
       }).catch((err) => {
         console.log(err)
+        setLoadingSingup(false);
       })
   }
 
+
+
   const onSignup = () => {
+    setLoadingSingup(true);
     onCaptchVerify();
     const appVerifier = window.applicationVerifier
     const phone = "+" + selectedCountry?.phone + phoneNumber;
@@ -294,8 +313,10 @@ useEffect(() => {
         window.confirmationResult = confirmationResult;
         console.log(confirmationResult);
         toggleContinueWithPhone();
+        setLoadingSingup(false);
       }).catch((error) => {
         console.log(error);
+        setLoadingSingup(false);
       });
   }
 
@@ -316,8 +337,8 @@ useEffect(() => {
     setSelectedCountry(value);
   };
 
-  
-  if (userInfo){
+
+  if (userInfo) {
     console.log("Giá trị userInfo được tìm thấy: " + userInfo);
   } else {
     console.log("Không có giá trị userInfo trong Local Storage.");
@@ -986,7 +1007,7 @@ useEffect(() => {
                 <hr />
                 <div className="dropdown-menu-choice">Quản lý nhà/phòng cho thuê</div>
                 <Link className="link-user-login"
-                 to={'/account-settings'}>
+                  to={'/account-settings'}>
                   <div className="dropdown-menu-choice">Tài khoản</div>
                 </Link>
                 <hr />
@@ -1081,10 +1102,20 @@ useEffect(() => {
                   />
                 </Box>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'center' }}
-                onClick={onSignup}>
-                <GradientButton style={{ width: '97%' }}>Tiếp tục</GradientButton>
-              </div>
+              {
+                loadingSingup ? (
+                  <div style={{display:'flex', justifyContent:'center', alignItems:'center'}}>
+                      <div class="loadingio-spinner-ellipsis-bpnxs5xwm1u"><div class="ldio-8ew4rgpfv3q">
+                        <div></div><div></div><div></div><div></div><div></div>
+                      </div></div>
+                    </div>
+                ) : (
+                    <div style={{ display: 'flex', justifyContent: 'center' }}
+                      onClick={onSignup}>
+                      <GradientButton style={{ width: '97%' }}>Tiếp tục</GradientButton>
+                    </div>
+                )
+              }
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <hr style={{ width: '36%' }} />
                 <div>Hoặc</div>
@@ -1130,16 +1161,43 @@ useEffect(() => {
               <hr />
               <div className="continue-with-otp-phone">
                 <h3 className="another-choice-continue-with-otp">Lựa chọn khác</h3>
-                <button
-                  onClick={onOTPVerify}
-                  className="btn-continue-with-otp-phone"
+                {
+                  loadingSingup ? (
+                    <div class="loadingio-spinner-ellipsis-bpnxs5xwm1u"><div class="ldio-8ew4rgpfv3q">
+                      <div></div><div></div><div></div><div></div><div></div>
+                    </div></div>
+                  ) : (
+                    <button
+                      onClick={onOTPVerify}
+                      className="btn-continue-with-otp-phone"
 
-                >Tiếp tục</button>
+                    >Tiếp tục</button>
+                  )
+                }
               </div>
             </div>
           </div>
         )}
-      </header>
+
+        {(
+          <div className={`overlay2 ${isOverlayLoginSuccess ? '' : 'd-none'}`} >
+            <div className={`appearing-div ${isOverlayLoginSuccess ? 'active' : ''}`} style={{ width: '666px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                {/* <i style={{ marginRight: '21%' }}
+                  onClick={toggleLoginSuccess} class="fa-solid fa-chevron-left close-description" ></i> */}
+                <h1>Đăng nhập thành công</h1>
+              </div>
+              <hr />
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <img style={{ width: '12%' }} src="https://www.seekpng.com/png/full/957-9571167_airbnb-png.png" alt="" />
+                <h2>Chào mừng bạn đến với Airbnb</h2>
+                <p>Khám phá các nơi ở và trải nghiệm độc đáo trên thế giới</p>
+                <button className="btn-continue-with-toggle-login-success" onClick={toggleLoginSuccess}>Tiếp tục</button>
+              </div>
+            </div>
+          </div>
+        )}
+      </header >
     </>
   )
 }
