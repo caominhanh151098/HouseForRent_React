@@ -81,9 +81,18 @@ const Header = () => {
 
   const { status } = useParams();
 
-  const handleAcceptRegistrationTermsAndCreateUser = () => {
-    console.log(user);
-    UserService.register(user);
+  const handleAcceptRegistrationTermsAndCreateUser = async() => {
+    await UserService.register(user);
+    async function getInfo() {
+      let res = await axios.get(API_GET_USER_INFO,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+          }
+        });
+      localStorage.setItem('userInfo', JSON.stringify(res.data))
+    }
+    getInfo();
     toggleVerifyEmailForm();
   }
 
@@ -126,7 +135,7 @@ const Header = () => {
         toggleFormSuccess();
       }
     }
-    if (status == "success") 
+    if (status == "success")
       verifyEmail();
   }, [])
 
@@ -313,18 +322,20 @@ const Header = () => {
     if (isOverLayLoginForm) {
       setIsOpenLayLoginForm(false);
     }
+    if (isOverLayContinueWithPhone)
+      setIsOpenLayContinueWithPhone(false);
   }
 
   const toggleFormFinishRegister = () => {
     setIsOverFormFinishRegister(!isOverFormFinishRegister)
-    if (isOverLayContinueWithPhone)
-      setIsOpenLayContinueWithPhone(false);
+    if (isOverLayRegisterForm)
+      setIsOverLayRegisterForm(false);
   }
 
   const toggleVerifyEmailForm = () => {
     setIsOverLayVerifyEmail(!isOverLayVerifyEmail)
     if (isOverFormFinishRegister) {
-      setIsOverLayRegisterForm(false);
+      setIsOverFormFinishRegister(false);
     }
   }
 
@@ -380,7 +391,6 @@ const Header = () => {
       .confirm(valueOTP)
       .then(async (res) => {
         if (await UserService.loginUser(res.user.phoneNumber)) {
-          console.log("Can't find! Register pls!");
           setLoadingSingup(false);
           toggleRegisterForm();
         }
@@ -1209,16 +1219,16 @@ const Header = () => {
               </div>
               {
                 loadingSingup ? (
-                  <div style={{display:'flex', justifyContent:'center', alignItems:'center'}}>
-                      <div class="loadingio-spinner-ellipsis-bpnxs5xwm1u"><div class="ldio-8ew4rgpfv3q">
-                        <div></div><div></div><div></div><div></div><div></div>
-                      </div></div>
-                    </div>
+                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                    <div class="loadingio-spinner-ellipsis-bpnxs5xwm1u"><div class="ldio-8ew4rgpfv3q">
+                      <div></div><div></div><div></div><div></div><div></div>
+                    </div></div>
+                  </div>
                 ) : (
-                    <div style={{ display: 'flex', justifyContent: 'center' }}
-                      onClick={onSignup}>
-                      <GradientButton style={{ width: '97%' }}>Tiếp tục</GradientButton>
-                    </div>
+                  <div style={{ display: 'flex', justifyContent: 'center' }}
+                    onClick={onSignup}>
+                    <GradientButton style={{ width: '97%' }}>Tiếp tục</GradientButton>
+                  </div>
                 )
               }
               <div style={{ display: 'flex', alignItems: 'center' }}>

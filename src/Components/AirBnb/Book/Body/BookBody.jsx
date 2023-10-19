@@ -9,7 +9,7 @@ import { useContext } from 'react';
 import BookingProvider from '../Main/BookingProvider';
 import BookingContext from '../Main/BookingContext';
 import { useParams, useHistory, Link } from 'react-router-dom';
-import { API_HOUSE_DETAIL_URL, API_HOUSE_DETAIL_PRICE, API_CREATE_BOOK_HOUSE, API_RESERVATION_HOUSE } from '../../../../Services/common';
+import { API_HOUSE_DETAIL_URL, API_HOUSE_DETAIL_PRICE, API_CREATE_BOOK_HOUSE } from '../../../../Services/common';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { DateRangeCalendar, DateRangePickerDay } from '@mui/x-date-pickers-pro';
@@ -24,6 +24,7 @@ import OpenOTP from '../../../otp/OpenOTP';
 import { format } from 'date-fns';
 import { async } from '@firebase/util';
 import MyAxios from '../../../../Services/MyAxios';
+import { API_RESERVATION_HOUSE } from './../../../../Services/common';
 
 
 const BookBody = () => {
@@ -74,10 +75,16 @@ const BookBody = () => {
       const urlParams = new URLSearchParams(window.location.search);
       const transactionNo = urlParams.get("vnp_TransactionNo");
       const statusTransaction = urlParams.get("vnp_TransactionStatus");
-      if (statusTransaction == '00' && paymentID && tnxRef && transactionNo) {
-        const reps = await MyAxios.axiosWithHeader(API_RESERVATION_HOUSE).get(`/check-transaction/${paymentID}/${tnxRef}?vnp_TransactionNo=${transactionNo}`);
-        if (reps.data) setFormConfirm(true);
+      const payDate = urlParams.get("vnp_PayDate");
+      if (paymentID && tnxRef && transactionNo) {
+        if (statusTransaction == '00') {
+          const reps = await MyAxios.axiosWithHeader(API_RESERVATION_HOUSE).get(`/check-transaction/${paymentID}/${tnxRef}?vnp_TransactionNo=${transactionNo}&vnp_PayDate=${payDate}`);
+          if (reps.data) setFormConfirm(true);
+        }
+        else if (statusTransaction == '02')
+          await MyAxios.axiosWithHeader(API_RESERVATION_HOUSE).post(`/delete-reservation/${paymentID}/${tnxRef}`);
       }
+
     }
     checkTransaction();
   }, [])
