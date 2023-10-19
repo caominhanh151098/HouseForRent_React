@@ -48,3 +48,10 @@
 .pagination a {
   padding: 0px 6px !important
 }
+.selected{
+  color: black !important;
+  border-bottom: solid black;
+}
+.pointer:hover{
+  cursor: pointer;
+}

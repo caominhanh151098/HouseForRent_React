@@ -176,6 +176,22 @@ function AllReservation() {
         }
         getData();
     }
+    function formatDateString(inputDate) {
+        if (inputDate.length !== 8) {
+          return "Ngày không hợp lệ"; // Kiểm tra xem chuỗi đầu vào có đúng độ dài không
+        }
+      
+        var year = inputDate.slice(0, 4);
+        var month = inputDate.slice(4, 6);
+        var day = inputDate.slice(6, 8);
+      
+        if (isNaN(year) || isNaN(month) || isNaN(day)) {
+          return "Ngày không hợp lệ"; // Kiểm tra xem các phần tử có phải là số không
+        }
+      
+        return year + "-" + month + "-" + day;
+      }
+      
     return (
         <>
             <NavbarHosting></NavbarHosting>
@@ -190,10 +206,10 @@ function AllReservation() {
                 <div className='fs-1  ms-5 mb-5'>Đặt phòng</div>
                 <div className=''>
                     <div className='d-flex justify-content-start border-bottom mb-3'>
-                        <div className={`fs-5 me-3 ms-3 pb-3 fw-bold ${type == "upcoming" ? "selected" : ""}`} style={{ color: 'grey' }} onClick={() => { setType("upcoming"); setCurrentPage(0); handleShowList("upcoming"); renderPagination() }}> Sắp tới</div>
-                        <div className={`fs-5 me-3 ms-3 pb-3 fw-bold ${type == "finished" ? "selected" : ""}`} style={{ color: 'grey' }} onClick={() => { setType("finished"); setCurrentPage(0); handleShowList("finished"); renderPagination() }}> Đã hoàn tất</div>
-                        <div className={`fs-5 me-3 ms-3 pb-3 fw-bold ${type == "cancel" ? "selected" : ""}`} style={{ color: 'grey' }} onClick={() => { setType("cancel"); setCurrentPage(0); handleShowList("cancel"); renderPagination() }}> Đã huỷ</div>
-                        <div className={`fs-5 me-3 ms-3 pb-3 fw-bold ${type == "all" ? "selected" : ""}`} style={{ color: 'grey' }} onClick={() => { setType("all"); setCurrentPage(0); handleShowList("all"); }}> Tất cả</div>
+                        <div className={`fs-5 me-3 ms-3 pointer pb-3 fw-bold ${type == "upcoming" ? "selected" : ""}`} style={{ color: 'grey' }} onClick={() => { setType("upcoming"); setCurrentPage(0); handleShowList("upcoming"); renderPagination() }}> Sắp tới</div>
+                        <div className={`fs-5 me-3 ms-3 pointer pb-3 fw-bold ${type == "finished" ? "selected" : ""}`} style={{ color: 'grey' }} onClick={() => { setType("finished"); setCurrentPage(0); handleShowList("finished"); renderPagination() }}> Đã hoàn tất</div>
+                        <div className={`fs-5 me-3 ms-3 pointer pb-3 fw-bold ${type == "cancel" ? "selected" : ""}`} style={{ color: 'grey' }} onClick={() => { setType("cancel"); setCurrentPage(0); handleShowList("cancel"); renderPagination() }}> Đã huỷ</div>
+                        <div className={`fs-5 me-3 ms-3 pointer pb-3 fw-bold ${type == "all" ? "selected" : ""}`} style={{ color: 'grey' }} onClick={() => { setType("all"); setCurrentPage(0); handleShowList("all"); }}> Tất cả</div>
                     </div>
                     <div style={{ height: '300px' }}>
                         <table className='col-6 table table-striped' style={{ border: 'solid 1px gray', width: '95%' }}>
@@ -219,8 +235,9 @@ function AllReservation() {
                                                 <td>{item.user.lastName}</td>
                                                 <td>{item.user.phone}</td>
                                                 <td>{item.house.hotelName}</td>
-                                                <td >{item.checkInDate}</td>
-                                                <td >{item.checkOutDate}</td>
+                                                <td >{(dayjs(item.checkInDate)).format('YYYY-MM-DD')}</td>
+                                                <td >{(dayjs(item.checkOutDate
+                                                    )).format('YYYY-MM-DD')}</td>
                                                 <td style={{ textAlign: 'center' }}>{item.totalPrice}</td>
                                             </tr>
                                         </>

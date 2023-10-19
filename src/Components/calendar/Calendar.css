@@ -46,3 +46,19 @@ input:focus {
 .pb-80{
     padding-bottom: 80px;
 }
+.evt{
+    color: black;
+    background-color: blue;
+    text-align: center;
+    
+}
+.evt-block{
+    border: solid 3px black;
+    padding: 2px 2px 2px 2px
+
+}
+.evt-blockReservation{
+    border: solid 3px black;
+    padding: 2px 2px 2px 2px;
+    color :black
+}

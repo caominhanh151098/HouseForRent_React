@@ -23,6 +23,13 @@ function HomeList () {
     const handleShowDetailHouseOfHost=()=>{
 
     }
+    function daoNguocMang(arr) {
+      var newArr = [];
+      for (var i = arr.length - 1; i >= 0; i--) {
+        newArr.push(arr[i]);
+      }
+      return newArr;
+    }
    
   return (
     <>
@@ -44,9 +51,9 @@ function HomeList () {
   </thead>
   <tbody>
     {
-        houseList.map((item)=>(
+       daoNguocMang( houseList).map((item)=>(
           <tr key={item.id}>
-               <th className='' scope="row"><Link style={{textDecoration :'none',color:'black'}} to={`/host/houseOfHostDetail/${item.id}`}>{item.hotelName}</Link></th>
+               <th className='pt-4' scope="row"><Link style={{textDecoration :'none',color:'black',verticalAlign:'center'}} to={`/host/houseOfHostDetail/${item.id}`}>{item.hotelName}</Link></th>
             <td className='td-homelist'><img style={{width: '100px',height:'70px',borderRadius:'7px'}} src={item.images[0].srcImg} alt="" /></td>
             <td className='td-homelist' style={{verticalAlign:'middle'}}>{item.status}</td>
             <td className='td-homelist'>{item.bookNow=="true"?'Bật':'Tắt'}</td>

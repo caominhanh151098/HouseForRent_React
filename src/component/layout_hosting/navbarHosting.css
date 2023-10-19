@@ -1,0 +1,18 @@
+.btn-nb:hover{
+    border-radius: 20px;
+    background-color: rgb(233, 233, 233);
+    cursor: pointer;
+    
+}
+.choosed{
+    border-bottom: black 2px solid;
+    color :black !important;
+
+    
+}
+.item{
+    color: grey;
+ 
+    text-decoration: none;
+    padding:5px 10px 5px 10px;
+}

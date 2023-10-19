@@ -856,11 +856,11 @@ const PersonalInfo = () => {
                                         <hr />
                                         <div style={{ display: 'flex', justifyContent: 'space-between',marginTop:'5%' }}>
                                             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                                <img className='img-display-on-verify-identity' src={userInfo.identity.srcImgFrontSide} alt="" />
+                                                <img className='img-display-on-verify-identity' src={userInfo.identity && userInfo.identity.srcImgFrontSide} alt="" />
                                                 <h4>Ảnh mặt trước</h4>
                                             </div>
                                             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                                <img className='img-display-on-verify-identity' src={userInfo.identity.srcImgBackSide} alt="" />
+                                                <img className='img-display-on-verify-identity' src={userInfo.identity && userInfo.identity.srcImgBackSide} alt="" />
                                                 <h4>Ảnh mặt sau</h4>
                                             </div>
                                         </div>

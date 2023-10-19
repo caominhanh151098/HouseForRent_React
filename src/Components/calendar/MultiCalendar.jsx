@@ -8,6 +8,8 @@ import axios from 'axios';
 import dayjs from 'dayjs';
 import { set } from 'lodash';
 import "./Calendar.css"
+
+
 const today = new Date();
 const oneYearLater = new Date(today);
 oneYearLater.setFullYear(today.getFullYear() + 1);
@@ -37,12 +39,13 @@ export default function MultiCalendar() {
     const [listHouse, setListHouse] = useState([])
     const [houseID, setHouse] = useState(0)
     const [blockStatus, setBlockStatus] = useState(true)
-    const [listBlockingDate, setListBlockingDate] = useState([])
+    const [blockingDateRangeEvt,setBlockingDateRange]=useState([])
+    const [listBlockingResevation,setListBlockingReservation]=useState([])
     const [calendarEvents, setCalendarEvents] = useState([]);
     const [render, setRender] = useState(false)
     const [typeShow, setTypeShow] = useState('show')
     const [serviceFee, setServiceFee] = useState(0)
-    const [dateFocus, setDateFocus] = useState(new Date(2023, 11))
+    const [dateFocus, setDateFocus] = useState(new Date(    ))
     const [priceOnDate, setPriceOnDate] = useState([])
     const getDatesInRange = (startDate, endDate) => {
         return eachDayOfInterval({ start: startDate, end: endDate });
@@ -56,6 +59,24 @@ export default function MultiCalendar() {
         });
         return check
     }
+    function getDates(startDate, endDate) {
+        var dateArray = [];
+        var currentDate = new Date(startDate);
+        var today = new Date(); // Lấy ngày hiện tại
+        var yesterday = new Date(today);
+        yesterday.setDate(today.getDate() - 1); // Giảm một ngày
+        
+      
+        while (currentDate <= endDate) {
+          if (currentDate >= yesterday) {
+            dateArray.push(new Date(currentDate));
+          }
+          currentDate.setDate(currentDate.getDate() + 1);
+        }
+        console.log(dateArray);
+        return dateArray;
+      }
+      
     function getDateRange() {
         const currentDate = new Date();
         const startDate = new Date(currentDate.getFullYear() - 1, currentDate.getMonth(), currentDate.getDate());
@@ -72,11 +93,40 @@ export default function MultiCalendar() {
         return dateList;
     }
     useEffect(() => {
-        
+        async function getData() {
+            
+
+            let res = await axios.get(`http://localhost:8080/api/multiCalendars/client/getBlockingDateRange/${houseID}`,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+                    }
+                });
+                let listevt=[]
+                res.data?.forEach(element => {
+                    getDates(dayjs(element.checkInDate),dayjs(element.checkOutDate)).forEach(item => {
+                        listevt.push(dayjs(item))
+                    });
+                });
+                setListBlockingReservation(listevt)
+                
+                let x=listevt.map((item)=>(
+                    {
+                        title: 'Đang sử dụng',
+                        color: 'blue',   // an option!
+                        textColor: 'red',
+                        display: 'background',
+                        start: dayjs(item).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+                        allDay: true,
+                        classNames:['evt-blockReservation']
+                    }
+                ))
+                setBlockingDateRange(x)
+        }
+        getData();
+    }, [houseID, render])
+    useEffect(() => {
         let x =weekendPrice!=0?
-        
-        
-        
         getDateRange().map((item) =>
         item.getDay()!==0 && item.getDay()!==6?
         (
@@ -86,6 +136,7 @@ export default function MultiCalendar() {
                 textColor: 'black',
                 start: dayjs(item).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
                 allDay: true,
+                classNames:['evt']
             }
         ):
         (
@@ -95,6 +146,7 @@ export default function MultiCalendar() {
                 textColor: 'black',
                 start: dayjs(item).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
                 allDay: true,
+                classNames:['evt']
             }
         )
         ):
@@ -106,6 +158,7 @@ export default function MultiCalendar() {
                 textColor: 'black',
                 start: dayjs(item).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
                 allDay: true,
+                classNames:['evt']
             }
         )
         )
@@ -152,8 +205,6 @@ export default function MultiCalendar() {
     }, [houseID])
     useEffect(() => {
         async function getData() {
-
-
             let res = await axios.get(`http://localhost:8080/api/multiCalendars/client/getBlockingDate/${houseID}`,
                 {
                     headers: {
@@ -163,19 +214,17 @@ export default function MultiCalendar() {
             let x = res?.data?.map((item) => ({
                 title: 'Đã chặn',
                 color: '#818181',   // an option!
-                textColor: 'black',
+                textColor: 'blue',
                 display: 'background',
                 start: dayjs(item.blockingDate).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
                 allDay: true,
-
+                classNames:['evt-block']
             }))
             console.log(x);
             setCalendarEvents(x)
-
         }
         getData();
     }, [houseID, render])
-
 
     useEffect(() => {
         async function getData() {
@@ -227,7 +276,16 @@ export default function MultiCalendar() {
         }
         getData();
     }, [])
-
+    function isDateInList(dateToCheck, dateList) {
+        let dateCheck=dayjs(dateToCheck).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
+     // Chuyển đổi ngày cần kiểm tra sang đối tượng Date
+        const check= dateList.some(function(date) {
+          return  date.format('YYYY-MM-DDTHH:mm:ss.SSS[Z]') == dateCheck;
+        });
+        console.log(check);
+        return check
+      }
+      
     const handleDateClick = (arg) => {
 
         const clickedDate = arg.date;
@@ -235,6 +293,7 @@ export default function MultiCalendar() {
         var today = new Date(); // Lấy ngày hiện tại
         var yesterday = new Date(today);
         yesterday.setDate(today.getDate() - 1);
+        if(!isDateInList(clickedDate,listBlockingResevation)){
         if (clickedDate >= yesterday) {
             const isDateSelected = selectedDates.find(date => date.getTime() === clickedDate.getTime());
             if (!isDateSelected) {
@@ -247,7 +306,7 @@ export default function MultiCalendar() {
                 setListDom(listDom.filter((item) => item != arg.dayEl))
 
             }
-        }
+        }}
         arg.view.calendar.gotoDate(new Date(clickedDate.getFullYear(), clickedDate.getMonth()))
     };
 
@@ -349,6 +408,8 @@ export default function MultiCalendar() {
         getData();
     }
     const handleUpdateOther = () => {
+
+        console.log("okkk");
         async function getData() {
             let res = await axios.get(`http://localhost:8080/api/host/feeHouse/editOther/${houseID}/${other}/${otherPrice}`,
                 {
@@ -361,7 +422,7 @@ export default function MultiCalendar() {
         getData();
     }
     return (
-        <>    <NavbarHosting />
+        <>    <NavbarHosting  type={"calendar"}/>
             <div className='d-flex'>
                 <div className='fs-5 me-5'>Chọn Phòng / Nhà :</div>
                 <div className='mb-3 col-5 mb-3'>
@@ -400,7 +461,7 @@ export default function MultiCalendar() {
                         dayMaxEvents={false}
                         navLinks={false}
                         dateClick={handleDateClick}
-                        events={[...calendarEvents, ...priceOnDate]}
+                        events={[...calendarEvents, ...priceOnDate,...blockingDateRangeEvt]}
                         initialDate={dateFocus}
                     />
                 </div>

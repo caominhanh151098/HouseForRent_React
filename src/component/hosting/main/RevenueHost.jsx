@@ -204,7 +204,7 @@ function RevenueHost() {
     }, [start, end,house,currentPage])
     return (
         <>
-            <NavbarHosting></NavbarHosting>
+            <NavbarHosting type={"revenueHost"}></NavbarHosting>
             <div className='col-7 container-revenue'>
                 <div className='fs-2 mb-5'>Lịch sử giao dịch</div>
                 <div className=' d-flex justify-content-between pb-3 mb-3 border-bottom'>
@@ -226,7 +226,7 @@ function RevenueHost() {
                 </div>
                 <div className=' d-flex justify-content-around mb-4'>
                     <div className='d-flex'>
-                        <div style={{ verticalAlign: 'middle' }} className='fs-4'> Từ :  </div>
+                        <div style={{ verticalAlign: 'middle' }} className='fs-4'> Từ   </div>
                         <select onChange={(e) => setStart({ ...start, month: e.target.value })} class="form-select month-select me-2 ms-2" aria-label="Default select example">
                             {
                                 listMonth?.map((item) => (
@@ -243,7 +243,7 @@ function RevenueHost() {
                         </select>
                     </div>
                     <div className='d-flex '>
-                        <div style={{ verticalAlign: 'middle' }} className='fs-4'>Đến : </div>
+                        <div style={{ verticalAlign: 'middle' }} className='fs-4'>Đến  </div>
                         <select onChange={(e) => setEnd({ ...end, month: e.target.value })} class="form-select  month-select me-2 ms-2" aria-label="Default select example">
                             {
                                 listMonth?.map((item) => (

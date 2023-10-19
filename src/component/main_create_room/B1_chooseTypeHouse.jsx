@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import CreateRoom from '../../service/create_room_usestate';
 import { roomTypeList } from '../../Services/typeRoomList';
 import Navbar_create_room from '../layout_create_room/Navbar_create_room';
+import "./create_room.css"
 function B1_chooseType  () {
     const [type,setType]=useState(CreateRoom?.getCreateRoom()?.categoryHotel||'')
     const handleLog=()=>{

@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import NavbarHosting from '../../layout_hosting/NavbarHosting';
-
+import dayjs from 'dayjs';
 function BookedToday() {
     const [type, setType] = useState("willCheckOut")
     const [willCheckOut, setWillCheckOut] = useState([])
@@ -15,10 +15,10 @@ function BookedToday() {
     const [upComing, setUpComing] = useState([])
     const [waitApproval, setApproval] = useState([])
     const [render, setRender] = useState(false)
-    const [detail,setDetail]=useState({})
+    const [detail, setDetail] = useState({})
     useEffect(() => {
         async function getData() {
-            let res = await axios.get(`http://localhost:8080/api/host/reservation/willCheckOut`,{
+            let res = await axios.get(`http://localhost:8080/api/host/reservation/willCheckOut`, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem("jwt")}`
                 }
@@ -30,9 +30,11 @@ function BookedToday() {
     useEffect(() => {
         async function getData() {
             let res = await axios.get(`http://localhost:8080/api/host/reservation/welcoming`,
-            { headers: {
-                'Authorization': `Bearer ${localStorage.getItem("jwt")}`
-            }});
+                {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+                    }
+                });
             setWelcoming(res.data)
         }
         getData();
@@ -40,9 +42,11 @@ function BookedToday() {
     useEffect(() => {
         async function getData() {
             let res = await axios.get(`http://localhost:8080/api/host/reservation/coming`,
-            { headers: {
-                'Authorization': `Bearer ${localStorage.getItem("jwt")}`
-            }});
+                {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+                    }
+                });
             setComing(res.data)
         }
         getData();
@@ -50,9 +54,11 @@ function BookedToday() {
     useEffect(() => {
         async function getData() {
             let res = await axios.get(`http://localhost:8080/api/host/reservation/upcoming`,
-            { headers: {
-                'Authorization': `Bearer ${localStorage.getItem("jwt")}`
-            }});
+                {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+                    }
+                });
             setUpComing(res.data)
         }
         getData();
@@ -60,9 +66,11 @@ function BookedToday() {
     useEffect(() => {
         async function getData() {
             let res = await axios.get(`http://localhost:8080/api/host/reservation/waitApproval`,
-            { headers: {
-                'Authorization': `Bearer ${localStorage.getItem("jwt")}`
-            }});
+                {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+                    }
+                });
             setApproval(res.data)
         }
         getData();
@@ -79,9 +87,11 @@ function BookedToday() {
                     onClick: () => {
                         async function getData() {
                             let res = await axios.get(`http://localhost:8080/api/host/reservation/delete/${id}`,
-                            { headers: {
-                                'Authorization': `Bearer ${localStorage.getItem("jwt")}`
-                            }});
+                                {
+                                    headers: {
+                                        'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+                                    }
+                                });
                             setRender(render ? false : true)
                         }
                         getData();
@@ -108,9 +118,11 @@ function BookedToday() {
                     onClick: () => {
                         async function getData() {
                             let res = await axios.get(`http://localhost:8080/api/host/reservation/accept/${id}`,
-                            { headers: {
-                                'Authorization': `Bearer ${localStorage.getItem("jwt")}`
-                            }});
+                                {
+                                    headers: {
+                                        'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+                                    }
+                                });
                             setRender(render ? false : true)
                         }
                         getData();
@@ -124,20 +136,22 @@ function BookedToday() {
             ]
         });
     };
-    const deny = (id) => {
+    const   deny = (id) => {
 
         confirmAlert({
             title: "Duyệt đơn",
-            message: "Bạn có huỷ đơn đặt này không?",
+            message: "Bạn có huỷ đơn đặt này và hoàn tiền lại cho khách không?",
             buttons: [
                 {
                     label: "Yes",
                     onClick: () => {
                         async function getData() {
                             let res = await axios.get(`http://localhost:8080/api/host/reservation/delete/${id}`,
-                            { headers: {
-                                'Authorization': `Bearer ${localStorage.getItem("jwt")}`
-                            }});
+                                {
+                                    headers: {
+                                        'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+                                    }
+                                });
                             setRender(render ? false : true)
                         }
                         getData();
@@ -151,17 +165,48 @@ function BookedToday() {
             ]
         });
     };
-    const handleshowGuestDetail =(reservationId)=>{
-       
+    const   finish = (id) => {
+
+        confirmAlert({
+            title: "hoàn thành đặt chỗ",
+            message: "Bạn có muốn hoàn thành đơn đặt này không?",
+            buttons: [
+                {
+                    label: "Yes",
+                    onClick: () => {
+                        async function getData() {
+                            let res = await axios.get(`http://localhost:8080/api/host/reservation/finishReservation/${id}`,
+                                {
+                                    headers: {
+                                        'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+                                    }
+                                });
+                            setRender(render ? false : true)
+                        }
+                        getData();
+                    }
+
+                },
+                {
+                    label: "No"
+                    // onClick: () => alert("Click No")
+                }
+            ]
+        });
+    };
+    const handleshowGuestDetail = (reservationId) => {
+
         async function getData() {
             let res = await axios.get(`http://localhost:8080/api/host/reservation/getGuestDetail/${reservationId}`,
-            { headers: {
-                'Authorization': `Bearer ${localStorage.getItem("jwt")}`
-            }});
+                {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+                    }
+                });
             setDetail(res.data)
         }
         getData();
-  
+
     }
     return (
         <>
@@ -177,16 +222,16 @@ function BookedToday() {
                     <button style={type == "coming" ? { borderColor: 'black' } : {}} onClick={() => setType("coming")} className='rounded-pill btn-type'>Sắp đến ({coming.length})</button>
                     <button style={type == "upcoming" ? { borderColor: 'black' } : {}} onClick={() => setType("upcoming")} className='rounded-pill btn-type'>Sắp tới ({upComing.length})</button>
                     <button style={type == "waitApproval" ? { borderColor: 'black' } : {}} onClick={() => setType("waitApproval")} className='rounded-pill btn-type'>Đánh giá đang chờ xử lí ({waitApproval.length})</button>
-                    <div className='fs-5 text-decoration-underline' style={{marginLeft:'200px'}}><Link style={{color:'black',textDecoration:'underline'}} to={`/host/AllReservation`}>Tất cả đặt phòng</Link>  </div>
+                    <div className='fs-5 text-decoration-underline' style={{ marginLeft: '200px' }}><Link style={{ color: 'black', textDecoration: 'underline' }} to={`/host/AllReservation`}>Tất cả đặt phòng</Link>  </div>
                 </div>
                 <table className='col-8 table table-striped' style={{ border: 'solid 1px gray', width: '100%' }}>
                     <thead>
                         <th style={{ height: '40px', padding: '10px', verticalAlign: 'middle' }}>Tên khách hàng</th>
                         <th style={{ height: '40px', padding: '10px', verticalAlign: 'middle' }}>Số điện thoại</th>
                         <th style={{ height: '40px', padding: '10px', verticalAlign: 'middle' }}>Nhà/Phòng của bạn</th>
-                        <th style={{ height: '40px', padding: '10px', verticalAlign: 'middle' }}>Ngày Check-in</th>
-                        <th style={{ height: '40px', padding: '10px', verticalAlign: 'middle' }}>Ngày Check-out</th>
-                        <th style={{ height: '40px', padding: '10px', verticalAlign: 'middle' }}>Tổng giá</th>
+                        <th style={{ height: '40px', padding: '10px', verticalAlign: 'middle', textAlign: 'center' }}>Ngày Check-in</th>
+                        <th style={{ height: '40px', padding: '10px', verticalAlign: 'middle', textAlign: 'center' }}>Ngày Check-out</th>
+                        <th style={{ height: '40px', padding: '10px', verticalAlign: 'middle', textAlign: 'center' }}>Tổng giá</th>
                     </thead>
                     <tbody >
                         {
@@ -200,10 +245,14 @@ function BookedToday() {
                                             <td>{item.user.lastName}</td>
                                             <td>{item.user.phone}</td>
                                             <td>{item.house.hotelName}</td>
-                                            <td style={{ textAlign: 'center' }}>{item.checkInDate}</td>
-                                            <td style={{ textAlign: 'center' }}>{item.checkOutDate}</td>
+                                            <td style={{ textAlign: 'center' }}>{(dayjs(item.checkInDate)).format('YYYY-MM-DD')}</td>
+                                            <td style={{ textAlign: 'center' }}>{(dayjs(item.checkOutDate)).format('YYYY-MM-DD')}</td>
                                             <td style={{ textAlign: 'center' }}>{item.totalPrice}</td>
-                                            <td><i data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="fa-solid fa-circle-info fa-xl" onClick={()=>handleshowGuestDetail(item.id)}></i></td>
+                                            <td>
+                                                <i data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="fa-solid fa-circle-info fa-xl" onClick={() => handleshowGuestDetail(item.id)}></i>
+                                                <i class="fa-solid fa-flag-checkered fs-4  ms-3"  onClick={() => finish(item.id)}></i>
+                                            </td>
+
                                         </tr>
                                         </>
 
@@ -218,10 +267,13 @@ function BookedToday() {
                                                 <td>{item.user.lastName}</td>
                                                 <td>{item.user.phone}</td>
                                                 <td>{item.house.hotelName}</td>
-                                                <td style={{ textAlign: 'center' }}>{item.checkInDate}</td>
-                                                <td style={{ textAlign: 'center' }}>{item.checkOutDate}</td>
+                                                <td style={{ textAlign: 'center' }}>{(dayjs(item.checkInDate)).format('YYYY-MM-DD')}</td>
+                                                <td style={{ textAlign: 'center' }}>{(dayjs(item.checkOutDate)).format('YYYY-MM-DD')}</td>
                                                 <td style={{ textAlign: 'center' }}>{item.totalPrice}</td>
-                                                <td><i data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="fa-solid fa-circle-info fa-xl" onClick={()=>handleshowGuestDetail(item.id)}></i></td>
+                                                <td>
+                                                    <i data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="fa-solid fa-circle-info fa-xl" onClick={() => handleshowGuestDetail(item.id)}></i>
+                                                    <i class="fa-solid fa-flag-checkered fs-4  ms-3"  onClick={() => finish(item.id)}></i>
+                                                </td>
                                             </tr>
                                             </>
 
@@ -236,8 +288,8 @@ function BookedToday() {
                                                     <td>{item.user.lastName}</td>
                                                     <td>{item.user.phone}</td>
                                                     <td>{item.house.hotelName}</td>
-                                                    <td style={{ textAlign: 'center' }}>{item.checkInDate}</td>
-                                                    <td style={{ textAlign: 'center' }}>{item.checkOutDate}</td>
+                                                    <td style={{ textAlign: 'center' }}>{(dayjs(item.checkInDate)).format('YYYY-MM-DD')}</td>
+                                                    <td style={{ textAlign: 'center' }}>{(dayjs(item.checkOutDate)).format('YYYY-MM-DD')}</td>
                                                     <td style={{ textAlign: 'center' }}>{item.totalPrice}</td>
                                                     <td><i class="fa-solid fa-trash-can fa-lg" onClick={() => submit(item.id)}></i></td>
                                                     <td><i data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="fa-solid fa-circle-info fa-xl"></i></td>
@@ -255,11 +307,11 @@ function BookedToday() {
                                                         <td>{item.user.lastName}</td>
                                                         <td>{item.user.phone}</td>
                                                         <td>{item.house.hotelName}</td>
-                                                        <td style={{ textAlign: 'center' }}>{item.checkInDate}</td>
-                                                        <td style={{ textAlign: 'center' }}>{item.checkOutDate}</td>
+                                                        <td style={{ textAlign: 'center' }}>{(dayjs(item.checkInDate)).format('YYYY-MM-DD')}</td>
+                                                        <td style={{ textAlign: 'center' }}>{(dayjs(item.checkOutDate)).format('YYYY-MM-DD')}</td>
                                                         <td style={{ textAlign: 'center' }}>{item.totalPrice}</td>
                                                         <td><i class="fa-solid fa-trash-can fa-lg" onClick={() => submit(item.id)}></i></td>
-                                                        <td><i data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="fa-solid fa-circle-info fa-xl" onClick={()=>handleshowGuestDetail(item.id)}></i></td>
+                                                        <td><i data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="fa-solid fa-circle-info fa-xl" onClick={() => handleshowGuestDetail(item.id)}></i></td>
                                                     </tr>
                                                     </>
 
@@ -274,12 +326,12 @@ function BookedToday() {
                                                             <td>{item.user.lastName}</td>
                                                             <td>{item.user.phone}</td>
                                                             <td>{item.house.hotelName}</td>
-                                                            <td style={{ textAlign: 'center' }}>{item.checkInDate}</td>
-                                                            <td style={{ textAlign: 'center' }}>{item.checkOutDate}</td>
+                                                            <td style={{ textAlign: 'center' }}>{(dayjs(item.checkInDate)).format('YYYY-MM-DD')}</td>
+                                                            <td style={{ textAlign: 'center' }}>{(dayjs(item.checkOutDate)).format('YYYY-MM-DD')}</td>
                                                             <td style={{ textAlign: 'center' }}>{item.totalPrice}</td>
                                                             <td><i class="fa-solid fa-x fa-lg" onClick={() => deny(item.id)}></i></td>
                                                             <td><i class="fa-solid fa-check fa-xl" onClick={() => accept(item.id)}></i></td>
-                                                            <td><i data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="fa-solid fa-circle-info fa-xl" onClick={()=>handleshowGuestDetail(item.id)}></i></td>
+                                                            <td><i data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="fa-solid fa-circle-info fa-xl" onClick={() => handleshowGuestDetail(item.id)}></i></td>
                                                         </tr>
                                                         </>
 
@@ -302,7 +354,7 @@ function BookedToday() {
                         <div class="modal-body" style={{ marginLeft: '40px', marginRight: '40px' }}>
                             <div className='d-flex justify-content-between border-bottom mb-3 pb-3'>
                                 <div className=' fs-4'> người lớn :</div>
-                                
+
                                 <div className='fs-5 mt-2 ' style={{ marginRight: '80px' }}>{detail?.numAdults}</div>
                             </div>
                             <div className='d-flex justify-content-between border-bottom mb-3 pb-3'>

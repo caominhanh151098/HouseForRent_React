@@ -4,7 +4,8 @@ import { toast } from "react-toastify";
 import FileServive from "../../Services/fileService";
 import Navbar_create_room from "../layout_create_room/Navbar_create_room";
 import CreateRoom from './../../service/create_room_usestate';
-
+// import 'bootstrap/dist/css/bootstrap.min.css';
+// import 'bootstrap/dist/js/bootstrap.min.js';
 function B2_uploadImage() {
     const list = CreateRoom.getCreateRoom().imageList?.map((item, index) => (
         {
