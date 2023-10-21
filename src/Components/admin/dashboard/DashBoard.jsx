@@ -387,7 +387,7 @@ function DashBoard() {
         datasets: [
             {
                 label: '# of Votes',
-                data: [1000 - 0, 0],
+                data: [700 , 300],
                 backgroundColor: ["#377dff", "rgba(55, 125, 255, 0.35)"],
                 borderColor: ["#ffffff", "#ffffff"],
                 borderWidth: 4,
@@ -398,7 +398,6 @@ function DashBoard() {
 
 
     const dataToday = useFetchReservationToday();
-    console.log(dataToday);
 
     const [socketData, setSocketData] = useState([]);
     const [stompClient, setStompClient] = useState(null);
@@ -421,8 +420,16 @@ function DashBoard() {
                     }
                 })
             })
+
+            const newChart = { ...dataChart };
+            const newArr = [...newChart.datasets[0].data];
+            newArr[0] = parseInt(1000 - total);
+            newArr[1] = parseInt(total);
+            newChart.datasets[0].data = newArr;
+
             setDataShow(dataToday);
             setTotalShow(total.toFixed(2))
+            setDataChart(newChart)
         }
     }, [dataToday])
 
@@ -634,7 +641,7 @@ function DashBoard() {
                 <div style={{ height: '75%', display: 'flex' }} >
                     <div style={{ width: '30%', height: 'auto' }}>
                         <div style={{ position: "relative" }}>
-                            <Doughnut data={dataChart} options={option} />
+                            <Doughnut data={data} options={option} />
                             <div style={{ position: 'absolute', bottom: '70px', left: '105px', textAlign: "center" }}>
                                 <small style={{ fontSize: "15px", textTransform: "uppercase", letterSpacing: ".03125rem", fontWeight: "600" }}>Project balance</small> <br />
                                 <span style={{ fontSize: "1.4109375rem", fontWeight: "600", lineHeight: "1.2" }}>${totalShow || 0}</span>

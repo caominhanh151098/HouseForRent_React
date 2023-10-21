@@ -399,18 +399,18 @@ function TicketList() {
                                                     <div>
                                                         <div style={{ marginBottom: "50px" }} >
                                                             <p className="d-flex justify-content-between">Giá cơ sở: <span>{house?.price.split(".00")}$</span></p>
-                                                            <p className="d-flex justify-content-between">Phí dịch vụ dành cho khách: <span>{(house?.price * 14 / 100)}$</span></p>
+                                                            <p className="d-flex justify-content-between">Phí dịch vụ dành cho khách: <span>{(house?.price * 0.14).toFixed(2)}$</span></p>
                                                             <div className="d-flex justify-content-center">
                                                                 <hr style={{ width: "90%" }} />
                                                             </div>
-                                                            <p className="d-flex justify-content-between">Giá cho khách (Trước thuế):  <span>{house?.price.split(".00") + Math.ceil(house?.price * 14 / 100)}$</span></p>
+                                                            <p className="d-flex justify-content-between">Giá cho khách (Trước thuế):  <span>{(parseFloat(house?.price.split(".00")) + parseFloat(Math.ceil(house?.price * 0.14))).toFixed(2)}$</span></p>
                                                         </div>
 
                                                     </div>
 
                                                 </div>
                                                 <div className="price-bot">
-                                                    <p className="d-flex justify-content-between">Lợi nhuận kiếm được: <span>{(house?.price.split(".00") + Math.ceil(house?.price * 0.14)) * 0.15}$</span></p>
+                                                    <p className="d-flex justify-content-between">Lợi nhuận kiếm được: <span>{((parseFloat(house?.price.split(".00")) + parseFloat(Math.ceil(house?.price * 0.14))) * 0.15).toFixed(2)}$</span></p>
                                                 </div>
                                             </div>
 

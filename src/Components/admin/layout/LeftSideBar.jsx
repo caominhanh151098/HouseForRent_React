@@ -15,6 +15,12 @@ import CottageIcon from '@mui/icons-material/Cottage';
 import GiteIcon from '@mui/icons-material/Gite';
 import NoMeetingRoomIcon from '@mui/icons-material/NoMeetingRoom';
 import HistoryIcon from '@mui/icons-material/History';
+import PolicyIcon from '@mui/icons-material/Policy';
+import ReplyAllIcon from '@mui/icons-material/ReplyAll';
+import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import SecurityIcon from '@mui/icons-material/Security';
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import { Collapse, List, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -23,6 +29,7 @@ function LeftSideBar({ children }) {
     const [openCustomer, setOpenCustomer] = useState(false);
     const [openProcess, setOpenProcess] = useState(false);
     const [openHouses, setOpenHouses] = useState(false);
+    const [openPolicy, setOpenPolicy] = useState(false);
 
     const [active, setActive] = useState({
         dashboard: false,
@@ -32,7 +39,8 @@ function LeftSideBar({ children }) {
         user: false,
         reports: false,
         banList: false,
-        refund: false
+        refund: false,
+        refundPolicy: false
 
     })
 
@@ -48,7 +56,8 @@ function LeftSideBar({ children }) {
             user: pathName === '/admin/users',
             banList: pathName === '/admin/banList',
             reports: pathName === '/admin/reports',
-            refund: pathName === '/admin/refund'
+            refund: pathName === '/admin/refund',
+            refundPolicy: pathName === '/admin/refundPolicy'
 
         })
     }, [location.pathname])
@@ -64,6 +73,9 @@ function LeftSideBar({ children }) {
     const handleClickHouses = () => {
         setOpenHouses(!openHouses);
     }
+    const handleClickPolicy = () => {
+        setOpenPolicy(!openPolicy);
+    }
 
     return (
         <div className="container-fluid">
@@ -71,7 +83,7 @@ function LeftSideBar({ children }) {
                 <nav
                     id="sidebarMenu"
                     className="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse"
-                    style={{overflow: "auto"}}
+                    style={{ overflow: "auto" }}
                 >
                     <div className="position-sticky pt-3">
                         <ul className="nav flex-column">
@@ -197,9 +209,55 @@ function LeftSideBar({ children }) {
                                                 <ListItemText primary="History Refund" />
                                             </ListItemButton>
                                         </Link>
+                                        <ListItemButton sx={{ pl: 4 }}>
 
+                                            <ListItemIcon>
+                                                <ReceiptLongIcon sx={{ fontSize: "18px" }} />
+                                            </ListItemIcon>
+                                            <ListItemText primary="History Transaction" />
+                                        </ListItemButton>
+                                    </List>
+                                </Collapse>
+                            </li>
+                            <li className="nav-item">
+                                <ListItemButton onClick={() => handleClickPolicy()}>
+                                    <ListItemIcon>
+                                        <PolicyIcon sx={{ fontSize: "18px" }} />
+                                    </ListItemIcon>
+                                    <ListItemText primary="Policy" />
+                                    {openPolicy ? <ExpandLess sx={{ fontSize: "18px" }} /> : <ExpandMore sx={{ fontSize: "18px" }} />}
+                                </ListItemButton>
+                                <Collapse in={openPolicy} timeout="auto" unmountOnExit>
+                                    <List>
 
+                                        <ListItemButton sx={{ pl: 4 }}>
+                                            <ListItemIcon>
+                                                <CreateNewFolderIcon sx={{ fontSize: "18px" }} />
+                                            </ListItemIcon>
+                                            <ListItemText primary="Refund Policy" />
+                                        </ListItemButton>
 
+                                        <Link className={`nav-link ${active.refundPolicy ? "active" : ""}`} to={"/admin/refundPolicy"}>
+                                            <ListItemButton sx={{ pl: 4 }}>
+                                                <ListItemIcon>
+                                                    <ReplyAllIcon sx={{ fontSize: "18px" }} />
+                                                </ListItemIcon>
+                                                <ListItemText primary="Refund Policy" />
+                                            </ListItemButton>
+                                        </Link>
+
+                                        <ListItemButton sx={{ pl: 4 }}>
+                                            <ListItemIcon>
+                                                <MonetizationOnIcon sx={{ fontSize: "18px" }} />
+                                            </ListItemIcon>
+                                            <ListItemText primary="Fee Policy" />
+                                        </ListItemButton>
+                                        <ListItemButton sx={{ pl: 4 }}>
+                                            <ListItemIcon>
+                                                <SecurityIcon sx={{ fontSize: "18px" }} />
+                                            </ListItemIcon>
+                                            <ListItemText primary="Securiry Policy" />
+                                        </ListItemButton>
                                     </List>
                                 </Collapse>
                             </li>
