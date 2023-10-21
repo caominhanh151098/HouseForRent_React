@@ -20,7 +20,6 @@ import CircularProgressVariants from './CircularProgressVariants';
 import _ from 'lodash';
 import { useNavigate } from 'react-router-dom';
 import "../../../../../node_modules/@fortawesome/fontawesome-free/css/all.min.css"
-import OpenOTP from '../../../otp/OpenOTP';
 import { format } from 'date-fns';
 import { async } from '@firebase/util';
 import MyAxios from '../../../../Services/MyAxios';
@@ -926,7 +925,6 @@ const BookBody = () => {
               <div>
                 <button className='add-telephone-to-your-trip' onClick={toggleAddTelephone}>Thêm</button>
               </div>
-              <OpenOTP />
               {(
                 <div className={`overlay2 ${isOverlayVisible3 ? '' : 'd-none'}`} >
                   <div className={`appearing-div ${isOverlayVisible3 ? 'active' : ''}`} style={{ width: '550px' }}>
@@ -1298,172 +1296,6 @@ const BookBody = () => {
                         </div>
                       </div>
                       <hr style={{ width: '95%', margin: '-10px 10px' }} />
-                      {/* <div style={{ marginTop: '30px', marginBottom: '20px' }}
-                      className='price-detail-fixed-book-detail'>
-                      <h2>Chi tiết giá</h2>
-                      {
-                        housePrice && numberOfNights && numberOfNights - countWeekendDay > 0 && (
-                          <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
-                            <div>
-                              {
-                                housePrice && (
-                                  <p onClick={handleOpenAveragePriceDayDetail}
-                                    className='detail-text-payment-book-body'>${housePrice.price} x {numberOfNights - countWeekendDay} đêm (Trong tuần)  </p>
-                                )
-                              }
-                            </div>
-                            <div>
-                              <p>${housePrice && numberOfNights ? housePrice?.price * (numberOfNights - countWeekendDay) : 'Tối thiểu 1 ngày'}</p>
-                            </div>
-                            {
-                              isOpenAveragePriceDayDetail && (
-                                <div className={`show-weekend-days-details ${isOpenAveragePriceDayDetail ? '' : 'hide-weekend-details'}`}>
-                                  <div className='title-weekend-days-detail'>
-                                    <i onClick={handleOpenAveragePriceDayDetail}
-                                      class="fa-solid fa-xmark"></i>
-                                    <h3>Giá trung bình hàng đêm được làm tròn</h3>
-                                    <p></p>
-
-                                  </div>
-                                </div>
-                              )
-                            }
-                          </div>
-                        )
-                      }
-
-                      {
-                        housePrice && countWeekendDay > 0 && (
-                          <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
-                            <div>
-                              {
-                                housePrice && countWeekendDay > 0 && (
-                                  <p onClick={handleOpenWeekendDayDetail}
-                                    className='detail-text-payment-book-body'>${housePrice?.weekendDays ? housePrice.weekendPrice : housePrice.price} x {countWeekendDay} đêm (Cuối tuần)</p>
-                                )
-                              }
-                            </div>
-                            <div>
-                              <p>{housePrice && countWeekendDay > 0 && housePrice?.weekendPrice ? '$' + housePrice?.weekendPrice * countWeekendDay : housePrice?.price * countWeekendDay}</p>
-                            </div>
-                            {
-                              isOpenWeekendDetail && (
-                                <div className={`show-weekend-days-details ${isOpenWeekendDetail ? '' : 'hide-weekend-details'}`}>
-                                  <div className='title-weekend-days-detail'>
-                                    <i onClick={handleOpenWeekendDayDetail}
-                                      class="fa-solid fa-xmark"></i>
-                                    <h2>Các ngày cuối tuần</h2>
-                                    <p></p>
-                                  </div>
-                                  <div className='weekend-days-details'>
-                                    {
-                                      weekendDayDetails.map((day, index) => (
-                                        <p key={index}>{index + 1}. {day}</p>
-                                      ))
-                                    }
-                                  </div>
-                                </div>
-                              )
-                            }
-                          </div>
-                        )
-                      }
-                      <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
-                        <div>
-                          {
-                            housePrice &&
-                            housePrice?.feeHouses &&
-                            numberOfNights >= 3 &&
-                            housePrice.feeHouses[0] &&
-                            (
-                              <p className='detail-text-payment-book-body'>{housePrice?.feeHouses[0]?.fee.name}</p>
-                            )
-                          }
-                        </div>
-                        <div>
-                          {
-                            housePrice &&
-                            housePrice?.feeHouses &&
-                            numberOfNights >= 3 &&
-                            housePrice.feeHouses[0] &&
-                            (
-                              <p>${housePrice?.feeHouses[0]?.price}</p>
-                            )
-                          }
-                        </div>
-                      </div>
-                      <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
-                        <div>
-                          {
-                            housePrice &&
-                            housePrice?.feeHouses &&
-                            numberOfNights === 2 &&
-                            housePrice.feeHouses[0] &&
-                            (
-                              <p className='detail-text-payment-book-body'>{housePrice?.feeHouses[1]?.fee.name}</p>
-                            )
-                          }
-                        </div>
-                        <div>
-                          {
-                            housePrice &&
-                            housePrice?.feeHouses &&
-                            numberOfNights === 2 &&
-                            housePrice.feeHouses[0] &&
-                            (
-                              <p>${housePrice?.feeHouses[1]?.price}</p>
-                            )
-                          }
-                        </div>
-                      </div>
-                      <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
-                        <div>
-                          {
-                            housePrice &&
-                            housePrice?.feeHouses &&
-                            housePrice.feeHouses[2] &&
-                            countPets > 0 && (
-                              <p className='detail-text-payment-book-body'>{housePrice?.feeHouses[2]?.fee.name}</p>
-                            )
-                          }
-                        </div>
-                        <div>
-                          {
-                            housePrice &&
-                            housePrice?.feeHouses &&
-                            housePrice.feeHouses[0] &&
-                            countPets > 0 && (
-                              <p>${housePrice?.feeHouses[2]?.price}</p>
-                            )
-                          }
-                        </div>
-                      </div>
-                      <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
-                        <div>
-                          {
-                            housePrice &&
-                            housePrice?.feeHouses &&
-                            housePrice.feeHouses[3] &&
-                            housePrice?.feeHouses[3]?.other &&
-                            ((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other) > 0) && (
-                              <p className='detail-text-payment-book-body'>{housePrice?.feeHouses[3]?.fee.name}</p>
-                            )
-                          }
-                        </div>
-                        <div>
-                          {
-                            housePrice &&
-                            housePrice?.feeHouses &&
-                            housePrice.feeHouses[3] &&
-                            housePrice?.feeHouses[3]?.other &&
-                            ((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other) > 0) && (
-                              <p>${((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other)) * housePrice?.feeHouses[3]?.price}</p>
-                            )
-                          }
-                        </div>
-                      </div>
-                    </div> */}
-                      {/* <hr style={{ width: '95%', margin: '-10px 10px' }} /> */}
                       <div className='price-detail-fixed-book-detail'>
                         <div className='total-fixed-book-detail' style={{ margin: '20px 11px' }}>
                           <div>

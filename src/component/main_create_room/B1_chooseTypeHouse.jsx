@@ -29,8 +29,8 @@ function B1_chooseType  () {
          {
           roomTypeList.map((item)=>(
             <div key={item.id} className={`card mb-3  me-3 ms-3 ${item.id==type?'dark':''}`} style={{width: '10rem'}}>
-            <div className="card-body row">
-                <img style={{width:'50px',height:'40px'}} src={item.icon} onClick={()=>{handleChooseType(item.id)}}></img>
+            <div className="card-body row" onClick={()=>{handleChooseType(item.id)}}>
+                <img style={{width:'50px',height:'40px'}} src={item.icon} ></img>
                 <h6 className=" mb-2 text-muted">{item.name} </h6>
             </div>
         </div>

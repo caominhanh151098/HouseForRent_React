@@ -43,6 +43,7 @@ const BodyDetail = () => {
     const [isOverlayVisible, setIsOverlayVisible] = useState(false);
     const [isOverlayComfortable, setIsOVerlayComfortable] = useState(false)
     const [isOverlayReviews, setIsOVerlayReviews] = useState(false)
+    const [isOverlayCancellationPolicy, setIsOverlayCancellationPolicy] = useState(false)
     const [searchReviews, setSearchReviews] = useState('');
     const [filteredReviewsSearch, setFilteredReviewsSearch] = useState([]);
     const [houseComfortable, setHouseComfortable] = useState([]);
@@ -51,6 +52,7 @@ const BodyDetail = () => {
     const [loadingInputSearch, setLoadingInputSearch] = useState(false)
     const [selectedDates, setSelectedDates] = useState([null, null
     ]);
+    const [selectNoRefund, setSelectNoRefund] = useState(false);
     const [showFullDescription, setShowFullDescription] = useState(false);
     const [isTruncated, setIsTruncated] = useState(true);
     const [countOld, setCountOld] = useState(CountOld ? Number(CountOld) : 1);
@@ -60,6 +62,7 @@ const BodyDetail = () => {
     const [housePrice, setHousePrice] = useState({});
     const [checkAvailableRoom, setCheckAvailableRoom] = useState(false)
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [noRefund, setNoRefund] = useState(false);
 
     const handleImageClick = (index) => {
         setCurrentImageIndex(index);
@@ -136,6 +139,7 @@ const BodyDetail = () => {
             let res = await fetch(API_HOUSE_DETAIL_URL + `${houseID}`);
             let housedtl = await res.json()
             setHouse(housedtl)
+            setNoRefund(housedtl.cancellationPolicyDetailList[0].noRefunds ? true : false)
         }
         getHouseDetail();
     }, [])
@@ -217,6 +221,10 @@ const BodyDetail = () => {
             document.querySelector('.leaflet-control').style = 'block';
             document.querySelector('.leaflet-control-attribution').style = 'block'
         }
+    };
+
+    const toggleOverlayCancellationPolicy = () => {
+        setIsOverlayCancellationPolicy(!isOverlayCancellationPolicy);
     };
 
     const toggleOverlayComfortable = () => {
@@ -447,6 +455,10 @@ const BodyDetail = () => {
             }
         });
     }, []);
+
+    // useEffect(() => {
+    //     HouseService.getShowCancellationPolicy(selectedDates, house, selectNoRefund ? true : false);
+    // }, [selectedDates, selectNoRefund])
 
     function srcset(image, width, height, rows = 1, cols = 1) {
         return {
@@ -1369,10 +1381,27 @@ const BodyDetail = () => {
                                             <h3>Chính sách hủy</h3>
                                             <p>Đặt phòng/đặt chỗ này không được hoàn tiền.</p>
                                             <p>Hãy đọc toàn bộ chính sách hủy của Chủ nhà/Người tổ chức được áp dụng ngay cả khi bạn hủy vì ốm bệnh hoặc gián đoạn do dịch COVID-19.</p>
-                                            <button className='btn-show-description' onClick={toggleOverlay}>
+                                            <button className='btn-show-description' onClick={toggleOverlayCancellationPolicy}>
                                                 <p>Hiển thị thêm  <span><i class="fa-solid fa-angle-right"></i></span></p>
                                             </button>
                                         </div>
+                                        {(
+                                            <div className={`overlay2 ${isOverlayCancellationPolicy ? '' : 'd-none'}`} >
+                                                <div className={`appearing-div ${isOverlayCancellationPolicy ? 'active' : ''}`}>
+                                                    <div>
+                                                        <i onClick={toggleOverlayCancellationPolicy} class="fa-solid fa-xmark close-description" ></i>
+                                                    </div>
+                                                    <div>
+                                                        <h1>Chính sách hủy</h1>
+                                                        <div className='description'>Trước khi bạn đặt phòng/đặt chỗ, hãy đảm bảo chính sách hủy của Chủ nhà/Người tổ chức này phù hợp với bạn. Xin lưu ý rằng <span style={{ textDecoration: "underline", fontWeight: "bold", cursor: "pointer" }}> chính sách Trường hợp bất khả kháng</span>  của Airbnb không áp dụng cho các trường hợp hủy vì ốm bệnh hoặc gián đoạn đi lại do dịch COVID-19.</div>
+                                                        <h3>Hủy muộn nhất vào ngày</h3>
+                                                        <table>
+                                                            <tr></tr>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>

@@ -23,11 +23,11 @@ import Navbar_create_room from '../layout_create_room/Navbar_create_room';
         <div className='fs-4'>Khách sẽ được sử dụng loại chỗ ở nào?</div>
         <div className='d-flex'>
         <div className='me-5 ms-5'>
-        <div className={`card mb-5 mt-5 ${roomType==="ENTIRE_PLACE"?'dark':''}`} style={{width: '18rem'}}>
+        <div className={`card mb-5 mt-5 ${roomType==="ENTIRE_PLACE"?'dark':''}`} style={{width: '18rem', height: '12rem'}}>
         <div className={`card-body row `} onClick={()=>{handleChooseRoomType("ENTIRE_PLACE")}} >
             <div>
           <h6 className=" mb-2 text-muted">Toàn Bộ nhà</h6>
-          <p>Khách được sử dụng riêng toàn bộ chỗ ở này                                               </p>
+          <p>Khách được sử dụng riêng toàn bộ chỗ ở này</p>
           </div>
           <div>
           <i className="fa-solid fa-door-open fs-2"></i>
@@ -37,7 +37,7 @@ import Navbar_create_room from '../layout_create_room/Navbar_create_room';
         
       </div>
       <div className='me-5 ms-5'>
-        <div className={`card mb-5 mt-5 ${roomType==="ROOM"?'dark':''}`} style={{width: '18rem'}}>
+        <div className={`card mb-5 mt-5 ${roomType==="ROOM"?'dark':''}`} style={{width: '18rem', height: '12rem'}}>
         <div className={`card-body row `} onClick={()=>{handleChooseRoomType("ROOM")}}>
             <div>
           <h6 className=" mb-2 text-muted">Một căn phòng</h6>
@@ -51,7 +51,7 @@ import Navbar_create_room from '../layout_create_room/Navbar_create_room';
         
       </div>
       <div className='me-5 ms-5'>
-        <div className={`card mb-5 mt-5 ${roomType==="SHARED_ROOM"?'dark':''}`} style={{width: '18rem'}}>
+        <div className={`card mb-5 mt-5 ${roomType==="SHARED_ROOM"?'dark':''}`} style={{width: '18rem', height: '12rem'}}>
         <div className={`card-body row`} onClick={()=>{handleChooseRoomType("SHARED_ROOM")}}>
             <div>
           <h6 className=" mb-2 text-muted">Phòng chung</h6>

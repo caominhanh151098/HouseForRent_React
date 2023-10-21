@@ -33,7 +33,6 @@ import Reviews from './../../component/hosting/main/Reviews';
 // import '../../../node_modules/bootstrap/dist/js/bootstrap.min.js'
 // import '../../../node_modules/@fortawesome/fontawesome-free/css/all.min.css';
  import 'bootstrap/dist/css/bootstrap.css';
-import OpenOTP from './../../Components/otp/OpenOTP';
 import MultiCalendar from '../../Components/calendar/MultiCalendar';
 // import MultiCalendar from './../../Components/calendar/MultiCalendar';
 
@@ -67,7 +66,6 @@ const RoutesHost = () => {
         <Route path='/host/calendar' element={<MultiCalendar/>}/>
         <Route path='/host/revenueHost' element={<RevenueHost/>}/>
         <Route path='/host/reviews' element={<Reviews/>}/>
-        <Route path='/host/otp' element={<OpenOTP/>}></Route>
       </Routes>
   )
 } 
