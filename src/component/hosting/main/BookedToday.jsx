@@ -247,7 +247,7 @@ function BookedToday() {
                                             <td>{item.house.hotelName}</td>
                                             <td style={{ textAlign: 'center' }}>{(dayjs(item.checkInDate)).format('YYYY-MM-DD')}</td>
                                             <td style={{ textAlign: 'center' }}>{(dayjs(item.checkOutDate)).format('YYYY-MM-DD')}</td>
-                                            <td style={{ textAlign: 'center' }}>{item.totalPrice}</td>
+                                            <td style={{ textAlign: 'center' }}>{item.totalPrice} $</td>
                                             <td>
                                                 <i data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="fa-solid fa-circle-info fa-xl" onClick={() => handleshowGuestDetail(item.id)}></i>
                                                 <i class="fa-solid fa-flag-checkered fs-4  ms-3"  onClick={() => finish(item.id)}></i>
@@ -269,7 +269,7 @@ function BookedToday() {
                                                 <td>{item.house.hotelName}</td>
                                                 <td style={{ textAlign: 'center' }}>{(dayjs(item.checkInDate)).format('YYYY-MM-DD')}</td>
                                                 <td style={{ textAlign: 'center' }}>{(dayjs(item.checkOutDate)).format('YYYY-MM-DD')}</td>
-                                                <td style={{ textAlign: 'center' }}>{item.totalPrice}</td>
+                                                <td style={{ textAlign: 'center' }}>{item.totalPrice} $</td>
                                                 <td>
                                                     <i data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="fa-solid fa-circle-info fa-xl" onClick={() => handleshowGuestDetail(item.id)}></i>
                                                     <i class="fa-solid fa-flag-checkered fs-4  ms-3"  onClick={() => finish(item.id)}></i>
@@ -290,7 +290,7 @@ function BookedToday() {
                                                     <td>{item.house.hotelName}</td>
                                                     <td style={{ textAlign: 'center' }}>{(dayjs(item.checkInDate)).format('YYYY-MM-DD')}</td>
                                                     <td style={{ textAlign: 'center' }}>{(dayjs(item.checkOutDate)).format('YYYY-MM-DD')}</td>
-                                                    <td style={{ textAlign: 'center' }}>{item.totalPrice}</td>
+                                                    <td style={{ textAlign: 'center' }}>{item.totalPrice} $</td>
                                                     <td><i class="fa-solid fa-trash-can fa-lg" onClick={() => submit(item.id)}></i></td>
                                                     <td><i data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="fa-solid fa-circle-info fa-xl"></i></td>
                                                 </tr>
@@ -309,7 +309,7 @@ function BookedToday() {
                                                         <td>{item.house.hotelName}</td>
                                                         <td style={{ textAlign: 'center' }}>{(dayjs(item.checkInDate)).format('YYYY-MM-DD')}</td>
                                                         <td style={{ textAlign: 'center' }}>{(dayjs(item.checkOutDate)).format('YYYY-MM-DD')}</td>
-                                                        <td style={{ textAlign: 'center' }}>{item.totalPrice}</td>
+                                                        <td style={{ textAlign: 'center' }}>{item.totalPrice} $</td>
                                                         <td><i class="fa-solid fa-trash-can fa-lg" onClick={() => submit(item.id)}></i></td>
                                                         <td><i data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="fa-solid fa-circle-info fa-xl" onClick={() => handleshowGuestDetail(item.id)}></i></td>
                                                     </tr>
@@ -328,7 +328,7 @@ function BookedToday() {
                                                             <td>{item.house.hotelName}</td>
                                                             <td style={{ textAlign: 'center' }}>{(dayjs(item.checkInDate)).format('YYYY-MM-DD')}</td>
                                                             <td style={{ textAlign: 'center' }}>{(dayjs(item.checkOutDate)).format('YYYY-MM-DD')}</td>
-                                                            <td style={{ textAlign: 'center' }}>{item.totalPrice}</td>
+                                                            <td style={{ textAlign: 'center' }}>{item.totalPrice} $</td>
                                                             <td><i class="fa-solid fa-x fa-lg" onClick={() => deny(item.id)}></i></td>
                                                             <td><i class="fa-solid fa-check fa-xl" onClick={() => accept(item.id)}></i></td>
                                                             <td><i data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="fa-solid fa-circle-info fa-xl" onClick={() => handleshowGuestDetail(item.id)}></i></td>

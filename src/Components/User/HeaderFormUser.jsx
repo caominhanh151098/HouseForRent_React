@@ -82,7 +82,12 @@ const HeaderFormUser = () => {
                 <div className="dropdown-menu-choice">Danh sách yêu thích</div>
                 </Link>
                 <hr />
-                <div className="dropdown-menu-choice">Quản lý nhà/phòng cho thuê</div>
+                {
+                  userInfo.role=="GUEST"?
+                  <><div className="dropdown-menu-choice">Bắt đầu cho thuê taij air-bnb</div></>:
+                  <><div className="dropdown-menu-choice">Quản lý nhà/phòng cho thuê</div></>
+                }
+                
                 <Link className="link-user-login"
                   to={'/account-settings'}>
                   <div className="dropdown-menu-choice">Tài khoản</div>

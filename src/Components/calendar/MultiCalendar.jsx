@@ -37,7 +37,7 @@ export default function MultiCalendar() {
     const [priceEvent, setPriceEvent] = useState([])
     const [listDom, setListDom] = useState([])
     const [listHouse, setListHouse] = useState([])
-    const [houseID, setHouse] = useState(0)
+    const [houseID, setHouse] = useState(1)
     const [blockStatus, setBlockStatus] = useState(true)
     const [blockingDateRangeEvt,setBlockingDateRange]=useState([])
     const [listBlockingResevation,setListBlockingReservation]=useState([])

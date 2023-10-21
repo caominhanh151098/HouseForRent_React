@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Await, Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import FileServive from "../../Services/fileService";
 import Navbar_create_room from "../layout_create_room/Navbar_create_room";
 import CreateRoom from './../../service/create_room_usestate';
@@ -90,7 +90,7 @@ function B2_uploadImage() {
                     );
                     setUploadedAvatar([...list])
                     console.log(list);
-                    toast.info("Avatar uploaded success", { position: "top-right", autoClose: 2 * 1000 });
+                    toast.info("uploaded success", { position: "top-right", autoClose: 1 * 1000 });
 
 
                 }
@@ -111,6 +111,7 @@ function B2_uploadImage() {
     }
     return (
         <>
+        
             <Navbar_create_room></Navbar_create_room>
             <div className="col-7" style={{ marginLeft: '300px' }}>
                 <div className="fs-3 mb-5">Bổ sung một số bức ảnh chụp chỗ ở thuộc danh mục nhà của bạn</div>
@@ -153,9 +154,9 @@ function B2_uploadImage() {
                     quay lại
                 </Link>
                 {
-                    selectAvatar.length<4 && uploading==false && uploadedAvatar.length==0?
+                    selectAvatar.length<6 && uploading==false && uploadedAvatar.length==0?
                     <div><button className="btn bg-dark text-white me-5 mb-5 disabled"> Upload</button></div>:
-                    selectAvatar.length>=4 && uploading==false&&uploadedAvatar.length==0?
+                    selectAvatar.length>=6 && uploading==false&&uploadedAvatar.length==0?
                     <div><button className="btn bg-dark text-white me-5 mb-5 " onClick={()=>{setUploading(true);handleUploadAvatar()}}> Upload</button></div>:
                     uploading==true?
                     <div><button className="btn btn-sm btn-dark" type="button" disabled="">

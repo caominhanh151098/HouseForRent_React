@@ -238,7 +238,7 @@ function AllReservation() {
                                                 <td >{(dayjs(item.checkInDate)).format('YYYY-MM-DD')}</td>
                                                 <td >{(dayjs(item.checkOutDate
                                                     )).format('YYYY-MM-DD')}</td>
-                                                <td style={{ textAlign: 'center' }}>{item.totalPrice}</td>
+                                                <td style={{ textAlign: 'center' }}>{item.totalPrice} $</td>
                                             </tr>
                                         </>
                                     ))

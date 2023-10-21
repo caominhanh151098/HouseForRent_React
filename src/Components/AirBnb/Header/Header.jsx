@@ -1121,7 +1121,24 @@ const Header = () => {
                 <div className="dropdown-menu-choice">Chuyến đi</div>
                 <div className="dropdown-menu-choice">Danh sách yêu thích</div>
                 <hr />
-                <div className="dropdown-menu-choice">Quản lý nhà/phòng cho thuê</div>
+                {
+                   userInfo?.role?
+                      userInfo.role=="GUEST"?
+                      <>
+                       <Link className="link-user-login"
+                  to={'/host/firstCreateRoom'}>
+                  <div className="dropdown-menu-choice">Bắt đầu cho thuê tại air-bnb</div>
+                </Link>
+                      </>
+                      :
+                      <>
+                          <Link className="link-user-login"
+                  to={'/host/bookedToday'}>
+                  <div className="dropdown-menu-choice">Quản lý nhà/phòng cho thuê</div>
+                </Link>                      
+                      </>
+                    :""
+                }
                 <Link className="link-user-login"
                   to={'/account-settings'}>
                   <div className="dropdown-menu-choice">Tài khoản</div>
