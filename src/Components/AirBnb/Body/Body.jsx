@@ -24,6 +24,8 @@ import format from 'date-fns/format';
 import { useHouse } from '../Header/HouseContext';
 import Pagination from './Pagination';
 import CustomPagination from './PaginationList';
+import { IonIcon } from '@ionic/react';
+import { heartOutline, heartCircleOutline } from 'ionicons/icons';
 
 
 const itemsPerLoad = 7;
@@ -770,6 +772,12 @@ const Body = () => {
         }
     }
 
+    const [hoveredIndex, setHoveredIndex] = useState(null);
+
+    const toggleHover = (index) => {
+        setHoveredIndex(index);
+    };
+
     return (
         <div>
             <>
@@ -941,7 +949,7 @@ const Body = () => {
                                                                                     onChange={(e) => handleCheckboxChange(e, item.id)}
                                                                                 />
                                                                                 <p>{item.name}</p>
-                                                                                <p style={{opacity:'0'}}>{item.id}</p>
+                                                                                <p style={{ opacity: '0' }}>{item.id}</p>
                                                                             </div>
                                                                         ))}
                                                                 </div>
@@ -1257,6 +1265,14 @@ const Body = () => {
                                                     <div>
                                                         <div>
                                                             <HouseSlider house={house} />
+                                                            <div className='outer-div'
+                                                                onMouseEnter={() => toggleHover(index)} onMouseLeave={() => toggleHover(null)}>
+                                                                {hoveredIndex === index ? (
+                                                                    <IonIcon icon={heartCircleOutline} className="heartCircle-icon" />
+                                                                ) : (
+                                                                    <IonIcon icon={heartOutline} className='heart-icon' />
+                                                                )}
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1284,6 +1300,14 @@ const Body = () => {
                                                             <div>
                                                                 <div>
                                                                     <HouseSlider house={house} />
+                                                                    <div className='outer-div'
+                                                                        onMouseEnter={() => toggleHover(index)} onMouseLeave={() => toggleHover(null)}>
+                                                                        {hoveredIndex === index ? (
+                                                                            <IonIcon icon={heartCircleOutline} className="heartCircle-icon" />
+                                                                        ) : (
+                                                                            <IonIcon icon={heartOutline} className='heart-icon' />
+                                                                        )}
+                                                                    </div>
                                                                     {/* <i style={{color: "revert"}} className="fa-brands fa-gratipay icon-conmemya"></i> */}
                                                                 </div>
                                                             </div>

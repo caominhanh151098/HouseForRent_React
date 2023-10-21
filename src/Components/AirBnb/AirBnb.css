@@ -1284,7 +1284,10 @@ header {
 
 .custom-div-icon-leaflet:hover {
     transform: scale(1.2);
+    background: black;
+    color: white;
 }
+
 
 .img-custom-div-leaflet {
     width: 348px;

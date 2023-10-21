@@ -90,3 +90,54 @@
     color: black !important;
 }
 
+.btn-create-new-a-wish-list{
+    width: 100%;
+    background: black;
+    color: white;
+    padding: 15px 0px;
+    font-size: 20px;
+    border-radius: 12px;
+    cursor: pointer;
+}
+
+.btn-create-new-a-wish-list:hover{
+    background: #4d4949;
+}
+
+.btn-confirm-create-new-a-wish-list{
+    padding: 10px 20px;
+    background: black;
+    color: white;
+    font-size: 20px;
+    border-radius: 12px;
+    cursor: pointer;
+}
+.btn-confirm-create-new-a-wish-list:hover{
+    background: #4d4a4a;
+}
+
+.btn-delete-characters{
+    padding: 10px 20px;
+    background: white;
+    font-size: 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    text-decoration: underline;
+    border: none;
+}
+.btn-delete-characters:hover{
+    background: #c5c3bf57;
+}
+.css-65zm2q-JoyTextarea-root{
+    background: white !important;
+}
+
+.div-contain-wish-lists{
+    max-height: 370px;
+    overflow-y: auto;
+}
+
+.custom-toast-create-new-wish-list-success{
+    background: black !important;
+    color: white !important;
+}

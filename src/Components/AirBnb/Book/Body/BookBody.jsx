@@ -9,7 +9,7 @@ import { useContext } from 'react';
 import BookingProvider from '../Main/BookingProvider';
 import BookingContext from '../Main/BookingContext';
 import { useParams, useHistory, Link } from 'react-router-dom';
-import { API_HOUSE_DETAIL_URL, API_HOUSE_DETAIL_PRICE, API_CREATE_BOOK_HOUSE } from '../../../../Services/common';
+import { API_HOUSE_DETAIL_URL, API_HOUSE_DETAIL_PRICE, API_CREATE_BOOK_HOUSE, API_BLOCK_REVERSATION_BY_HOUSE_ID, API_BLOCKING_DATE_BY_HOUSE_ID } from '../../../../Services/common';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { DateRangeCalendar, DateRangePickerDay } from '@mui/x-date-pickers-pro';
@@ -25,6 +25,8 @@ import { format } from 'date-fns';
 import { async } from '@firebase/util';
 import MyAxios from '../../../../Services/MyAxios';
 import { API_RESERVATION_HOUSE } from './../../../../Services/common';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const BookBody = () => {
@@ -61,7 +63,7 @@ const BookBody = () => {
   const [isUpdatingUrl, setIsUpdatingUrl] = useState(false);
   const [formConfirm, setFormConfirm] = useState(false);
 
-
+  const [checkAvailableRoom, setCheckAvailableRoom] = useState(false)
 
   const goDay = GoDay ? new Date(GoDay) : null
   console.log("goDay", goDay);
@@ -169,6 +171,14 @@ const BookBody = () => {
   };
 
   const toggleOverlay = () => {
+    if (tempBookDay[0] === null) {
+      toast.error('Vui lòng chọn ngày đi');
+      return;
+    }
+    if (tempBookDay[1] === null) {
+      toast.error('Vui lòng chọn ngày trả phòng');
+      return;
+    }
     setIsOverlayVisible(!isOverlayVisible);
     const elements = document.querySelectorAll('.css-o22y52-MuiButtonBase-root-MuiRadio-root');
     if (!isOverlayVisible) {
@@ -210,17 +220,57 @@ const BookBody = () => {
     }
   }
 
-  const handleDateChange = (newBookDay) => {
-    setTempBookDay(newBookDay);
-  }
+  // const handleDateChange = (newBookDay) => {
+  //   setTempBookDay(newBookDay);
+  // }
+
+  const [maxDay, setMaxDay] = useState();
+  const [hasSelectedDepartureDate, setHasSelectedDepartureDate] = useState(false);
+  const [chooseGoDay, setIsChooseGoDay] = useState(false);
+
+  const handleDateChange = (newDates, selectionState) => {
+    const selectedDate = dayjs(newDates[0]);
+    setIsChooseGoDay(true);
+    const nextDate = dayjs(newDates[0] || newDates[1]).add(1, 'day');
+
+    const isNextDateDisabled = shouldDisableDates.includes(nextDate.format('YYYY-MM-DD')) && tempBookDay[0] == null;
+
+    if (isNextDateDisabled) {
+      toast.error('Đây là ngày chỉ dành cho trả phòng');
+
+      setTempBookDay([null, null]);
+      setHasSelectedDepartureDate(false);
+      return;
+    }
+    const closestDate = shouldDisableDates
+      .filter(date => date > selectedDate.format('YYYY-MM-DD'))
+      .sort((a, b) => new Date(a) - new Date(b))[0];
+
+    const maxDay = closestDate ? dayjs(closestDate) : null;
+    setMaxDay(maxDay)
+    console.log('Ngày gần nhất sau ngày được chọn:', closestDate);
+    if (tempBookDay[0] !== null && tempBookDay[1] != null) {
+      setTempBookDay([null, null])
+    } else if (tempBookDay[0] == null) {
+      setTempBookDay([newDates[0] || newDates[1], null])
+    } else {
+      setTempBookDay([tempBookDay[0],
+      newDates[0].format('YYYY-MM-DD') === tempBookDay[0].format('YYYY-MM-DD') ?
+        newDates[1] : newDates[0]])
+    }
+    if (newDates[1]) {
+      setCheckAvailableRoom(false)
+      setMaxDay(null);
+    }
+    if (newDates[0] && newDates[1]) {
+      setHasSelectedDepartureDate(true);
+    } else {
+      setHasSelectedDepartureDate(false);
+    }
+  };
 
   const handleResetDates = () => {
-    setTempBookDay([
-      dayjs(),
-      dayjs().add(5, 'day')]);
-    setBookDay([
-      dayjs(),
-      dayjs().add(5, 'day')]);
+    setTempBookDay([null, null]);
     setSaveDay(false);
   };
 
@@ -504,187 +554,244 @@ const BookBody = () => {
     debouncedHandleChangePhoneInput(input);
   }
 
+
+  const [reservedDates, setReservedDates] = useState([]);
+  const [blockedDates, setBlockedDates] = useState([]);
+
+  useEffect(() => {
+    // Gọi API để lấy danh sách các ngày đã đặt
+    axios.get(API_BLOCK_REVERSATION_BY_HOUSE_ID + houseID)
+      .then(response => {
+        const dates = response.data.map(reservation => ({
+          checkInDate: dayjs(reservation.checkInDate).format('YYYY-MM-DD'),
+          checkOutDate: dayjs(reservation.checkOutDate).format('YYYY-MM-DD')
+        }));
+        setReservedDates(dates);
+      })
+      .catch(error => {
+        console.error('Error fetching reserved dates:', error);
+      });
+
+    // Gọi API để lấy danh sách các ngày bị chặn
+    axios.get(API_BLOCKING_DATE_BY_HOUSE_ID + houseID)
+      .then(response => {
+        const dates = response.data.map(item => dayjs(item.blockingDate).format('YYYY-MM-DD'));
+        setBlockedDates(dates);
+      })
+      .catch(error => {
+        console.error('Error fetching blocked dates:', error);
+      });
+  }, [houseID]);
+
+  const shouldDisableDates = [...reservedDates.map(reservation => reservation.checkInDate), ...blockedDates];
+
+  const shouldDisableDate = (date) => {
+    const formattedDate = date.format('YYYY-MM-DD');
+
+    const isReserved = reservedDates.some(reservation =>
+      formattedDate >= reservation.checkInDate && formattedDate <= reservation.checkOutDate
+    );
+
+    const isBlocked = blockedDates.includes(formattedDate);
+
+    return isReserved || isBlocked;
+  };
+
   return (
-    <div className='book-body'>
-      <div className='devide-book-body' style={{ background: 'white' }}>
-        <div className='back-book-body'>
-          <Link to={`/house/${houseID}/${countOld}/${countYoung}/${countBaby}/${countPets}/${GoDay}/${BackDay}`}>
-            <svg className='svg-book-body' style={{ color: 'black' }}
-              xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-label="Quay lại" role="img" focusable="false" ><path fill="none" d="M20 28 8.7 16.7a1 1 0 0 1 0-1.4L20 4"></path></svg>
-          </Link>
-          <h1>Yêu cầu đặt phòng/đặt chỗ</h1>
-        </div>
-        <div className='text-book-body'>
-          <h2>Chuyến đi của bạn</h2>
-          <div className='your-journey-book-body'>
-            <div>
-              <h3>Ngày</h3>
-              {
-                GoDay && BackDay && (
-                  <p>{bookDay[0] && bookDay[1] ? (
-                    `${bookDay[0].format('D [thg] M YYYY')} - ${bookDay[1].format('D [thg] M YYYY')}`
-                  ) : (
-                    <div>
-                      <p style={{ opacity: '0.8' }}>Thêm ngày trả để biết giá chính xác</p>
-                    </div>
-                  )}
-                  </p>
+    <>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000} // Thời gian tự động đóng toast (5 giây)
+        // hideProgressBar
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
+      <div className='book-body'>
+        <div className='devide-book-body' style={{ background: 'white' }}>
+          <div className='back-book-body'>
+            <Link to={`/house/${houseID}/${countOld}/${countYoung}/${countBaby}/${countPets}/${GoDay}/${BackDay}`}>
+              <svg className='svg-book-body' style={{ color: 'black' }}
+                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-label="Quay lại" role="img" focusable="false" ><path fill="none" d="M20 28 8.7 16.7a1 1 0 0 1 0-1.4L20 4"></path></svg>
+            </Link>
+            <h1>Yêu cầu đặt phòng/đặt chỗ</h1>
+          </div>
+          <div className='text-book-body'>
+            <h2>Chuyến đi của bạn</h2>
+            <div className='your-journey-book-body'>
+              <div>
+                <h3>Ngày</h3>
+                {
+                  GoDay && BackDay && (
+                    <p>{bookDay[0] && bookDay[1] ? (
+                      `${bookDay[0].format('D [thg] M YYYY')} - ${bookDay[1].format('D [thg] M YYYY')}`
+                    ) : (
+                      <div>
+                        <p style={{ opacity: '0.8' }}>Thêm ngày trả để biết giá chính xác</p>
+                      </div>
+                    )}
+                    </p>
 
-                )
-              }
-            </div>
-            <div>
-              <button className='btn-edit-day-book-body' onClick={toggleOverlay} >Chỉnh sửa</button>
-              {(
-                <div className={`overlay2 ${isOverlayVisible ? '' : 'd-none'}`} >
-                  <div className={`appearing-div ${isOverlayVisible ? 'active' : ''}`} style={{ width: '629px', height: '478px' }}>
-                    <div>
-                      <i onClick={() => {
-                        if (saveDay) {
-                          setTempBookDay(bookDay);
+                  )
+                }
+              </div>
+              <div>
+                <button className='btn-edit-day-book-body' onClick={toggleOverlay} >Chỉnh sửa</button>
+                {(
+                  <div className={`overlay2 ${isOverlayVisible ? '' : 'd-none'}`} >
+                    <div className={`appearing-div ${isOverlayVisible ? 'active' : ''}`} style={{ width: '629px', height: '478px' }}>
+                      <div>
+                        <i onClick={() => {
+                          if (saveDay) {
+                            setTempBookDay(bookDay);
+                          }
+                          toggleOverlay()
+                        }} class="fa-solid fa-xmark close-description" ></i>
+                      </div>
+                      <div className='container-description-details'>
+                        {
+                          house && (
+                            <>
+                              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DemoContainer components={['DateRangeCalendar']}>
+                                  <DateRangeCalendar
+                                    value={tempBookDay}
+                                    onChange={handleDateChange}
+                                    minDate={tempBookDay[0] ? tempBookDay[0] : dayjs()}
+                                    shouldDisableDate={shouldDisableDate}
+                                    maxDate={maxDay}
+                                    slots={{ day: (props) => <DateRangePickerDay {...props} className={props.isHighlighting ? 'range-highlight' : ''} /> }}
+                                  />
+                                </DemoContainer>
+                              </LocalizationProvider>
+                              <div className='btn-group-reset-save-book-date'>
+                                <button className='btn-delete-book-date' onClick={handleResetDates}>Xoá ngày</button>
+                                {
+                                  loadingBtnSaveBookDay ? (
+                                    <button style={{ top: '13px', margin: '-15px 0px' }} className='btn-save-book-date-loading'><CircularProgressVariants /></button>
+                                  ) : (
+
+                                    <button className='btn-save-book-date' onClick={handleSaveDates} disabled={isSaveDisabled}>Lưu</button>
+
+
+                                    // <button className='btn-save-book-date-loading'><CircularProgressVariants /></button>
+                                  )
+                                }
+                              </div>
+                            </>
+                          )
                         }
-                        toggleOverlay()
-                      }} class="fa-solid fa-xmark close-description" ></i>
-                    </div>
-                    <div className='container-description-details'>
-                      {
-                        house && (
-                          <>
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                              <DemoContainer components={['DateRangeCalendar']}>
-                                <DateRangeCalendar
-                                  value={tempBookDay}
-                                  onChange={handleDateChange}
-                                  minDate={tempBookDay[0]}
-                                  slots={{ day: (props) => <DateRangePickerDay {...props} className={props.isHighlighting ? 'range-highlight' : ''} /> }}
-                                />
-                              </DemoContainer>
-                            </LocalizationProvider>
-                            <div className='btn-group-reset-save-book-date'>
-                              <button className='btn-delete-book-date' onClick={handleResetDates}>Xoá ngày</button>
-                              {
-                                loadingBtnSaveBookDay ? (
-                                  <button style={{ top: '13px', margin: '-15px 0px' }} className='btn-save-book-date-loading'><CircularProgressVariants /></button>
-                                ) : (
-
-                                  <button className='btn-save-book-date' onClick={handleSaveDates} disabled={isSaveDisabled}>Lưu</button>
-
-
-                                  // <button className='btn-save-book-date-loading'><CircularProgressVariants /></button>
-                                )
-                              }
-                            </div>
-                          </>
-                        )
-                      }
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
-          </div>
-          <div className='your-journey-book-body'>
-            <div>
-              <h3>Khách</h3>
-              <p>{countOld || countYoung ? countOld + countYoung + ' khách ' : 'Thêm ít nhất 1 khách'}
-                {countBaby ? ', ' + countBaby + ' em bé ' : ''}
-                {countPets ? ', ' + countPets + ' thú cưng' : ''}
-              </p>
-            </div>
-            <div>
-              <button className='btn-edit-day-book-body' onClick={toggleOverlayGuests}>Chỉnh sửa</button>
-              {(
-                <div className={`overlay2 ${isOverlayVisible2 ? '' : 'd-none'}`} >
-                  <div className={`appearing-div ${isOverlayVisible2 ? 'active' : ''}`} style={{ width: '550px' }}>
-                    <div>
-                      <i onClick={() => { toggleOverlayGuests() }} class="fa-solid fa-xmark close-description" ></i>
-                    </div>
-                    <div className='container-description-details'>
-                      {
-                        house && (
-                          <>
-                            <div style={{ textAlign: 'left', margin: '0px 25px' }}>
-                              <h2 style={{ fontWeight: 'bolder' }}>Khách</h2>
-                              <p>Chỗ ở này cho phép tối đa {maxGuests} khách, không tính em bé. Nếu bạn mang theo thú cưng, bạn phải trả thêm phí (Số lượng tuỳ thích)</p>
-                              {
-                                (<div>
-                                  <div className='count-guest-detail' style={{ position: 'relative', width: '107%', border: 'none' }}>
-                                    <div className="add-guest-detail">
-                                      <div className="body-guests">
-                                        <div className="header-guests">
-                                          <h3>Người lớn</h3>Từ 13 tuổi trở lên
+            <div className='your-journey-book-body'>
+              <div>
+                <h3>Khách</h3>
+                <p>{countOld || countYoung ? countOld + countYoung + ' khách ' : 'Thêm ít nhất 1 khách'}
+                  {countBaby ? ', ' + countBaby + ' em bé ' : ''}
+                  {countPets ? ', ' + countPets + ' thú cưng' : ''}
+                </p>
+              </div>
+              <div>
+                <button className='btn-edit-day-book-body' onClick={toggleOverlayGuests}>Chỉnh sửa</button>
+                {(
+                  <div className={`overlay2 ${isOverlayVisible2 ? '' : 'd-none'}`} >
+                    <div className={`appearing-div ${isOverlayVisible2 ? 'active' : ''}`} style={{ width: '550px' }}>
+                      <div>
+                        <i onClick={() => { toggleOverlayGuests() }} class="fa-solid fa-xmark close-description" ></i>
+                      </div>
+                      <div className='container-description-details'>
+                        {
+                          house && (
+                            <>
+                              <div style={{ textAlign: 'left', margin: '0px 25px' }}>
+                                <h2 style={{ fontWeight: 'bolder' }}>Khách</h2>
+                                <p>Chỗ ở này cho phép tối đa {maxGuests} khách, không tính em bé. Nếu bạn mang theo thú cưng, bạn phải trả thêm phí (Số lượng tuỳ thích)</p>
+                                {
+                                  (<div>
+                                    <div className='count-guest-detail' style={{ position: 'relative', width: '107%', border: 'none' }}>
+                                      <div className="add-guest-detail">
+                                        <div className="body-guests">
+                                          <div className="header-guests">
+                                            <h3>Người lớn</h3>Từ 13 tuổi trở lên
+                                          </div>
+                                          <div className="group-btn-guests">
+                                            <button className={`degbtn ${tempCountOld === 0 ? 'disable-degbtn' : ''}`} onClick={decreaseOld} disabled={tempCountOld === 1}><span>-</span></button>
+                                            <span className="countOld">{tempCountOld}</span>
+                                            <button className="crebtn" onClick={increaseOld} disabled={tempCountOld + tempCountYoung >= maxGuests}>+</button>
+                                          </div>
                                         </div>
-                                        <div className="group-btn-guests">
-                                          <button className={`degbtn ${tempCountOld === 0 ? 'disable-degbtn' : ''}`} onClick={decreaseOld} disabled={tempCountOld === 1}><span>-</span></button>
-                                          <span className="countOld">{tempCountOld}</span>
-                                          <button className="crebtn" onClick={increaseOld} disabled={tempCountOld + tempCountYoung >= maxGuests}>+</button>
+                                        <hr className='hr' />
+                                        <div className="body-guests">
+                                          <div className="header-guests">
+                                            <h3>Trẻ em</h3>Độ tuổi 2 - 12
+                                          </div>
+                                          <div className="group-btn-guests">
+                                            <button className={`degbtn ${tempCountYoung === 0 ? 'disable-degbtn' : ''}`} onClick={decreaseYoung} disabled={tempCountYoung === 0}><span>-</span></button>
+                                            <span className="countOld">{tempCountYoung}</span>
+                                            <button className="crebtn" onClick={increaseYoung} disabled={tempCountOld + tempCountYoung >= maxGuests}>+</button>
+                                          </div>
+                                        </div>
+                                        <hr className='hr' />
+                                        <div className="body-guests">
+                                          <div className="header-guests">
+                                            <h3>Em bé</h3>Dưới 2 tuổi
+                                          </div>
+                                          <div className="group-btn-guests">
+                                            <button className={`degbtn ${tempCountBaby === 0 ? 'disable-degbtn' : ''}`} onClick={decreaseBaby} disabled={tempCountBaby === 0}><span>-</span></button>
+                                            <span className="countOld">{tempCountBaby}</span>
+                                            <button className="crebtn" onClick={increaseBaby} disabled={tempCountBaby === 5}>+</button>
+                                          </div>
+                                        </div>
+                                        <hr className='hr' />
+                                        <div className="body-guests">
+                                          <div className="header-guests">
+                                            <h3>Thú cưng</h3>
+                                          </div>
+                                          <div className="group-btn-guests">
+                                            <button className={`degbtn ${tempCountPets === 0 ? 'disable-degbtn' : ''}`} onClick={decreasePets} disabled={tempCountPets === 0}><span>-</span></button>
+                                            <span className="countOld">{tempCountPets}</span>
+                                            <button className="crebtn" onClick={increasePets} disabled={tempCountPets === 5}>+</button>
+                                          </div>
                                         </div>
                                       </div>
-                                      <hr className='hr' />
-                                      <div className="body-guests">
-                                        <div className="header-guests">
-                                          <h3>Trẻ em</h3>Độ tuổi 2 - 12
-                                        </div>
-                                        <div className="group-btn-guests">
-                                          <button className={`degbtn ${tempCountYoung === 0 ? 'disable-degbtn' : ''}`} onClick={decreaseYoung} disabled={tempCountYoung === 0}><span>-</span></button>
-                                          <span className="countOld">{tempCountYoung}</span>
-                                          <button className="crebtn" onClick={increaseYoung} disabled={tempCountOld + tempCountYoung >= maxGuests}>+</button>
-                                        </div>
-                                      </div>
-                                      <hr className='hr' />
-                                      <div className="body-guests">
-                                        <div className="header-guests">
-                                          <h3>Em bé</h3>Dưới 2 tuổi
-                                        </div>
-                                        <div className="group-btn-guests">
-                                          <button className={`degbtn ${tempCountBaby === 0 ? 'disable-degbtn' : ''}`} onClick={decreaseBaby} disabled={tempCountBaby === 0}><span>-</span></button>
-                                          <span className="countOld">{tempCountBaby}</span>
-                                          <button className="crebtn" onClick={increaseBaby} disabled={tempCountBaby === 5}>+</button>
-                                        </div>
-                                      </div>
-                                      <hr className='hr' />
-                                      <div className="body-guests">
-                                        <div className="header-guests">
-                                          <h3>Thú cưng</h3>
-                                        </div>
-                                        <div className="group-btn-guests">
-                                          <button className={`degbtn ${tempCountPets === 0 ? 'disable-degbtn' : ''}`} onClick={decreasePets} disabled={tempCountPets === 0}><span>-</span></button>
-                                          <span className="countOld">{tempCountPets}</span>
-                                          <button className="crebtn" onClick={increasePets} disabled={tempCountPets === 5}>+</button>
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <div className='btn-group-reset-save-book-date' style={{ width: '97%', margin: '10px 0px' }}>
-                                      <button className='btn-delete-book-date' onClick={handleResetCountGuests}>Xoá khách</button>
+                                      <div className='btn-group-reset-save-book-date' style={{ width: '97%', margin: '10px 0px' }}>
+                                        <button className='btn-delete-book-date' onClick={handleResetCountGuests}>Xoá khách</button>
 
-                                      {
-                                        loadingBtnSaveCountGuests ? (
-                                          <button style={{ margin: '-11px 0px' }}
-                                            className='btn-save-count-guests-loading'><CircularProgressVariants /></button>
-                                        ) : (
-                                          <button style={{ padding: '9px 20px', borderRadius: '12px' }}
-                                            className='btn-save-book-date' onClick={() => { handleSaveCountGuest() }} disabled={isSaveDisabled}>Lưu</button>
+                                        {
+                                          loadingBtnSaveCountGuests ? (
+                                            <button style={{ margin: '-11px 0px' }}
+                                              className='btn-save-count-guests-loading'><CircularProgressVariants /></button>
+                                          ) : (
+                                            <button style={{ padding: '9px 20px', borderRadius: '12px' }}
+                                              className='btn-save-book-date' onClick={() => { handleSaveCountGuest() }} disabled={isSaveDisabled}>Lưu</button>
 
-                                        )
-                                      }
+                                          )
+                                        }
+                                      </div>
                                     </div>
                                   </div>
-                                </div>
-                                )
-                              }
-                            </div>
-                          </>
-                        )
-                      }
+                                  )
+                                }
+                              </div>
+                            </>
+                          )
+                        }
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
-        </div>
-        <hr style={{ width: '82%' }} />
-        {/* <div className='payment-text-body'>
+          <hr style={{ width: '82%' }} />
+          {/* <div className='payment-text-body'>
           <h2>Chọn cách thanh toán</h2>
           <div onClick={() => { handleClickDivPayment('all') }}
             className={`pay-all-text-body ${selectedDivPayment === 'all' ? 'selectedDivPaymentAmount' : ''}`}>
@@ -739,415 +846,170 @@ const BookBody = () => {
           </div>
         </div>
         <hr style={{ width: '82%' }} /> */}
-        {
-          !userLogin && (
-            <div>
-              <h2 style={{ padding: "0px 56px" }}>Đăng nhập hoặc đăng ký để đặt phòng/đặt chỗ</h2>
-              <div className='payment-text-body'>
-                <div onClick={() => { handleClickDivPhoneLogIn('country') }}
-                  className={`country-login-text-body ${selectedPhoneLogIn === 'country' ? 'selectedDivCountryLogIn' : ''}`}>
-                  <div className='text-div-text-body'>
-                    <h3>Quốc gia/Khu vực</h3>
-                    <p>Việt nam (+84)</p>
-                  </div>
-                  <div>
-                    <svg className='svg-book-body' style={{ width: '20px' }} viewBox="0 0 18 18" role="presentation" aria-hidden="true" focusable="false"><path d="m16.29 4.3a1 1 0 1 1 1.41 1.42l-8 8a1 1 0 0 1 -1.41 0l-8-8a1 1 0 1 1 1.41-1.42l7.29 7.29z" fillRule="evenodd"></path></svg>
-                  </div>
-                </div>
-                <div onClick={() => { handleClickDivPhoneLogIn('phone') }}
-                  className={`phone-login-text-body ${selectedPhoneLogIn === 'phone' ? 'selectedDivPhoneLogin' : ''} 
-                  ${phoneInput.length > 0 && phoneInput.length < 10 ? 'checkPhoneInput' : ''}`}>
-                  <div className='text-div-text-body'>
-                    <input className='input-phone-login-text-body'
-                      type="text"
-                      placeholder='Số điện thoại'
-                      value={phoneInput}
-                      onChange={handleChangePhoneInput} />
-                  </div>
-                  {phoneInput.length > 0 && phoneInput.length < 10 && (
-                    <span style={{ color: 'red', bottom: '5px', right: '5px', width: '300px' }}>
-                      Vui lòng nhập ít nhất 10 số
-                    </span>
-                  )}
-                  {phoneInput.length > 11 && (
-                    <span style={{ color: 'red', bottom: '5px', right: '5px' }}>
-                      Không được nhập quá 11 số
-                    </span>
-                  )}
-                  {phoneInput.length >= 10 && phoneInput.length <= 11 && (
-                    <span style={{ color: 'red', bottom: '5px', right: '5px' }}>
-                      <i className="fa-solid fa-check" style={{ fontSize: '30px', marginRight: '8px', color: 'black' }}></i>
-                    </span>
-                  )}
-                </div>
-              </div>
-              <div className='text-div-text-body'>
-                <p className='p-tag-text-body'>Chúng tôi sẽ gọi điện hoặc nhắn tin cho bạn để xác nhận số điện thoại.
-                  Có áp dụng phí dữ liệu và phí tin nhắn tiêu chuẩn. <a href="https://www.airbnb.com.vn/help/article/2855" className='a-tag-text-body'>Chính sách về quyền riêng tư</a></p>
-              </div>
-              <div style={{ margin: "0px 48px", width: '92%' }}
-                className='div-gradient-btn-text-body'>
-                <GradientButton >Tiếp tục</GradientButton>
-              </div>
-              <div className='group-btn-login-text-body'>
-                <button className='btn-method-login-text-body'>
-                  <svg className='svg-tag-login-text-body' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" role="presentation" focusable="false"><path fill="#1877F2" d="M32 0v32H0V0z"></path><path fill="#FFF" d="M22.94 16H18.5v-3c0-1.27.62-2.5 2.6-2.5h2.02V6.56s-1.83-.31-3.58-.31c-3.65 0-6.04 2.21-6.04 6.22V16H9.44v4.63h4.06V32h5V20.62h3.73l.7-4.62z"></path></svg>
-                </button>
-                <button className='btn-method-login-text-body'>
-                  <svg className='svg-tag-login-text-body' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" role="presentation" focusable="false" ><path fill="#4285f4" d="M24.12 25c2.82-2.63 4.07-7 3.32-11.19H16.25v4.63h6.37A5.26 5.26 0 0 1 20.25 22z"></path><path fill="#34a853" d="M5.62 21.31A12 12 0 0 0 24.12 25l-3.87-3a7.16 7.16 0 0 1-10.69-3.75z"></path><path fill="#fbbc02" d="M9.56 18.25c-.5-1.56-.5-3 0-4.56l-3.94-3.07a12.08 12.08 0 0 0 0 10.7z"></path><path fill="#ea4335" d="M9.56 13.69c1.38-4.32 7.25-6.82 11.19-3.13l3.44-3.37a11.8 11.8 0 0 0-18.57 3.43l3.94 3.07z"></path></svg>
-                </button>
-                <button className='btn-method-login-text-body'>
-                  <svg className='svg-tag-login-text-body' viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" role="presentation" aria-hidden="true" focusable="false" ><path d="m13.3 2.1a5.1 5.1 0 0 1 3.8-2.1 5.1 5.1 0 0 1 -1.2 3.8 4.1 4.1 0 0 1 -3.6 1.7 4.5 4.5 0 0 1 1-3.4zm-5 3.7c-2.8 0-5.8 2.5-5.8 7.3 0 4.9 3.5 10.9 6.3 10.9 1 0 2.5-1 4-1s2.6.9 4 .9c3.1 0 5.3-6.4 5.3-6.4a5.3 5.3 0 0 1 -3.2-4.9 5.2 5.2 0 0 1 2.6-4.5 5.4 5.4 0 0 0 -4.7-2.4c-2 0-3.5 1.1-4.3 1.1-.9 0-2.4-1-4.2-1z"></path></svg>
-                </button>
-                <button className='btn-continue-with-email-text-body'>
-                  <svg className='svg-tag-login-text-body' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" role="presentation" focusable="false" ><path d="M30.51 5.88A5.06 5.06 0 0 0 26 3H6a5.06 5.06 0 0 0-4.51 2.88A4.94 4.94 0 0 0 1 8v16a5 5 0 0 0 5 5h20a5 5 0 0 0 5-5V8a4.94 4.94 0 0 0-.49-2.12ZM6 5h20a2.97 2.97 0 0 1 1.77.6L17.95 14a2.98 2.98 0 0 1-3.9 0L4.23 5.6A2.97 2.97 0 0 1 6 5Zm23 19a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V8a2.97 2.97 0 0 1 .1-.74l9.65 8.27a4.97 4.97 0 0 0 6.5 0l9.65-8.27A2.97 2.97 0 0 1 29 8Z"></path></svg>
-                  Tiếp tục bằng Email
-                </button>
-              </div>
-            </div>
-          )
-        }
-        <hr style={{ width: '82%' }} />
-        <div className='payment-text-body' style={{ margin: '25px 59px' }}>
-          <h2>Bắt buột cho chuyến đi của bạn</h2>
-          <div className='required-for-your-trip'>
-            <div style={{ width: '80%' }}>
-              <h3>Số điện thoại</h3>
-              <p>Thêm và xác nhận số điện thoại của bạn để nhận thông tin cập nhật về chuyến đi.</p>
-            </div>
-            <div>
-              <button className='add-telephone-to-your-trip' onClick={toggleAddTelephone}>Thêm</button>
-            </div>
-            {(
-              <div className={`overlay2 ${isOverlayVisible3 ? '' : 'd-none'}`} >
-                <div className={`appearing-div ${isOverlayVisible3 ? 'active' : ''}`} style={{ width: '550px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <i onClick={toggleAddTelephone} class="fa-solid fa-xmark close-description" ></i>
-                    <h1 style={{ margin: '0px 103px' }}>Thêm số điện thoại</h1>
-                  </div>
-                  <hr />
-                  <div className='container-description-details'>
-                    <div className='payment-text-body'>
-                      <p>Chúng tôi sẽ gửi cho bạn thông tin cập nhật về chuyến đi cùng một tin nhắn để xác minh số điện thoại này.</p>
-                      <div onClick={() => { handleClickDivPhoneLogIn('country') }}
-                        className={`country-login-text-body ${selectedPhoneLogIn === 'country' ? 'selectedDivCountryLogIn' : ''}`}>
-                        <div className='text-div-text-body'>
-                          <h3>Quốc gia/Khu vực</h3>
-                          <p>Việt nam (+84)</p>
-                        </div>
-                        <div>
-                          <svg className='svg-book-body' style={{ width: '20px' }} viewBox="0 0 18 18" role="presentation" aria-hidden="true" focusable="false"><path d="m16.29 4.3a1 1 0 1 1 1.41 1.42l-8 8a1 1 0 0 1 -1.41 0l-8-8a1 1 0 1 1 1.41-1.42l7.29 7.29z" fillRule="evenodd"></path></svg>
-                        </div>
-                      </div>
-                      <div onClick={() => { handleClickDivPhoneLogIn('phone') }}
-                        className={`phone-login-text-body ${selectedPhoneLogIn === 'phone' ? 'selectedDivPhoneLogin' : ''}`}>
-                        <div className='text-div-text-body'>
-                          <input className='input-phone-login-text-body' type="text" placeholder='Số điện thoại' />
-                        </div>
-                      </div>
-                      <p>Chúng tôi sẽ nhắn tin gửi mã đến cho bạn để xác nhận số điện thoại. Có áp dụng phí dữ liệu và phí tin nhắn tiêu chuẩn.</p>
-                    </div>
-                  </div>
-                  {
-                    loadingBtnContinueAddTelePhone ? (
-                      <button className='btn-continue-add-telephone-loading'><CircularProgressVariants /></button>
-                    ) : (
-                      <button className='btn-continue-add-telephone' onClick={handleContinueAddTelephone}>Tiếp tục</button>
-                    )
-                  }
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-        <hr style={{ width: '82%' }} />
-        <div className='cancellation-policy-text-body'>
-          <h2>Chính sách huỷ</h2>
-          <p><span style={{ fontWeight: 'bold' }}>Huỷ miễn phí trước {bookDay[0].format('D [thg] M YYYY')}.</span>
-            <span> Bạn được hoàn tiền một phần nếu hủy trước khi nhận phòng vào {bookDay[0].format('D [thg] M YYYY')}. Sau thời gian đó, số tiền hoàn lại sẽ phụ thuộc vào thời điểm bạn hủy.</span></p>
-        </div>
-        <hr style={{ width: '82%' }} />
-        <div className='cancellation-policy-text-body'>
-          <h2>Quy chuẩn chung</h2>
-          <p>Chúng tôi yêu cầu tất cả khách phải ghi nhớ một số quy chuẩn đơn giản để làm một vị khách tuyệt vời.</p>
-          <p>1. Tuân thủ nội quy nhà</p>
-          <p>2. Giữ gìn ngôi nhà như thể đó là nhà bạn</p>
-        </div>
-        <hr style={{ width: '82%' }} />
-        <div className='cancellation-policy-text-body'>
-          <p>
-            <span>Bằng việc chọn nút bên dưới, tôi đồng ý với </span>
-            <span className='span-tag-text-body'>Nội quy nhà của Chủ nhà,</span>
-            <a className='a-tag-text-body' href=""> Quy chuẩn chung đối với khách, </a>
-            <span className='span-tag-text-body'>Chính sách đặt lại và hoàn tiền của Airbnb,</span>
-            <a className='a-tag-text-body' href=""> Điều khoản trả trước một phần,</a>
-            <span> và đồng ý rằng Airbnb có thể </span>
-            <span className='span-tag-text-body'>tính phí vào phương thức thanh toán của tôi</span>
-            <span> nếu tôi phải chịu trách nhiệm về thiệt hại.</span>
-          </p>
-        </div>
-        <div className='btn-confirm-payment-text-body'>
-          <GradientButton onClick={() => {
-            // handleConfirmPayment();
-            toggleOverlayConfirmPay()
-          }}>Xác nhận và thanh toán</GradientButton>
-        </div>
-        {(
-          <div className={`overlay2 ${isOverlayConfirmPay ? '' : 'd-none'}`} >
-            <div className={`appearing-div ${isOverlayConfirmPay ? 'active' : ''}`} style={{ width: '650px' }}>
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                <i onClick={() => {
-                  toggleOverlayConfirmPay()
-                }} class="fa-solid fa-angle-left close-description"
-                  style={{ marginRight: '23%' }}></i>
-                <h1>Xác nhận thanh toán</h1>
-              </div>
-              <hr />
+
+          {
+            !userLogin && (
               <div>
-                <div style={{ display: 'contents', border: 'none' }}
-                  className='fixed-div-payment-book-body'>
-                  <div className='title-details-fix-book-body'>
-                    <div>
-                      {
-                        house.images && (
-                          <img className='img-div-fixed-book-body'
-                            src={house?.images[0]?.srcImg} alt="" />
-                        )
-                      }
+                <h2 style={{ padding: "0px 56px" }}>Đăng nhập hoặc đăng ký để đặt phòng/đặt chỗ</h2>
+                <div className='payment-text-body'>
+                  <div onClick={() => { handleClickDivPhoneLogIn('country') }}
+                    className={`country-login-text-body ${selectedPhoneLogIn === 'country' ? 'selectedDivCountryLogIn' : ''}`}>
+                    <div className='text-div-text-body'>
+                      <h3>Quốc gia/Khu vực</h3>
+                      <p>Việt nam (+84)</p>
                     </div>
                     <div>
-                      {
-                        house && (
-                          <p>{house?.hotelName}</p>
-                        )
-                      }
-                      <p>{house?.title}</p>
-                      {
-                        house && (
-                          <p style={{ display: 'flex', alignItems: 'center', padding: '9px 0px' }}>
-                            <svg style={{ width: '20px', padding: '0px 5px' }} className='svg-tag-login-text-body' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" role="presentation" focusable="false" ><path fill-rule="evenodd" d="m15.1 1.58-4.13 8.88-9.86 1.27a1 1 0 0 0-.54 1.74l7.3 6.57-1.97 9.85a1 1 0 0 0 1.48 1.06l8.62-5 8.63 5a1 1 0 0 0 1.48-1.06l-1.97-9.85 7.3-6.57a1 1 0 0 0-.55-1.73l-9.86-1.28-4.12-8.88a1 1 0 0 0-1.82 0z"></path></svg>
-                            {house?.reviewPoint} ({house?.numReview} đánh giá) </p>
-                        )
-                      }
+                      <svg className='svg-book-body' style={{ width: '20px' }} viewBox="0 0 18 18" role="presentation" aria-hidden="true" focusable="false"><path d="m16.29 4.3a1 1 0 1 1 1.41 1.42l-8 8a1 1 0 0 1 -1.41 0l-8-8a1 1 0 1 1 1.41-1.42l7.29 7.29z" fillRule="evenodd"></path></svg>
                     </div>
                   </div>
-                  <hr style={{ width: '95%', margin: '-10px 10px' }} />
-                  <div style={{ marginTop: '30px' }}
-                    className='price-detail-fixed-book-detail'>
-                    <h2>Ngày đi - Ngày trả phòng</h2>
-                    <div className='bookday-detail-confirm-pay'>
-                      <p>{bookDay[0].format('D [tháng] M YYYY')}</p>
-                      <i class="fa-solid fa-arrow-right"></i>
-                      <p>{bookDay[1].format('D [tháng] M YYYY')}</p>
+                  <div onClick={() => { handleClickDivPhoneLogIn('phone') }}
+                    className={`phone-login-text-body ${selectedPhoneLogIn === 'phone' ? 'selectedDivPhoneLogin' : ''} 
+                  ${phoneInput.length > 0 && phoneInput.length < 10 ? 'checkPhoneInput' : ''}`}>
+                    <div className='text-div-text-body'>
+                      <input className='input-phone-login-text-body'
+                        type="text"
+                        placeholder='Số điện thoại'
+                        value={phoneInput}
+                        onChange={handleChangePhoneInput} />
                     </div>
-                  </div>
-                  <hr style={{ width: '95%', margin: '-10px 10px' }} />
-                  <div style={{ marginTop: '30px', marginBottom: '20px' }}
-                    className='price-detail-fixed-book-detail'>
-                    <h2>Chi tiết giá</h2>
-                    {
-                      housePrice && numberOfNights && numberOfNights - countWeekendDay > 0 && (
-                        <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
-                          <div>
-                            {
-                              housePrice && (
-                                <p onClick={handleOpenAveragePriceDayDetail}
-                                  className='detail-text-payment-book-body'>${housePrice.price} x {numberOfNights - countWeekendDay} đêm (Trong tuần)  </p>
-                              )
-                            }
-                          </div>
-                          <div>
-                            <p>${housePrice && numberOfNights ? housePrice?.price * (numberOfNights - countWeekendDay) : 'Tối thiểu 1 ngày'}</p>
-                          </div>
-                          {
-                            isOpenAveragePriceDayDetail && (
-                              <div className={`show-weekend-days-details ${isOpenAveragePriceDayDetail ? '' : 'hide-weekend-details'}`}>
-                                <div className='title-weekend-days-detail'>
-                                  <i onClick={handleOpenAveragePriceDayDetail}
-                                    class="fa-solid fa-xmark"></i>
-                                  <h3>Giá trung bình hàng đêm được làm tròn</h3>
-                                  <p></p>
-
-                                </div>
-                              </div>
-                            )
-                          }
-                        </div>
-                      )
-                    }
-
-                    {
-                      housePrice && countWeekendDay > 0 && (
-                        <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
-                          <div>
-                            {
-                              housePrice && countWeekendDay > 0 && (
-                                <p onClick={handleOpenWeekendDayDetail}
-                                  className='detail-text-payment-book-body'>${housePrice?.weekendDays ? housePrice.weekendPrice : housePrice.price} x {countWeekendDay} đêm (Cuối tuần)</p>
-                              )
-                            }
-                          </div>
-                          <div>
-                            <p>{housePrice && countWeekendDay > 0 && housePrice?.weekendPrice ? '$' + housePrice?.weekendPrice * countWeekendDay : housePrice?.price * countWeekendDay}</p>
-                          </div>
-                          {
-                            isOpenWeekendDetail && (
-                              <div className={`show-weekend-days-details ${isOpenWeekendDetail ? '' : 'hide-weekend-details'}`}>
-                                <div className='title-weekend-days-detail'>
-                                  <i onClick={handleOpenWeekendDayDetail}
-                                    class="fa-solid fa-xmark"></i>
-                                  <h2>Các ngày cuối tuần</h2>
-                                  <p></p>
-                                </div>
-                                <div className='weekend-days-details'>
-                                  {
-                                    weekendDayDetails.map((day, index) => (
-                                      <p key={index}>{index + 1}. {day}</p>
-                                    ))
-                                  }
-                                </div>
-                              </div>
-                            )
-                          }
-                        </div>
-                      )
-                    }
-                    <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
-                      <div>
-                        {
-                          housePrice &&
-                          housePrice?.feeHouses &&
-                          numberOfNights >= 3 &&
-                          housePrice.feeHouses[0] &&
-                          (
-                            <p className='detail-text-payment-book-body'>{housePrice?.feeHouses[0]?.fee.name}</p>
-                          )
-                        }
-                      </div>
-                      <div>
-                        {
-                          housePrice &&
-                          housePrice?.feeHouses &&
-                          numberOfNights >= 3 &&
-                          housePrice.feeHouses[0] &&
-                          (
-                            <p>${housePrice?.feeHouses[0]?.price}</p>
-                          )
-                        }
-                      </div>
-                    </div>
-                    <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
-                      <div>
-                        {
-                          housePrice &&
-                          housePrice?.feeHouses &&
-                          numberOfNights === 2 &&
-                          housePrice.feeHouses[0] &&
-                          (
-                            <p className='detail-text-payment-book-body'>{housePrice?.feeHouses[1]?.fee.name}</p>
-                          )
-                        }
-                      </div>
-                      <div>
-                        {
-                          housePrice &&
-                          housePrice?.feeHouses &&
-                          numberOfNights === 2 &&
-                          housePrice.feeHouses[0] &&
-                          (
-                            <p>${housePrice?.feeHouses[1]?.price}</p>
-                          )
-                        }
-                      </div>
-                    </div>
-                    <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
-                      <div>
-                        {
-                          housePrice &&
-                          housePrice?.feeHouses &&
-                          housePrice.feeHouses[2] &&
-                          countPets > 0 && (
-                            <p className='detail-text-payment-book-body'>{housePrice?.feeHouses[2]?.fee.name}</p>
-                          )
-                        }
-                      </div>
-                      <div>
-                        {
-                          housePrice &&
-                          housePrice?.feeHouses &&
-                          housePrice.feeHouses[0] &&
-                          countPets > 0 && (
-                            <p>${housePrice?.feeHouses[2]?.price}</p>
-                          )
-                        }
-                      </div>
-                    </div>
-                    <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
-                      <div>
-                        {
-                          housePrice &&
-                          housePrice?.feeHouses &&
-                          housePrice.feeHouses[3] &&
-                          housePrice?.feeHouses[3]?.other &&
-                          ((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other) > 0) && (
-                            <p className='detail-text-payment-book-body'>{housePrice?.feeHouses[3]?.fee.name}</p>
-                          )
-                        }
-                      </div>
-                      <div>
-                        {
-                          housePrice &&
-                          housePrice?.feeHouses &&
-                          housePrice.feeHouses[3] &&
-                          housePrice?.feeHouses[3]?.other &&
-                          ((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other) > 0) && (
-                            <p>${((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other)) * housePrice?.feeHouses[3]?.price}</p>
-                          )
-                        }
-                      </div>
-                    </div>
-                  </div>
-                  <hr style={{ width: '95%', margin: '-10px 10px' }} />
-                  <div className='price-detail-fixed-book-detail'>
-                    <div className='total-fixed-book-detail' style={{ margin: '20px 11px' }}>
-                      <div>
-                        <h2>Tổng <span className='span-tag-text-body'>(USD)</span> </h2>
-                      </div>
-                      <div>
-                        <h3>
-                          {
-                            housePrice &&
-                            housePrice.feeHouses &&
-                            numberOfNights && '$' + (
-                              housePrice.price * (numberOfNights - countWeekendDay) +
-                              (countWeekendDay > 0 && housePrice.weekendPrice ? housePrice.weekendPrice * countWeekendDay : housePrice.price * countWeekendDay) +
-                              (numberOfNights >= 3 && housePrice.feeHouses[0]?.price || 0) +
-                              (numberOfNights === 2 && housePrice.feeHouses[1]?.price || 0) +
-                              (countPets > 0 && housePrice.feeHouses[2]?.price || 0) +
-                              ((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other) > 0 &&
-                                ((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other)) * housePrice.feeHouses[3]?.price || 0)
-                            ).toFixed(2)
-                          }
-                        </h3>
-                      </div>
-                    </div>
+                    {phoneInput.length > 0 && phoneInput.length < 10 && (
+                      <span style={{ color: 'red', bottom: '5px', right: '5px', width: '300px' }}>
+                        Vui lòng nhập ít nhất 10 số
+                      </span>
+                    )}
+                    {phoneInput.length > 11 && (
+                      <span style={{ color: 'red', bottom: '5px', right: '5px' }}>
+                        Không được nhập quá 11 số
+                      </span>
+                    )}
+                    {phoneInput.length >= 10 && phoneInput.length <= 11 && (
+                      <span style={{ color: 'red', bottom: '5px', right: '5px' }}>
+                        <i className="fa-solid fa-check" style={{ fontSize: '30px', marginRight: '8px', color: 'black' }}></i>
+                      </span>
+                    )}
                   </div>
                 </div>
+                <div className='text-div-text-body'>
+                  <p className='p-tag-text-body'>Chúng tôi sẽ gọi điện hoặc nhắn tin cho bạn để xác nhận số điện thoại.
+                    Có áp dụng phí dữ liệu và phí tin nhắn tiêu chuẩn. <a href="https://www.airbnb.com.vn/help/article/2855" className='a-tag-text-body'>Chính sách về quyền riêng tư</a></p>
+                </div>
+                <div style={{ margin: "0px 48px", width: '92%' }}
+                  className='div-gradient-btn-text-body'>
+                  <GradientButton >Tiếp tục</GradientButton>
+                </div>
+                <div className='group-btn-login-text-body'>
+                  <button className='btn-method-login-text-body'>
+                    <svg className='svg-tag-login-text-body' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" role="presentation" focusable="false"><path fill="#1877F2" d="M32 0v32H0V0z"></path><path fill="#FFF" d="M22.94 16H18.5v-3c0-1.27.62-2.5 2.6-2.5h2.02V6.56s-1.83-.31-3.58-.31c-3.65 0-6.04 2.21-6.04 6.22V16H9.44v4.63h4.06V32h5V20.62h3.73l.7-4.62z"></path></svg>
+                  </button>
+                  <button className='btn-method-login-text-body'>
+                    <svg className='svg-tag-login-text-body' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" role="presentation" focusable="false" ><path fill="#4285f4" d="M24.12 25c2.82-2.63 4.07-7 3.32-11.19H16.25v4.63h6.37A5.26 5.26 0 0 1 20.25 22z"></path><path fill="#34a853" d="M5.62 21.31A12 12 0 0 0 24.12 25l-3.87-3a7.16 7.16 0 0 1-10.69-3.75z"></path><path fill="#fbbc02" d="M9.56 18.25c-.5-1.56-.5-3 0-4.56l-3.94-3.07a12.08 12.08 0 0 0 0 10.7z"></path><path fill="#ea4335" d="M9.56 13.69c1.38-4.32 7.25-6.82 11.19-3.13l3.44-3.37a11.8 11.8 0 0 0-18.57 3.43l3.94 3.07z"></path></svg>
+                  </button>
+                  <button className='btn-method-login-text-body'>
+                    <svg className='svg-tag-login-text-body' viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" role="presentation" aria-hidden="true" focusable="false" ><path d="m13.3 2.1a5.1 5.1 0 0 1 3.8-2.1 5.1 5.1 0 0 1 -1.2 3.8 4.1 4.1 0 0 1 -3.6 1.7 4.5 4.5 0 0 1 1-3.4zm-5 3.7c-2.8 0-5.8 2.5-5.8 7.3 0 4.9 3.5 10.9 6.3 10.9 1 0 2.5-1 4-1s2.6.9 4 .9c3.1 0 5.3-6.4 5.3-6.4a5.3 5.3 0 0 1 -3.2-4.9 5.2 5.2 0 0 1 2.6-4.5 5.4 5.4 0 0 0 -4.7-2.4c-2 0-3.5 1.1-4.3 1.1-.9 0-2.4-1-4.2-1z"></path></svg>
+                  </button>
+                  <button className='btn-continue-with-email-text-body'>
+                    <svg className='svg-tag-login-text-body' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" role="presentation" focusable="false" ><path d="M30.51 5.88A5.06 5.06 0 0 0 26 3H6a5.06 5.06 0 0 0-4.51 2.88A4.94 4.94 0 0 0 1 8v16a5 5 0 0 0 5 5h20a5 5 0 0 0 5-5V8a4.94 4.94 0 0 0-.49-2.12ZM6 5h20a2.97 2.97 0 0 1 1.77.6L17.95 14a2.98 2.98 0 0 1-3.9 0L4.23 5.6A2.97 2.97 0 0 1 6 5Zm23 19a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V8a2.97 2.97 0 0 1 .1-.74l9.65 8.27a4.97 4.97 0 0 0 6.5 0l9.65-8.27A2.97 2.97 0 0 1 29 8Z"></path></svg>
+                    Tiếp tục bằng Email
+                  </button>
+                </div>
               </div>
-              <hr />
-              <div style={{ textAlign: 'center' }}>
-                <GradientButton onClick={handleConfirmPayment}>Thanh toán</GradientButton>
-                {/* <button className='btn-confirm-pay-money'>Thanh toán</button> */}
+            )
+          }
+          <hr style={{ width: '82%' }} />
+          <div className='payment-text-body' style={{ margin: '25px 59px' }}>
+            <h2>Bắt buột cho chuyến đi của bạn</h2>
+            <div className='required-for-your-trip'>
+              <div style={{ width: '80%' }}>
+                <h3>Số điện thoại</h3>
+                <p>Thêm và xác nhận số điện thoại của bạn để nhận thông tin cập nhật về chuyến đi.</p>
               </div>
+              <div>
+                <button className='add-telephone-to-your-trip' onClick={toggleAddTelephone}>Thêm</button>
+              </div>
+              <OpenOTP />
+              {(
+                <div className={`overlay2 ${isOverlayVisible3 ? '' : 'd-none'}`} >
+                  <div className={`appearing-div ${isOverlayVisible3 ? 'active' : ''}`} style={{ width: '550px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <i onClick={toggleAddTelephone} class="fa-solid fa-xmark close-description" ></i>
+                      <h1 style={{ margin: '0px 103px' }}>Thêm số điện thoại</h1>
+                    </div>
+                    <hr />
+                    <div className='container-description-details'>
+                      <div className='payment-text-body'>
+                        <p>Chúng tôi sẽ gửi cho bạn thông tin cập nhật về chuyến đi cùng một tin nhắn để xác minh số điện thoại này.</p>
+                        <div onClick={() => { handleClickDivPhoneLogIn('country') }}
+                          className={`country-login-text-body ${selectedPhoneLogIn === 'country' ? 'selectedDivCountryLogIn' : ''}`}>
+                          <div className='text-div-text-body'>
+                            <h3>Quốc gia/Khu vực</h3>
+                            <p>Việt nam (+84)</p>
+                          </div>
+                          <div>
+                            <svg className='svg-book-body' style={{ width: '20px' }} viewBox="0 0 18 18" role="presentation" aria-hidden="true" focusable="false"><path d="m16.29 4.3a1 1 0 1 1 1.41 1.42l-8 8a1 1 0 0 1 -1.41 0l-8-8a1 1 0 1 1 1.41-1.42l7.29 7.29z" fillRule="evenodd"></path></svg>
+                          </div>
+                        </div>
+                        <div onClick={() => { handleClickDivPhoneLogIn('phone') }}
+                          className={`phone-login-text-body ${selectedPhoneLogIn === 'phone' ? 'selectedDivPhoneLogin' : ''}`}>
+                          <div className='text-div-text-body'>
+                            <input className='input-phone-login-text-body' type="text" placeholder='Số điện thoại' />
+                          </div>
+                        </div>
+                        <p>Chúng tôi sẽ nhắn tin gửi mã đến cho bạn để xác nhận số điện thoại. Có áp dụng phí dữ liệu và phí tin nhắn tiêu chuẩn.</p>
+                      </div>
+                    </div>
+                    {
+                      loadingBtnContinueAddTelePhone ? (
+                        <button className='btn-continue-add-telephone-loading'><CircularProgressVariants /></button>
+                      ) : (
+                        <button className='btn-continue-add-telephone' onClick={handleContinueAddTelephone}>Tiếp tục</button>
+                      )
+                    }
+                  </div>
+                </div>
+              )}
             </div>
           </div>
-        )}
-        {(
-          (
-            <div className={`overlay2 ${formConfirm ? '' : 'd-none'}`} >
-              <div className={`appearing-div ${formConfirm ? 'active' : ''}`} style={{ width: '650px' }}>
-                <div style={{ display: 'flex', justifyContent: 'center' }}>
-                  <h1>Thanh toán thành công</h1>
+          <hr style={{ width: '82%' }} />
+          <div className='cancellation-policy-text-body'>
+            <h2>Chính sách huỷ</h2>
+            <p><span style={{ fontWeight: 'bold' }}>Huỷ miễn phí trước {bookDay[0].format('D [thg] M YYYY')}.</span>
+              <span> Bạn được hoàn tiền một phần nếu hủy trước khi nhận phòng vào {bookDay[0].format('D [thg] M YYYY')}. Sau thời gian đó, số tiền hoàn lại sẽ phụ thuộc vào thời điểm bạn hủy.</span></p>
+          </div>
+          <hr style={{ width: '82%' }} />
+          <div className='cancellation-policy-text-body'>
+            <h2>Quy chuẩn chung</h2>
+            <p>Chúng tôi yêu cầu tất cả khách phải ghi nhớ một số quy chuẩn đơn giản để làm một vị khách tuyệt vời.</p>
+            <p>1. Tuân thủ nội quy nhà</p>
+            <p>2. Giữ gìn ngôi nhà như thể đó là nhà bạn</p>
+          </div>
+          <hr style={{ width: '82%' }} />
+          <div className='cancellation-policy-text-body'>
+            <p>
+              <span>Bằng việc chọn nút bên dưới, tôi đồng ý với </span>
+              <span className='span-tag-text-body'>Nội quy nhà của Chủ nhà,</span>
+              <a className='a-tag-text-body' href=""> Quy chuẩn chung đối với khách, </a>
+              <span className='span-tag-text-body'>Chính sách đặt lại và hoàn tiền của Airbnb,</span>
+              <a className='a-tag-text-body' href=""> Điều khoản trả trước một phần,</a>
+              <span> và đồng ý rằng Airbnb có thể </span>
+              <span className='span-tag-text-body'>tính phí vào phương thức thanh toán của tôi</span>
+              <span> nếu tôi phải chịu trách nhiệm về thiệt hại.</span>
+            </p>
+          </div>
+          <div className='btn-confirm-payment-text-body'>
+            <GradientButton onClick={() => {
+              // handleConfirmPayment();
+              toggleOverlayConfirmPay()
+            }}>Xác nhận và thanh toán</GradientButton>
+          </div>
+          {(
+            <div className={`overlay2 ${isOverlayConfirmPay ? '' : 'd-none'}`} >
+              <div className={`appearing-div ${isOverlayConfirmPay ? 'active' : ''}`} style={{ width: '650px' }}>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <i onClick={() => {
+                    toggleOverlayConfirmPay()
+                  }} class="fa-solid fa-angle-left close-description"
+                    style={{ marginRight: '23%' }}></i>
+                  <h1>Xác nhận thanh toán</h1>
                 </div>
                 <hr />
                 <div>
@@ -1189,7 +1051,254 @@ const BookBody = () => {
                       </div>
                     </div>
                     <hr style={{ width: '95%', margin: '-10px 10px' }} />
-                    {/* <div style={{ marginTop: '30px', marginBottom: '20px' }}
+                    <div style={{ marginTop: '30px', marginBottom: '20px' }}
+                      className='price-detail-fixed-book-detail'>
+                      <h2>Chi tiết giá</h2>
+                      {
+                        housePrice && numberOfNights && numberOfNights - countWeekendDay > 0 && (
+                          <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
+                            <div>
+                              {
+                                housePrice && (
+                                  <p onClick={handleOpenAveragePriceDayDetail}
+                                    className='detail-text-payment-book-body'>${housePrice.price} x {numberOfNights - countWeekendDay} đêm (Trong tuần)  </p>
+                                )
+                              }
+                            </div>
+                            <div>
+                              <p>${housePrice && numberOfNights ? housePrice?.price * (numberOfNights - countWeekendDay) : 'Tối thiểu 1 ngày'}</p>
+                            </div>
+                            {
+                              isOpenAveragePriceDayDetail && (
+                                <div className={`show-weekend-days-details ${isOpenAveragePriceDayDetail ? '' : 'hide-weekend-details'}`}>
+                                  <div className='title-weekend-days-detail'>
+                                    <i onClick={handleOpenAveragePriceDayDetail}
+                                      class="fa-solid fa-xmark"></i>
+                                    <h3>Giá trung bình hàng đêm được làm tròn</h3>
+                                    <p></p>
+
+                                  </div>
+                                </div>
+                              )
+                            }
+                          </div>
+                        )
+                      }
+
+                      {
+                        housePrice && countWeekendDay > 0 && (
+                          <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
+                            <div>
+                              {
+                                housePrice && countWeekendDay > 0 && (
+                                  <p onClick={handleOpenWeekendDayDetail}
+                                    className='detail-text-payment-book-body'>${housePrice?.weekendDays ? housePrice.weekendPrice : housePrice.price} x {countWeekendDay} đêm (Cuối tuần)</p>
+                                )
+                              }
+                            </div>
+                            <div>
+                              <p>{housePrice && countWeekendDay > 0 && housePrice?.weekendPrice ? '$' + housePrice?.weekendPrice * countWeekendDay : housePrice?.price * countWeekendDay}</p>
+                            </div>
+                            {
+                              isOpenWeekendDetail && (
+                                <div className={`show-weekend-days-details ${isOpenWeekendDetail ? '' : 'hide-weekend-details'}`}>
+                                  <div className='title-weekend-days-detail'>
+                                    <i onClick={handleOpenWeekendDayDetail}
+                                      class="fa-solid fa-xmark"></i>
+                                    <h2>Các ngày cuối tuần</h2>
+                                    <p></p>
+                                  </div>
+                                  <div className='weekend-days-details'>
+                                    {
+                                      weekendDayDetails.map((day, index) => (
+                                        <p key={index}>{index + 1}. {day}</p>
+                                      ))
+                                    }
+                                  </div>
+                                </div>
+                              )
+                            }
+                          </div>
+                        )
+                      }
+                      <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
+                        <div>
+                          {
+                            housePrice &&
+                            housePrice?.feeHouses &&
+                            numberOfNights >= 3 &&
+                            housePrice.feeHouses[0] &&
+                            (
+                              <p className='detail-text-payment-book-body'>{housePrice?.feeHouses[0]?.fee.name}</p>
+                            )
+                          }
+                        </div>
+                        <div>
+                          {
+                            housePrice &&
+                            housePrice?.feeHouses &&
+                            numberOfNights >= 3 &&
+                            housePrice.feeHouses[0] &&
+                            (
+                              <p>${housePrice?.feeHouses[0]?.price}</p>
+                            )
+                          }
+                        </div>
+                      </div>
+                      <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
+                        <div>
+                          {
+                            housePrice &&
+                            housePrice?.feeHouses &&
+                            numberOfNights === 2 &&
+                            housePrice.feeHouses[0] &&
+                            (
+                              <p className='detail-text-payment-book-body'>{housePrice?.feeHouses[1]?.fee.name}</p>
+                            )
+                          }
+                        </div>
+                        <div>
+                          {
+                            housePrice &&
+                            housePrice?.feeHouses &&
+                            numberOfNights === 2 &&
+                            housePrice.feeHouses[0] &&
+                            (
+                              <p>${housePrice?.feeHouses[1]?.price}</p>
+                            )
+                          }
+                        </div>
+                      </div>
+                      <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
+                        <div>
+                          {
+                            housePrice &&
+                            housePrice?.feeHouses &&
+                            housePrice.feeHouses[2] &&
+                            countPets > 0 && (
+                              <p className='detail-text-payment-book-body'>{housePrice?.feeHouses[2]?.fee.name}</p>
+                            )
+                          }
+                        </div>
+                        <div>
+                          {
+                            housePrice &&
+                            housePrice?.feeHouses &&
+                            housePrice.feeHouses[0] &&
+                            countPets > 0 && (
+                              <p>${housePrice?.feeHouses[2]?.price}</p>
+                            )
+                          }
+                        </div>
+                      </div>
+                      <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
+                        <div>
+                          {
+                            housePrice &&
+                            housePrice?.feeHouses &&
+                            housePrice.feeHouses[3] &&
+                            housePrice?.feeHouses[3]?.other &&
+                            ((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other) > 0) && (
+                              <p className='detail-text-payment-book-body'>{housePrice?.feeHouses[3]?.fee.name}</p>
+                            )
+                          }
+                        </div>
+                        <div>
+                          {
+                            housePrice &&
+                            housePrice?.feeHouses &&
+                            housePrice.feeHouses[3] &&
+                            housePrice?.feeHouses[3]?.other &&
+                            ((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other) > 0) && (
+                              <p>${((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other)) * housePrice?.feeHouses[3]?.price}</p>
+                            )
+                          }
+                        </div>
+                      </div>
+                    </div>
+                    <hr style={{ width: '95%', margin: '-10px 10px' }} />
+                    <div className='price-detail-fixed-book-detail'>
+                      <div className='total-fixed-book-detail' style={{ margin: '20px 11px' }}>
+                        <div>
+                          <h2>Tổng <span className='span-tag-text-body'>(USD)</span> </h2>
+                        </div>
+                        <div>
+                          <h3>
+                            {
+                              housePrice &&
+                              housePrice.feeHouses &&
+                              numberOfNights && '$' + (
+                                housePrice.price * (numberOfNights - countWeekendDay) +
+                                (countWeekendDay > 0 && housePrice.weekendPrice ? housePrice.weekendPrice * countWeekendDay : housePrice.price * countWeekendDay) +
+                                (numberOfNights >= 3 && housePrice.feeHouses[0]?.price || 0) +
+                                (numberOfNights === 2 && housePrice.feeHouses[1]?.price || 0) +
+                                (countPets > 0 && housePrice.feeHouses[2]?.price || 0) +
+                                ((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other) > 0 &&
+                                  ((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other)) * housePrice.feeHouses[3]?.price || 0)
+                              ).toFixed(2)
+                            }
+                          </h3>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <hr />
+              <div style={{ textAlign: 'center' }}>
+                <GradientButton onClick={handleConfirmPayment}>Thanh toán</GradientButton>
+                {/* <button className='btn-confirm-pay-money'>Thanh toán</button> */}
+              </div>
+            </div>
+          )}
+          {(
+            (
+              <div className={`overlay2 ${formConfirm ? '' : 'd-none'}`} >
+                <div className={`appearing-div ${formConfirm ? 'active' : ''}`} style={{ width: '650px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    <h1>Thanh toán thành công</h1>
+                  </div>
+                  <hr />
+                  <div>
+                    <div style={{ display: 'contents', border: 'none' }}
+                      className='fixed-div-payment-book-body'>
+                      <div className='title-details-fix-book-body'>
+                        <div>
+                          {
+                            house.images && (
+                              <img className='img-div-fixed-book-body'
+                                src={house?.images[0]?.srcImg} alt="" />
+                            )
+                          }
+                        </div>
+                        <div>
+                          {
+                            house && (
+                              <p>{house?.hotelName}</p>
+                            )
+                          }
+                          <p>{house?.title}</p>
+                          {
+                            house && (
+                              <p style={{ display: 'flex', alignItems: 'center', padding: '9px 0px' }}>
+                                <svg style={{ width: '20px', padding: '0px 5px' }} className='svg-tag-login-text-body' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" role="presentation" focusable="false" ><path fill-rule="evenodd" d="m15.1 1.58-4.13 8.88-9.86 1.27a1 1 0 0 0-.54 1.74l7.3 6.57-1.97 9.85a1 1 0 0 0 1.48 1.06l8.62-5 8.63 5a1 1 0 0 0 1.48-1.06l-1.97-9.85 7.3-6.57a1 1 0 0 0-.55-1.73l-9.86-1.28-4.12-8.88a1 1 0 0 0-1.82 0z"></path></svg>
+                                {house?.reviewPoint} ({house?.numReview} đánh giá) </p>
+                            )
+                          }
+                        </div>
+                      </div>
+                      <hr style={{ width: '95%', margin: '-10px 10px' }} />
+                      <div style={{ marginTop: '30px' }}
+                        className='price-detail-fixed-book-detail'>
+                        <h2>Ngày đi - Ngày trả phòng</h2>
+                        <div className='bookday-detail-confirm-pay'>
+                          <p>{bookDay[0].format('D [tháng] M YYYY')}</p>
+                          <i class="fa-solid fa-arrow-right"></i>
+                          <p>{bookDay[1].format('D [tháng] M YYYY')}</p>
+                        </div>
+                      </div>
+                      <hr style={{ width: '95%', margin: '-10px 10px' }} />
+                      {/* <div style={{ marginTop: '30px', marginBottom: '20px' }}
                       className='price-detail-fixed-book-detail'>
                       <h2>Chi tiết giá</h2>
                       {
@@ -1354,262 +1463,248 @@ const BookBody = () => {
                         </div>
                       </div>
                     </div> */}
-                    {/* <hr style={{ width: '95%', margin: '-10px 10px' }} /> */}
-                    <div className='price-detail-fixed-book-detail'>
-                      <div className='total-fixed-book-detail' style={{ margin: '20px 11px' }}>
-                        <div>
-                          <h2>Tổng <span className='span-tag-text-body'>(USD)</span> </h2>
-                        </div>
-                        <div>
-                          <h3>
-                            {
-                              housePrice &&
-                              housePrice.feeHouses &&
-                              numberOfNights && '$' + (
-                                housePrice.price * (numberOfNights - countWeekendDay) +
-                                (countWeekendDay > 0 && housePrice.weekendPrice ? housePrice.weekendPrice * countWeekendDay : housePrice.price * countWeekendDay) +
-                                (numberOfNights >= 3 && housePrice.feeHouses[0]?.price || 0) +
-                                (numberOfNights === 2 && housePrice.feeHouses[1]?.price || 0) +
-                                (countPets > 0 && housePrice.feeHouses[2]?.price || 0) +
-                                ((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other) > 0 &&
-                                  ((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other)) * housePrice.feeHouses[3]?.price || 0)
-                              ).toFixed(2)
-                            }
-                          </h3>
+                      {/* <hr style={{ width: '95%', margin: '-10px 10px' }} /> */}
+                      <div className='price-detail-fixed-book-detail'>
+                        <div className='total-fixed-book-detail' style={{ margin: '20px 11px' }}>
+                          <div>
+                            <h2>Tổng <span className='span-tag-text-body'>(USD)</span> </h2>
+                          </div>
+                          <div>
+                            <h3>
+                              {
+                                housePrice &&
+                                housePrice.feeHouses &&
+                                numberOfNights && '$' + (
+                                  housePrice.price * (numberOfNights - countWeekendDay) +
+                                  (countWeekendDay > 0 && housePrice.weekendPrice ? housePrice.weekendPrice * countWeekendDay : housePrice.price * countWeekendDay) +
+                                  (numberOfNights >= 3 && housePrice.feeHouses[0]?.price || 0) +
+                                  (numberOfNights === 2 && housePrice.feeHouses[1]?.price || 0) +
+                                  (countPets > 0 && housePrice.feeHouses[2]?.price || 0) +
+                                  ((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other) > 0 &&
+                                    ((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other)) * housePrice.feeHouses[3]?.price || 0)
+                                ).toFixed(2)
+                              }
+                            </h3>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                <hr />
-                <div style={{ textAlign: 'center' }}>
-                  <GradientButton onClick={handleBackToHome}>Xác nhận</GradientButton>
+                  <hr />
+                  <div style={{ textAlign: 'center' }}>
+                    <GradientButton onClick={handleBackToHome}>Xác nhận</GradientButton>
+                  </div>
                 </div>
               </div>
-            </div>
-          )
-        )}
-      </div>
-      <div className='devide-book-body'>
-        <div className='fixed-div-payment-book-body'>
-          <div className='title-details-fix-book-body'>
-            <div>
-              {
-                house.images && (
-                  <img className='img-div-fixed-book-body'
-                    src={house?.images[0]?.srcImg} alt="" />
-                )
-              }
-            </div>
-            <div>
-              {
-                house && (
-                  <p>{house?.hotelName}</p>
-                )
-              }
-              <p>{house?.title}</p>
-              {
-                house && (
-                  <p style={{ display: 'flex', alignItems: 'center', padding: '9px 0px' }}>
-                    <svg style={{ width: '20px', padding: '0px 5px' }} className='svg-tag-login-text-body' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" role="presentation" focusable="false" ><path fillRule="evenodd" d="m15.1 1.58-4.13 8.88-9.86 1.27a1 1 0 0 0-.54 1.74l7.3 6.57-1.97 9.85a1 1 0 0 0 1.48 1.06l8.62-5 8.63 5a1 1 0 0 0 1.48-1.06l-1.97-9.85 7.3-6.57a1 1 0 0 0-.55-1.73l-9.86-1.28-4.12-8.88a1 1 0 0 0-1.82 0z"></path></svg>
-                    {house?.reviewPoint} ({house?.numReview} đánh giá) </p>
-                )
-              }
-            </div>
-          </div>
-          <hr style={{ width: '95%', margin: '-10px 10px' }} />
-          <div className='price-detail-fixed-book-detail'>
-            <h2>Chi tiết giá</h2>
-            {
-              housePrice && numberOfNights && numberOfNights - countWeekendDay > 0 && (
+            )
+          )}
+        </div>
+        <div className='devide-book-body'>
+          <div className='fixed-div-payment-book-body'>
+            <div className='title-details-fix-book-body'>
+              <div>
+                {
+                  house.images && (
+                    <img className='img-div-fixed-book-body'
+                      src={house?.images[0]?.srcImg} alt="" />
+                  )
+                }
+              </div>
+              <hr style={{ width: '95%', margin: '-10px 10px' }} />
+              <div className='price-detail-fixed-book-detail'>
+                <h2>Chi tiết giá</h2>
+                {
+                  housePrice && numberOfNights && numberOfNights - countWeekendDay > 0 && (
+                    <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
+                      <div>
+                        {
+                          housePrice && (
+                            <p onClick={handleOpenAveragePriceDayDetail}
+                              className='detail-text-payment-book-body'>${housePrice.price} x {numberOfNights - countWeekendDay} đêm (Trong tuần)  </p>
+                          )
+                        }
+                      </div>
+                      <div>
+                        <p>${housePrice && numberOfNights ? housePrice?.price * (numberOfNights - countWeekendDay) : 'Tối thiểu 1 ngày'}</p>
+                      </div>
+                      {
+                        isOpenAveragePriceDayDetail && (
+                          <div className={`show-weekend-days-details ${isOpenAveragePriceDayDetail ? '' : 'hide-weekend-details'}`}>
+                            <div className='title-weekend-days-detail'>
+                              <i onClick={handleOpenAveragePriceDayDetail}
+                                class="fa-solid fa-xmark"></i>
+                              <h3>Giá trung bình hàng đêm được làm tròn</h3>
+                              <p></p>
+
+                            </div>
+                          </div>
+                        )
+                      }
+                    </div>
+                  )
+                }
+
+                {
+                  housePrice && countWeekendDay > 0 && (
+                    <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
+                      <div>
+                        {
+                          housePrice && countWeekendDay > 0 && (
+                            <p onClick={handleOpenWeekendDayDetail}
+                              className='detail-text-payment-book-body'>${housePrice?.weekendDays ? housePrice.weekendPrice : housePrice.price} x {countWeekendDay} đêm (Cuối tuần)</p>
+                          )
+                        }
+                      </div>
+                      <div>
+                        <p>{housePrice && countWeekendDay > 0 && housePrice?.weekendPrice ? '$' + housePrice?.weekendPrice * countWeekendDay : housePrice?.price * countWeekendDay}</p>
+                      </div>
+                      {
+                        isOpenWeekendDetail && (
+                          <div className={`show-weekend-days-details ${isOpenWeekendDetail ? '' : 'hide-weekend-details'}`}>
+                            <div className='title-weekend-days-detail'>
+                              <i onClick={handleOpenWeekendDayDetail}
+                                class="fa-solid fa-xmark"></i>
+                              <h2>Các ngày cuối tuần</h2>
+                              <p></p>
+                            </div>
+                            <div className='weekend-days-details'>
+                              {
+                                weekendDayDetails.map((day, index) => (
+                                  <p key={index}>{index + 1}. {day}</p>
+                                ))
+                              }
+                            </div>
+                          </div>
+                        )
+                      }
+                    </div>
+                  )
+                }
                 <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
                   <div>
                     {
-                      housePrice && (
-                        <p onClick={handleOpenAveragePriceDayDetail}
-                          className='detail-text-payment-book-body'>${housePrice.price} x {numberOfNights - countWeekendDay} đêm (Trong tuần)  </p>
+                      housePrice &&
+                      housePrice?.feeHouses &&
+                      numberOfNights >= 3 &&
+                      housePrice.feeHouses[0] &&
+                      (
+                        <p className='detail-text-payment-book-body'>{housePrice?.feeHouses[0]?.fee.name}</p>
                       )
                     }
                   </div>
                   <div>
-                    <p>${housePrice && numberOfNights ? housePrice?.price * (numberOfNights - countWeekendDay) : 'Tối thiểu 1 ngày'}</p>
+                    {
+                      housePrice &&
+                      housePrice?.feeHouses &&
+                      numberOfNights >= 3 &&
+                      housePrice.feeHouses[0] &&
+                      (
+                        <p>${housePrice?.feeHouses[0]?.price}</p>
+                      )
+                    }
                   </div>
-                  {
-                    isOpenAveragePriceDayDetail && (
-                      <div className={`show-weekend-days-details ${isOpenAveragePriceDayDetail ? '' : 'hide-weekend-details'}`}>
-                        <div className='title-weekend-days-detail'>
-                          <i onClick={handleOpenAveragePriceDayDetail}
-                            class="fa-solid fa-xmark"></i>
-                          <h3>Giá trung bình hàng đêm được làm tròn</h3>
-                          <p></p>
-
-                        </div>
-                      </div>
-                    )
-                  }
                 </div>
-              )
-            }
-
-            {
-              housePrice && countWeekendDay > 0 && (
                 <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
                   <div>
                     {
-                      housePrice && countWeekendDay > 0 && (
-                        <p onClick={handleOpenWeekendDayDetail}
-                          className='detail-text-payment-book-body'>${housePrice?.weekendDays ? housePrice.weekendPrice : housePrice.price} x {countWeekendDay} đêm (Cuối tuần)</p>
+                      housePrice &&
+                      housePrice?.feeHouses &&
+                      numberOfNights === 2 &&
+                      housePrice.feeHouses[0] &&
+                      (
+                        <p className='detail-text-payment-book-body'>{housePrice?.feeHouses[1]?.fee.name}</p>
                       )
                     }
                   </div>
                   <div>
-                    <p>{housePrice && countWeekendDay > 0 && housePrice?.weekendPrice ? '$' + housePrice?.weekendPrice * countWeekendDay : housePrice?.price * countWeekendDay}</p>
+                    {
+                      housePrice &&
+                      housePrice?.feeHouses &&
+                      numberOfNights === 2 &&
+                      housePrice.feeHouses[0] &&
+                      (
+                        <p>${housePrice?.feeHouses[1]?.price}</p>
+                      )
+                    }
                   </div>
-                  {
-                    isOpenWeekendDetail && (
-                      <div className={`show-weekend-days-details ${isOpenWeekendDetail ? '' : 'hide-weekend-details'}`}>
-                        <div className='title-weekend-days-detail'>
-                          <i onClick={handleOpenWeekendDayDetail}
-                            class="fa-solid fa-xmark"></i>
-                          <h2>Các ngày cuối tuần</h2>
-                          <p></p>
-                        </div>
-                        <div className='weekend-days-details'>
-                          {
-                            weekendDayDetails.map((day, index) => (
-                              <p key={index}>{index + 1}. {day}</p>
-                            ))
-                          }
-                        </div>
-                      </div>
-                    )
-                  }
                 </div>
-              )
-            }
-            <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
-              <div>
-                {
-                  housePrice &&
-                  housePrice?.feeHouses &&
-                  numberOfNights >= 3 &&
-                  housePrice.feeHouses[0] &&
-                  (
-                    <p className='detail-text-payment-book-body'>{housePrice?.feeHouses[0]?.fee.name}</p>
-                  )
-                }
+                <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
+                  <div>
+                    {
+                      housePrice &&
+                      housePrice?.feeHouses &&
+                      housePrice.feeHouses[2] &&
+                      countPets > 0 && (
+                        <p className='detail-text-payment-book-body'>{housePrice?.feeHouses[2]?.fee.name}</p>
+                      )
+                    }
+                  </div>
+                  <div>
+                    {
+                      housePrice &&
+                      housePrice?.feeHouses &&
+                      housePrice.feeHouses[0] &&
+                      countPets > 0 && (
+                        <p>${housePrice?.feeHouses[2]?.price}</p>
+                      )
+                    }
+                  </div>
+                </div>
+                <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
+                  <div>
+                    {
+                      housePrice &&
+                      housePrice?.feeHouses &&
+                      housePrice.feeHouses[3] &&
+                      housePrice?.feeHouses[3]?.other &&
+                      ((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other) > 0) && (
+                        <p className='detail-text-payment-book-body'>{housePrice?.feeHouses[3]?.fee.name}</p>
+                      )
+                    }
+                  </div>
+                  <div>
+                    {
+                      housePrice &&
+                      housePrice?.feeHouses &&
+                      housePrice.feeHouses[3] &&
+                      housePrice?.feeHouses[3]?.other &&
+                      ((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other) > 0) && (
+                        <p>${((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other)) * housePrice?.feeHouses[3]?.price}</p>
+                      )
+                    }
+                  </div>
+                </div>
               </div>
-              <div>
-                {
-                  housePrice &&
-                  housePrice?.feeHouses &&
-                  numberOfNights >= 3 &&
-                  housePrice.feeHouses[0] &&
-                  (
-                    <p>${housePrice?.feeHouses[0]?.price}</p>
-                  )
-                }
-              </div>
-            </div>
-            <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
-              <div>
-                {
-                  housePrice &&
-                  housePrice?.feeHouses &&
-                  numberOfNights === 2 &&
-                  housePrice.feeHouses[0] &&
-                  (
-                    <p className='detail-text-payment-book-body'>{housePrice?.feeHouses[1]?.fee.name}</p>
-                  )
-                }
-              </div>
-              <div>
-                {
-                  housePrice &&
-                  housePrice?.feeHouses &&
-                  numberOfNights === 2 &&
-                  housePrice.feeHouses[0] &&
-                  (
-                    <p>${housePrice?.feeHouses[1]?.price}</p>
-                  )
-                }
-              </div>
-            </div>
-            <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
-              <div>
-                {
-                  housePrice &&
-                  housePrice?.feeHouses &&
-                  housePrice.feeHouses[2] &&
-                  countPets > 0 && (
-                    <p className='detail-text-payment-book-body'>{housePrice?.feeHouses[2]?.fee.name}</p>
-                  )
-                }
-              </div>
-              <div>
-                {
-                  housePrice &&
-                  housePrice?.feeHouses &&
-                  housePrice.feeHouses[0] &&
-                  countPets > 0 && (
-                    <p>${housePrice?.feeHouses[2]?.price}</p>
-                  )
-                }
-              </div>
-            </div>
-            <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
-              <div>
-                {
-                  housePrice &&
-                  housePrice?.feeHouses &&
-                  housePrice.feeHouses[3] &&
-                  housePrice?.feeHouses[3]?.other &&
-                  ((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other) > 0) && (
-                    <p className='detail-text-payment-book-body'>{housePrice?.feeHouses[3]?.fee.name}</p>
-                  )
-                }
-              </div>
-              <div>
-                {
-                  housePrice &&
-                  housePrice?.feeHouses &&
-                  housePrice.feeHouses[3] &&
-                  housePrice?.feeHouses[3]?.other &&
-                  ((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other) > 0) && (
-                    <p>${((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other)) * housePrice?.feeHouses[3]?.price}</p>
-                  )
-                }
-              </div>
-            </div>
-          </div>
-          <hr style={{ width: '95%', margin: '-10px 10px' }} />
-          <div className='price-detail-fixed-book-detail'>
-            <div className='total-fixed-book-detail' style={{ margin: '20px 11px' }}>
-              <div>
-                <h3>Tổng <span className='span-tag-text-body'>(USD)</span> </h3>
-              </div>
-              <div>
-                <h3>
-                  {
-                    housePrice &&
-                    housePrice.feeHouses &&
-                    numberOfNights && '$' + (
-                      housePrice.price * (numberOfNights - countWeekendDay) +
-                      (countWeekendDay > 0 && housePrice.weekendPrice ? housePrice.weekendPrice * countWeekendDay : housePrice.price * countWeekendDay) +
-                      (numberOfNights >= 3 && housePrice.feeHouses[0]?.price || 0) +
-                      (numberOfNights === 2 && housePrice.feeHouses[1]?.price || 0) +
-                      (countPets > 0 && housePrice.feeHouses[2]?.price || 0) +
-                      ((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other) > 0 &&
-                        ((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other)) * housePrice.feeHouses[3]?.price || 0)
-                    ).toFixed(2)
-                  }
-                </h3>
+              <hr style={{ width: '95%', margin: '-10px 10px' }} />
+              <div className='price-detail-fixed-book-detail'>
+                <div className='total-fixed-book-detail' style={{ margin: '20px 11px' }}>
+                  <div>
+                    <h3>Tổng <span className='span-tag-text-body'>(USD)</span> </h3>
+                  </div>
+                  <div>
+                    <h3>
+                      {
+                        housePrice &&
+                        housePrice.feeHouses &&
+                        numberOfNights && '$' + (
+                          housePrice.price * (numberOfNights - countWeekendDay) +
+                          (countWeekendDay > 0 && housePrice.weekendPrice ? housePrice.weekendPrice * countWeekendDay : housePrice.price * countWeekendDay) +
+                          (numberOfNights >= 3 && housePrice.feeHouses[0]?.price || 0) +
+                          (numberOfNights === 2 && housePrice.feeHouses[1]?.price || 0) +
+                          (countPets > 0 && housePrice.feeHouses[2]?.price || 0) +
+                          ((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other) > 0 &&
+                            ((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other)) * housePrice.feeHouses[3]?.price || 0)
+                        ).toFixed(2)
+                      }
+                    </h3>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
 

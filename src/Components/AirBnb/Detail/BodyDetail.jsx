@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react'
 import "../AirBnbDetail.css"
 import { Link, useParams } from 'react-router-dom';
-import { API_HOUSE_COMFORTABLE_DETAIL, API_HOUSE_DETAIL_URL, API_HOUSE_REVIEW, API_HOUSE_REVIEWS } from '../../../Services/common';
+import { API_BLOCKING_DATE_BY_HOUSE_ID, API_BLOCK_REVERSATION_BY_HOUSE_ID, API_HOUSE_COMFORTABLE_DETAIL, API_HOUSE_DETAIL_URL, API_HOUSE_REVIEW, API_HOUSE_REVIEWS } from '../../../Services/common';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import dayjs from 'dayjs';
 import { styled } from '@mui/material/styles';
@@ -29,6 +29,9 @@ import ImageListItemBar from '@mui/material/ImageListItemBar';
 import IconButton from '@mui/material/IconButton';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import ImagesSlider from './ImagesSlider';
+import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const BodyDetail = () => {
@@ -46,9 +49,7 @@ const BodyDetail = () => {
     const [houseReview, setHouseReview] = useState({})
     const [houseReviews, setHouseReviews] = useState({})
     const [loadingInputSearch, setLoadingInputSearch] = useState(false)
-    const [selectedDates, setSelectedDates] = useState([
-        GoDay ? dayjs(GoDay) : dayjs(),
-        BackDay ? dayjs(BackDay) : dayjs().add(5, 'day')
+    const [selectedDates, setSelectedDates] = useState([null, null
     ]);
     const [showFullDescription, setShowFullDescription] = useState(false);
     const [isTruncated, setIsTruncated] = useState(true);
@@ -66,18 +67,68 @@ const BodyDetail = () => {
     };
 
 
-    const handleDateChange = (newDates) => {
-        setSelectedDates(newDates);
+    const [maxDay, setMaxDay] = useState();
+    const [hasSelectedDepartureDate, setHasSelectedDepartureDate] = useState(false);
+    const [chooseGoDay, setIsChooseGoDay] = useState(false);
+    const handleDateChange = (newDates, selectionState) => {
+
+        console.log('day chage', selectionState)
+        const selectedDate = dayjs(newDates[0]);
+        setIsChooseGoDay(true);
+        const nextDate = dayjs(newDates[0] || newDates[1]).add(1, 'day');
+
+        const isNextDateDisabled = shouldDisableDates.includes(nextDate.format('YYYY-MM-DD')) && selectedDates[0] == null;
+
+        if (isNextDateDisabled) {
+            toast.error('Đây là ngày chỉ dành cho trả phòng');
+
+            setSelectedDates([null, null]); 
+            setHasSelectedDepartureDate(false); 
+            return;
+        }
+        const closestDate = shouldDisableDates
+            .filter(date => date > selectedDate.format('YYYY-MM-DD'))
+            .sort((a, b) => new Date(a) - new Date(b))[0];
+
+        const maxDay = closestDate ? dayjs(closestDate) : null;
+        setMaxDay(maxDay)
+        console.log('Ngày gần nhất sau ngày được chọn:', closestDate);
+        if(selectedDates[0] !== null && selectedDates[1] != null){
+            setSelectedDates([null, null])
+        }else if(selectedDates[0] == null){
+            setSelectedDates([newDates[0] || newDates[1],null])
+        }else{
+            setSelectedDates([selectedDates[0],
+                newDates[0].format('YYYY-MM-DD') === selectedDates[0].format('YYYY-MM-DD') ?
+            newDates[1] : newDates[0]])
+        }
         if (newDates[1]) {
             setCheckAvailableRoom(false)
+            setMaxDay(null);
+        }
+        if (newDates[0] && newDates[1]) {
+            setHasSelectedDepartureDate(true);
+        } else {
+            setHasSelectedDepartureDate(false);
         }
     };
+    useEffect(() => {
+        console.log("maxDay kiee tra", maxDay);
+    }, [maxDay])
     const numberOfNights = selectedDates[1] && selectedDates[0] ? selectedDates[1].diff(selectedDates[0], 'day') : null;
 
     const handleResetDates = () => {
-        setSelectedDates([
-            dayjs(),
-            dayjs().add(5, 'day')]);
+        if (!chooseGoDay){
+            toast.error('Vui lòng chọn ngày đi trước');
+            return;
+        }
+        if (!hasSelectedDepartureDate) {
+            toast.error('Vui lòng chọn ngày trả phòng trước');
+            return;
+        }
+        setIsChooseGoDay(false);
+        setSelectedDates([null, null]); 
+        setMaxDay(null);
     };
 
     useEffect(() => {
@@ -304,7 +355,9 @@ const BodyDetail = () => {
     };
 
     const { bookingInfo, setBookingInfo } = useContext(BookingContext);
-
+    useEffect(() => {
+        console.log(selectedDates, 'select')
+    }, [selectedDates])
     const handleClick = () => {
         const newBookingInfo = {
             numReview: house?.numReview,
@@ -411,8 +464,81 @@ const BodyDetail = () => {
     const totalComfortable = houseComfortable.reduce((acc, type) => acc + type.comfortableDetailList.length, 0);
 
     console.log(`Tổng số comfortable là: ${totalComfortable}`);
+
+
+    const [reservedDates, setReservedDates] = useState([]);
+    const [blockedDates, setBlockedDates] = useState([]);
+
+    useEffect(() => {
+        // Gọi API để lấy danh sách các ngày đã đặt
+        axios.get(API_BLOCK_REVERSATION_BY_HOUSE_ID + houseID)
+            .then(response => {
+                const dates = response.data.map(reservation => ({
+                    checkInDate: dayjs(reservation.checkInDate).format('YYYY-MM-DD'),
+                    checkOutDate: dayjs(reservation.checkOutDate).format('YYYY-MM-DD')
+                }));
+                setReservedDates(dates);
+            })
+            .catch(error => {
+                console.error('Error fetching reserved dates:', error);
+            });
+
+        // Gọi API để lấy danh sách các ngày bị chặn
+        axios.get(API_BLOCKING_DATE_BY_HOUSE_ID + houseID)
+            .then(response => {
+                const dates = response.data.map(item => dayjs(item.blockingDate).format('YYYY-MM-DD'));
+                setBlockedDates(dates);
+            })
+            .catch(error => {
+                console.error('Error fetching blocked dates:', error);
+            });
+    }, [houseID]);
+
+    useEffect(() => {
+        console.log("reservedDates", reservedDates);
+    }, [[reservedDates]])
+    useEffect(() => {
+        console.log("blockedDates", blockedDates);
+    }, [[blockedDates]])
+
+
+    // const shouldDisableDate = (date) => {
+    //     const formattedDate = date.format('YYYY - MM - DD');
+
+    //     return blockedDates.some(item => item.blockingDate === formattedDate);
+    // };
+
+    const shouldDisableDates = [...reservedDates.map(reservation => reservation.checkInDate), ...blockedDates];
+
+    // Kiểm tra mảng đã tạo
+    console.log("shouldDisableDates", shouldDisableDates);
+    const ref = useRef();
+    const shouldDisableDate = (date) => {
+        const formattedDate = date.format('YYYY-MM-DD');
+
+        const isReserved = reservedDates.some(reservation =>
+            formattedDate >= reservation.checkInDate && formattedDate <= reservation.checkOutDate
+        );
+
+        const isBlocked = blockedDates.includes(formattedDate);
+
+        return isReserved || isBlocked;
+    };
+
+    console.log("shouldDisableDate", shouldDisableDate);
     return (
         <>
+            <ToastContainer
+                position="bottom-right"
+                autoClose={5000} // Thời gian tự động đóng toast (5 giây)
+                // hideProgressBar
+                newestOnTop
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+            />
             <div className='body-detail'>
                 <div>
                     <div className='title'>
@@ -824,7 +950,7 @@ const BodyDetail = () => {
                             <hr className='hr'></hr>
                             <div>
                                 <div className='title'>
-                                    <h2>{numberOfNights !== null ? `${numberOfNights} đêm tại ${house.hotelName}` : 'Chọn ngày trả phòng'}</h2>
+                                    <h2>{numberOfNights !== null ? `${numberOfNights} đêm tại ${house.hotelName}` : `${selectedDates[0] ? 'Chọn ngày trả phòng' : 'Chọn ngày đi'}`}</h2>
                                     <h3>{selectedDates[0] && selectedDates[1] ? (
                                         `${selectedDates[0].format('D [thg] M YYYY')} - ${selectedDates[1].format('D [thg] M YYYY')}`
                                     ) : (
@@ -837,9 +963,12 @@ const BodyDetail = () => {
                                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                                         <DemoContainer components={['DateRangeCalendar']}>
                                             <DateRangeCalendar
+                                            ref={ref}
                                                 value={selectedDates}
                                                 onChange={handleDateChange}
-                                                minDate={selectedDates[0]}
+                                                minDate={selectedDates[0] ? selectedDates[0] : dayjs()}
+                                                shouldDisableDate={shouldDisableDate}
+                                                maxDate={maxDay}
                                                 slots={{ day: (props) => <DateRangePickerDay {...props} className={props.isHighlighting ? 'range-highlight' : ''} /> }}
                                             />
                                         </DemoContainer>
@@ -1396,17 +1525,17 @@ const BodyDetail = () => {
                             </div>
                         </div>
                     </div>
-                    <div>
+                    <div style={{marginLeft:'3%', marginRight:'-2%'}}>
                         {
                             selectedDates[0] ? selectedDates[1] ? (
                                 <Link to={`/book/${houseID}/${countOld}/${countYoung}/${countBaby}/${countPets}/${selectedDates[0].format('YYYY-MM-DD')}/${selectedDates[1].format('YYYY-MM-DD')}`}
                                     onClick={handleClick}>
-                                    <GradientButton>Đặt phòng</GradientButton>
+                                    <GradientButton >Đặt phòng</GradientButton>
                                 </Link>
                             ) : (
                                 <GradientButton onClick={handleCheckAvailableRoom}>Kiểm tra tình trạng còn phòng</GradientButton>
                             ) : (
-                                <GradientButton>Kiểm tra tình trạng còn phòng</GradientButton>
+                                <GradientButton onClick={handleCheckAvailableRoom}>Kiểm tra tình trạng còn phòng</GradientButton>
                             )
                         }
                         {
@@ -1445,7 +1574,9 @@ const BodyDetail = () => {
                                             <DateRangeCalendar
                                                 value={selectedDates}
                                                 onChange={handleDateChange}
-                                                minDate={selectedDates[0]}
+                                                minDate={selectedDates[0] ? selectedDates[0] : dayjs()}
+                                                shouldDisableDate={shouldDisableDate}
+                                                maxDate={maxDay}
                                                 slots={{ day: (props) => <DateRangePickerDay {...props} className={props.isHighlighting ? 'range-highlight' : ''} /> }}
                                             />
                                         </DemoContainer>

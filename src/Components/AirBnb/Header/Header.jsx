@@ -293,7 +293,8 @@ const Header = () => {
 
   const handleLogOut = () => {
     localStorage.removeItem('jwt');
-    localStorage.removeItem('userInfo')
+    localStorage.removeItem('userInfo');
+    localStorage.removeItem('userWishLists');
     navigate('/loggout', { replace: true });
     window.location.reload();
   }
