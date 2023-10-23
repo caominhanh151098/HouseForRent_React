@@ -83,16 +83,6 @@ const Header = () => {
 
   const handleAcceptRegistrationTermsAndCreateUser = async() => {
     await UserService.register(user);
-    async function getInfo() {
-      let res = await axios.get(API_GET_USER_INFO,
-        {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem("jwt")}`
-          }
-        });
-      localStorage.setItem('userInfo', JSON.stringify(res.data))
-    }
-    getInfo();
     toggleVerifyEmailForm();
   }
 
