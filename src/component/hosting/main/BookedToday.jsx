@@ -210,7 +210,7 @@ function BookedToday() {
     }
     return (
         <>
-            <NavbarHosting></NavbarHosting>
+            <NavbarHosting type="bookedToday" ></NavbarHosting>
             <div className='col-10 ' style={{ marginLeft: '100px' }}>
                 <div className='fs-3 mt-5 mb-5'>Chào mừng chủ nhà </div>
                 <div className='fs-4 mb-4'>

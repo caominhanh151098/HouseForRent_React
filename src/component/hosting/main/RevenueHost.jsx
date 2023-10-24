@@ -28,7 +28,7 @@ function RevenueHost() {
     useEffect(() => {
         let total=0
         listRevenue.forEach(element => {
-            total+=element.totalPrice
+            total+=element.totalPrice*99/100
         });
         setTotal(total)
     }, [listRevenue])
@@ -261,7 +261,7 @@ function RevenueHost() {
                     </div>
                 </div>
                 <div className='d-flex justify-content-between mb-3'>
-                    <div className='fs-4'> Tổng doanh thu : {total} $</div>
+                    <div className='fs-4'> Tổng doanh thu : {total.toFixed(2)} $</div>
                     <div><button>xuất file CSV</button></div>
                 </div>
                 {
@@ -289,7 +289,7 @@ function RevenueHost() {
                                             <td>{item.user.lastName}</td>
                                             <td>{item.house.hotelName}</td>
                                             <td>{item.completeDate}</td>
-                                            <td>{item.totalPrice}</td>
+                                            <td>{item.totalPrice*99/100} $</td>
                                         </tr>
 
                                     ))
