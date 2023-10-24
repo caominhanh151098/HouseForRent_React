@@ -224,7 +224,7 @@ function BookedToday() {
                     <button style={type == "waitApproval" ? { borderColor: 'black' } : {}} onClick={() => setType("waitApproval")} className='rounded-pill btn-type'>Đánh giá đang chờ xử lí ({waitApproval.length})</button>
                     <div className='fs-5 text-decoration-underline' style={{ marginLeft: '200px' }}><Link style={{ color: 'black', textDecoration: 'underline' }} to={`/host/AllReservation`}>Tất cả đặt phòng</Link>  </div>
                 </div>
-                <table className='col-8 table table-striped' style={{ border: 'solid 1px gray', width: '100%' }}>
+                <table className='col-12 table table-striped' style={{ border: 'solid 1px gray', width: '100%' }}>
                     <thead>
                         <th style={{ height: '40px', padding: '10px', verticalAlign: 'middle' }}>Tên khách hàng</th>
                         <th style={{ height: '40px', padding: '10px', verticalAlign: 'middle' }}>Số điện thoại</th>

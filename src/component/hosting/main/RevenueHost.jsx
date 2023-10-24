@@ -1,7 +1,7 @@
 import React from 'react'
 import axios from 'axios';
 import '../main/CssHosting/revenueHost.css';
-
+import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import MyAxios from '../../../Services/MyAxios';
 import NavbarHosting from '../../layout_hosting/NavbarHosting';
@@ -28,7 +28,7 @@ function RevenueHost() {
     useEffect(() => {
         let total=0
         listRevenue.forEach(element => {
-            total+=element.totalPrice*99/100
+            total+=element.totalPrice*97/100
         });
         setTotal(total)
     }, [listRevenue])
@@ -273,7 +273,7 @@ function RevenueHost() {
                         <div>
 
                         
-                            <table className='col-8 table table-striped' style={{ border: 'solid 1px gray', width: '100%' }}>
+                            <table className='col-12 table table-striped' style={{ border: 'solid 1px gray', width: '100%' }}>
                                 <thead>
                                 <td  className='col-2'style={{width:'10%'}}>Khách hàng</td>
                                     <td className='col-2' style={{width:'25%'}} >Phòng / nhà</td>
@@ -288,8 +288,8 @@ function RevenueHost() {
                                         <tr key={item.id}>
                                             <td>{item.user.lastName}</td>
                                             <td>{item.house.hotelName}</td>
-                                            <td>{item.completeDate}</td>
-                                            <td>{item.totalPrice*99/100} $</td>
+                                            <td>{(dayjs(item.completeDate)).format('YYYY-MM-DD')}</td>
+                                            <td>{item.totalPrice*97/100} $</td>
                                         </tr>
 
                                     ))

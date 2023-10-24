@@ -2,10 +2,9 @@ import React from 'react'
 import { Link, useNavigate } from "react-router-dom";
 import CreateRoom from '../../service/create_room_usestate';
 import HomeList from './../hosting/main/HomeList';
-
+import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.min.js';
 import './navbarHosting.css';
-import './bstrap/css/bootstrap.css'
 import { useState } from 'react';
 function NavbarHosting(props) {
   const [choose, setChoose] = useState(props.type)
@@ -20,10 +19,10 @@ function NavbarHosting(props) {
           />
         </Link>
         <div className='d-flex justify-content-between col-5 ' style={{ marginLeft: '220px' }}>
-          <Link className={`item btn-nb fw-bold ${choose == "bookedToday" ? "choosed" : ""} `} to={'/host/BookedToday'}><div onClick={() => setChoose("bookedToday")}> Hôm nay</div> </Link>
-          <div className={`item btn-nb fw-bold ${choose == "message" ? "choosed" : ""} `} onClick={() => setChoose("message")} >Hộp thư đến</div>
-          <Link className={`item btn-nb fw-bold ${choose == "calendar" ? "choosed" : ""} `} to={'/host/calendar'}><div onClick={() => setChoose("calendar")}> Lịch</div> </Link>
-          <Link className={`item btn-nb fw-bold ${choose == "revenueHost" ? "choosed" : ""} `} to={'/host/revenueHost'}><div onClick={() => setChoose("revenueHost")}>Lịch sử giao dich</div> </Link>
+          <Link className={`item btn-nb fw-bold ${choose == "bookedToday" ? "choosed" : ""} `} to={'/host/BookedToday'}><div className='item' onClick={() => setChoose("bookedToday")}> Hôm nay</div> </Link>
+          <Link className={`item btn-nb fw-bold ${choose == "message" ? "choosed" : ""} `}><div  onClick={() => setChoose("message")} className='item'>Hộp thư đến</div></Link>
+          <Link className={`item btn-nb fw-bold ${choose == "calendar" ? "choosed" : ""} `} to={'/host/calendar'}><div  className='item' onClick={() => setChoose("calendar")}> Lịch</div> </Link>
+          <Link className={`item btn-nb fw-bold ${choose == "revenueHost" ? "choosed" : ""} `} to={'/host/revenueHost'}><div  className='item' onClick={() => setChoose("revenueHost")}>Lịch sử giao dich</div> </Link>
           <div className="dropdown">
             <button className="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
               Menu
