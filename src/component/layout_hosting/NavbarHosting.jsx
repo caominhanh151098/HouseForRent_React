@@ -2,9 +2,10 @@ import React from 'react'
 import { Link, useNavigate } from "react-router-dom";
 import CreateRoom from '../../service/create_room_usestate';
 import HomeList from './../hosting/main/HomeList';
-import 'bootstrap/dist/css/bootstrap.min.css';
+
 import 'bootstrap/dist/js/bootstrap.min.js';
 import './navbarHosting.css';
+import './bstrap/css/bootstrap.css'
 import { useState } from 'react';
 function NavbarHosting(props) {
   const [choose, setChoose] = useState(props.type)
