@@ -473,7 +473,7 @@ const BodyDetail = () => {
         return matches ? matches[1] : null;
     };
 
-    const totalComfortable = houseComfortable.reduce((acc, type) => acc + type.comfortableDetailList.length, 0);
+    const totalComfortable = houseComfortable.reduce((acc, type) => acc + type.comfortableDetailList.length, 0) || null;
 
     console.log(`Tổng số comfortable là: ${totalComfortable}`);
 
@@ -912,8 +912,8 @@ const BodyDetail = () => {
                                             ))
                                         )
                                     }
-                                    {totalComfortable > 8 && (
-                                        <button className='btn-show-all-comfortable' onClick={toggleOverlayComfortable}>Hiển thị tất cả {totalComfortable} tiện nghi</button>
+                                    {house.numComfortable > 8 && (
+                                        <button className='btn-show-all-comfortable' onClick={toggleOverlayComfortable}>Hiển thị tất cả {house.numComfortable} tiện nghi</button>
                                     )}
                                     {(
                                         <div className={`overlay2 ${isOverlayComfortable ? '' : 'd-none'}`} >
@@ -940,7 +940,7 @@ const BodyDetail = () => {
                                                                                                     className='svg-title comfortable-icon'>
                                                                                                     <path d={item.icon}></path>
                                                                                                 </svg>
-                                                                                                <p>{item.name}</p>
+                                                                                                {item.status ? <p>{item.name}</p> : <del>{item.name}</del>}
                                                                                             </div>
                                                                                         </>
                                                                                     ))

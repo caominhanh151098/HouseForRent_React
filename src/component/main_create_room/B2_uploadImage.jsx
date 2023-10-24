@@ -124,7 +124,7 @@ function B2_uploadImage() {
 
                         selectAvatar.map((item) => (
                             <>
-                                <div>
+                                <div key={item.id}>
                                     <div className="col-md-4">
                                         <div className="card" style={{ width: '350px', height: '230px', marginRight: '30px', marginBottom: '30px' }}>
                                             <img style={{ width: '350px', height: '230px' }} role="button" src={item.fakeUrl || "https://cdn.pixabay.com/photo/2017/11/10/05/24/add-2935429_960_720.png"} className="card-img-top" alt=""

@@ -232,7 +232,7 @@ function HouseOfHostDetail() {
     return (
         <>
         <NavbarHosting></NavbarHosting>
-        <div className='fs-5 text-decoration-underline ' style={{marginLeft:'1100px'}}><Link style={{color:'black'}} to={`/host/homeList`}> <i class="fa-solid fa-chevron-left fa-2xs"></i> Quay lại</Link></div>
+        <div className='fs-5 text-decoration-underline ' style={{marginLeft:'1100px'}}><Link style={{color:'black'}} to={`/host/homeList`}> <i className="fa-solid fa-chevron-left fa-2xs"></i> Quay lại</Link></div>
             <div style={{ marginLeft: '120px' }} className=' col-10' >
                 <div className='fs-3 '>{houseOfHostDetail.hotelName}</div>
                 <div className='fs-4'>Ảnh</div>
@@ -456,7 +456,7 @@ function HouseOfHostDetail() {
 
                                 listImage?.map((item) => (
                                     <>
-                                        <div className=''>
+                                        <div key={item.id} className=''>
                                             <div className="col-md-4 ">
                                                 <div className="card" style={{ width: '350px', height: '230px', marginRight: '30px', marginBottom: '30px' }}>
                                                     <img style={{ width: '350px', height: '230px' }} role="button" src={item.fakeUrl || "https://cdn.pixabay.com/photo/2017/11/10/05/24/add-2935429_960_720.png"} className="card-img-top" alt=""

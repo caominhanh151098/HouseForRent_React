@@ -1,3 +1,8 @@
 .dark{
     background-color: rgb(206, 199, 199) !important;
 }
+
+.dark2{
+    background-color: rgb(78, 78, 78);
+    color: white;
+}

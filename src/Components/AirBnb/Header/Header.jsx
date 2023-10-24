@@ -81,7 +81,7 @@ const Header = () => {
 
   const { status } = useParams();
 
-  const handleAcceptRegistrationTermsAndCreateUser = async() => {
+  const handleAcceptRegistrationTermsAndCreateUser = async () => {
     await UserService.register(user);
     toggleVerifyEmailForm();
   }
@@ -1112,22 +1112,22 @@ const Header = () => {
                 <div className="dropdown-menu-choice">Danh sách yêu thích</div>
                 <hr />
                 {
-                   userInfo?.role?
-                      userInfo.role=="GUEST"?
+                  userInfo?.role ?
+                    userInfo.role == "GUEST" ?
                       <>
-                       <Link className="link-user-login"
-                  to={'/host/firstCreateRoom'}>
-                  <div className="dropdown-menu-choice">Bắt đầu cho thuê tại air-bnb</div>
-                </Link>
+                        <Link className="link-user-login"
+                          to={'/host/firstCreateRoom'}>
+                          <div className="dropdown-menu-choice">Bắt đầu cho thuê tại air-bnb</div>
+                        </Link>
                       </>
                       :
                       <>
-                          <Link className="link-user-login"
-                  to={'/host/bookedToday'}>
-                  <div className="dropdown-menu-choice">Quản lý nhà/phòng cho thuê</div>
-                </Link>                      
+                        <Link className="link-user-login"
+                          to={'/host/bookedToday'}>
+                          <div className="dropdown-menu-choice">Quản lý nhà/phòng cho thuê</div>
+                        </Link>
                       </>
-                    :""
+                    : ""
                 }
                 <Link className="link-user-login"
                   to={'/account-settings'}>
@@ -1147,7 +1147,8 @@ const Header = () => {
               <div className="dropdown-menu-login">
                 <div onClick={toggleLoginForm}
                   className="dropdown-menu-choice">Đăng nhập</div>
-                <div className="dropdown-menu-choice">Đăng ký</div>
+                <div onClick={toggleLoginForm}
+                  className="dropdown-menu-choice">Đăng ký</div>
                 <hr />
                 <div className="dropdown-menu-choice">Cho thuê chỗ ở qua Airbnb</div>
                 <div className="dropdown-menu-choice">Trung tâm trợ giúp</div>
