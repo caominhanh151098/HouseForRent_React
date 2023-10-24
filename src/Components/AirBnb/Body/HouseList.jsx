@@ -15,7 +15,7 @@ import Box from '@mui/joy/Box';
 import IconButton from '@mui/joy/IconButton';
 import Textarea from '@mui/joy/Textarea';
 import Typography from '@mui/joy/Typography';
-import { API_ADD_FAVORITE_HOUSE, API_CREATE_NEW_LIST, API_GET_FAVORITE_HOUSE_BY_USER, API_GET_WISH_LISTS_BY_USER, API_REMOVE_HOUSE_FAVORITE } from '../../../Services/common';
+import { API_ADD_FAVORITE_HOUSE, API_CREATE_NEW_LIST, API_DELETE_WISH_LISTS_BY_ID, API_GET_FAVORITE_HOUSE_BY_USER, API_GET_WISH_LISTS_BY_USER, API_REMOVE_HOUSE_FAVORITE } from '../../../Services/common';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 const HouseList = () => {
@@ -26,7 +26,7 @@ const HouseList = () => {
     const [isOverlayVisible, setIsOverlayVisible] = useState(false);
     const [hoveredIndex, setHoveredIndex] = useState(null);
 
-    
+
 
     const toggleHover = (index) => {
         setHoveredIndex(index);
@@ -132,8 +132,17 @@ const HouseList = () => {
                         'Authorization': `Bearer ${token}`
                     }
                 });
-            console.log("response.data", response.data);
-            const updatedWishLists = response.data;
+
+            const wishListEmpty = response.data.filter(wishList => wishList.quantityHouse === 0);
+            const idsToDelete = wishListEmpty.map(wishList => wishList.id);
+            const nameToDelete = wishListEmpty.map(wishList => wishList.name);
+
+            for (const id of idsToDelete) {
+                await handleDeleteWishListById(id, nameToDelete);
+            }
+
+            const updatedWishLists = response.data.filter(wishList => wishList.quantityHouse !== 0);
+
             setUserWishLists(updatedWishLists);
             localStorage.setItem('userWishLists', JSON.stringify(updatedWishLists));
         } catch (error) {
@@ -149,7 +158,7 @@ const HouseList = () => {
                     'Authorization': `Bearer ${token}`
                 }
             });
-            if (response.status === 200){
+            if (response.status === 200) {
                 await handleAddFavorite(response.data, idHouseSelected, text);
                 if (isOverLayOpenFormCreatNewWishList) {
                     setIsOverLayOpenFormCreatNewWishList(false);
@@ -219,6 +228,25 @@ const HouseList = () => {
         }
     }, [userInfo]);
 
+    const handleDeleteWishListById = async (id, name) => {
+        try {
+            const token = localStorage.getItem('jwt');
+            const response = await axios.delete(API_DELETE_WISH_LISTS_BY_ID + id, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            if (response.status === 200) {
+                toast.success('Xoá thành công danh sách' + ' "' + name + '" ', {
+                    className: 'custom-toast-success'
+                });
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
 
     const handleRemoveFavorite = async (id) => {
         const token = localStorage.getItem('jwt') || null;
@@ -234,8 +262,8 @@ const HouseList = () => {
                     toast.success('Đã xoá khỏi danh sách', {
                         className: 'custom-toast-create-new-wish-list-success'
                     });
-                    getFavoriteHouse();
-                    handleSaveChanges();
+                    await getFavoriteHouse();
+                    await handleSaveChanges();
                 } else {
                     console.error(`Lỗi khi xóa nhà yêu thích - mã lỗi: ${response.status}`);
                 }
@@ -343,24 +371,8 @@ const HouseList = () => {
                                                 </div>
                                             )}
                                         </div>
-
-                                        {/* {(
-                                        <div className={`overlay2 ${isOverlayVisible ? '' : 'd-none'}`} >
-                                            <div className={`appearing-div ${isOverlayVisible ? 'active' : ''}`}>
-                                                <div>
-                                                    <i onClick={toggleOverlay} class="fa-solid fa-xmark close-description" ></i>
-                                                </div>
-                                                <div className='container-description-details'>
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )} */}
-
-
                                         <div>
                                             <div className="listing-header">
-                                                {/* <h3 className="hotel-name">{house.hotelName}</h3> */}
                                                 <h3 className="hotel-name">{house?.location?.address}</h3>
                                                 <span className="review">
                                                     <i class="fa-solid fa-star"></i>&nbsp;{house.review}</span>

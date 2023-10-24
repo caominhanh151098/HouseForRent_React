@@ -952,3 +952,90 @@
 .icon-details-wish-list:hover {
   background: #e5e3e3;
 }
+
+.css-heg063-MuiTabs-flexContainer {
+  justify-content: space-between;
+  margin-bottom: 3% !important;
+}
+
+.css-1a4cg4j-MuiButtonBase-root-MuiTab-root {
+  background: white !important;
+}
+
+.css-1a4cg4j-MuiButtonBase-root-MuiTab-root {
+  color: black !important;
+  border-radius: 22px !important;
+}
+
+.css-11yukd5-MuiTabs-indicator {
+  background: black !important;
+  margin-bottom: 3% !important;
+}
+
+.div-details-reservation-history {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4%;
+  margin-left: -16%;
+}
+
+.price-detail-reservation-history {
+  position: relative;
+  bottom: -82px;
+  left: 178px
+}
+
+.total-price-detail-reservation-history {
+  position: relative;
+  left: 291px;
+  bottom: -159px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+.cancel-status-reversation {
+  color: red;
+}
+
+.checkin-status-reversation {
+  color: #09ca09;
+}
+
+.approval-status-reversation {
+  color: #f1f100;
+}
+
+.div-detail-status-reservation-history {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 222px;
+  margin-right: -4%;
+}
+
+.trash{
+  cursor: pointer;
+  transition: transform 0.4s ease;
+}
+
+.trash:hover{
+  transform: scale(1.2);
+}
+
+.group-btn-cancel-and-close-resersation{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

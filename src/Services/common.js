@@ -24,3 +24,5 @@ export const API_GET_FAVORITE_HOUSE_BY_USER = 'http://localhost:8080/api/house/c
 export const API_REMOVE_HOUSE_FAVORITE = 'http://localhost:8080/api/house/client/remove-house-favorite/';
 export const API_ADD_FAVORITE_HOUSE ='http://localhost:8080/api/house/client/add-wishlist/' ;
 export const API_DETAILS_WISH_LIST ='http://localhost:8080/api/house/client/wishlists/';
+export const API_GET_HISTORY_RESERVATION = 'http://localhost:8080/api/reservation/history';
+export const API_CANCEL_RESERVATION = 'http://localhost:8080/api/reservation/cancel/';
