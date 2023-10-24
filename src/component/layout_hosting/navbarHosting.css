@@ -1,5 +1,5 @@
-@import './bstrap/css/bootstrap.css';
-
+/* @import './bootstrap-5.0.2/dist/css/bootstrap.css'; */
+@import './bstrap/css/bootstrap2.css';
 
 .btn-nb:hover {
     border-radius: 20px;
