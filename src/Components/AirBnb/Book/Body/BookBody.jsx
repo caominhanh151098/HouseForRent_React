@@ -243,9 +243,10 @@ const BookBody = () => {
     }
     const closestDate = shouldDisableDates
       .filter(date => date > selectedDate.format('YYYY-MM-DD'))
-      .sort((a, b) => new Date(a) - new Date(b))[0];
+      .sort((a, b) => new Date(a) - new Date(b))[1];
 
     const maxDay = closestDate ? dayjs(closestDate) : null;
+    console.log("1111", newDates);
     setMaxDay(maxDay)
     console.log('Ngày gần nhất sau ngày được chọn:', closestDate);
     if (tempBookDay[0] !== null && tempBookDay[1] != null) {

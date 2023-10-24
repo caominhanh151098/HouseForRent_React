@@ -90,12 +90,12 @@ function B2_uploadImage() {
                     );
                     setUploadedAvatar([...list])
                     console.log(list);
-                    toast.info("uploaded success", { position: "top-right", autoClose: 1 * 1000 });
+                   
 
 
                 }
 
-
+                toast.info("uploaded success", { position: "top-right", autoClose: 1 * 1000 });
             } else if(element.id != selectAvatar.length - 1) { 
                 list=([...list,element.fakeUrl])
                 setUploadedAvatar([...list])
@@ -111,7 +111,7 @@ function B2_uploadImage() {
     }
     return (
         <>
-        
+              <ToastContainer/>
             <Navbar_create_room></Navbar_create_room>
             <div className="col-7" style={{ marginLeft: '300px' }}>
                 <div className="fs-3 mb-5">Bổ sung một số bức ảnh chụp chỗ ở thuộc danh mục nhà của bạn</div>

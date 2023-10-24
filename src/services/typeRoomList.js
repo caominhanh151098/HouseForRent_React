@@ -1,9 +1,8 @@
-export const roomTypeList = [
-  {
-    name: 'nhà ',
-    icon: 'https://res.cloudinary.com/didieklbo/image/upload/f_auto,q_auto/v1/CategoryHouse/ylyyg6cbxtwciu1a7fyx',
-    id: '1'
-  },
+
+export  const roomTypeList=[
+    {name:'nhà ',
+      icon:'https://res.cloudinary.com/didieklbo/image/upload/f_auto,q_auto/v1/CategoryHouse/ylyyg6cbxtwciu1a7fyx' ,
+      id:'1'},
   {
     name: 'căn hộ ',
     icon: 'https://a0.muscache.com/pictures/21cfc7c9-5457-494d-9779-7b0c21d81a25.jpg',

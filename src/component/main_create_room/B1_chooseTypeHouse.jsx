@@ -14,7 +14,7 @@ function B1_chooseType  () {
         setType(id)
     }
 
-   
+    
 
    
   return (

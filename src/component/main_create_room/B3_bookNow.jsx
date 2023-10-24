@@ -50,7 +50,7 @@ function B3_bookNow ()  {
                             <i className="fa fa-arrow-left me-2" />
                             quay lại
                         </Link>
-                        <div><Link className="" to={'/host/create/b3/price'}> <button onClick={()=>{CreateRoom.setCreateRoom({...CreateRoom.getCreateRoom(), bookNow:bookNow})}} className='btn bg-dark text-white me-5 mb-5' >Tiếp theo</button></Link></div>
+                        <div><Link className="" to={'/host/create/b3/price'}> <button onClick={()=>{CreateRoom.setCreateRoom({...CreateRoom.getCreateRoom(), bookNow:bookNow?false:true})}} className='btn bg-dark text-white me-5 mb-5' >Tiếp theo</button></Link></div>
     </div>
     </>
   )
