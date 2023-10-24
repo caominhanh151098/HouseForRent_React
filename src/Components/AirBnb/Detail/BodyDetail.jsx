@@ -978,7 +978,7 @@ const BodyDetail = () => {
                                             ref={ref}
                                                 value={selectedDates}
                                                 onChange={handleDateChange}
-                                                minDate={selectedDates[0] ? selectedDates[0] : dayjs()}
+                                                minDate={selectedDates[0] ? selectedDates[0] : dayjs().add(1, 'day')}
                                                 shouldDisableDate={shouldDisableDate}
                                                 maxDate={maxDay}
                                                 slots={{ day: (props) => <DateRangePickerDay {...props} className={props.isHighlighting ? 'range-highlight' : ''} /> }}
@@ -1603,7 +1603,7 @@ const BodyDetail = () => {
                                             <DateRangeCalendar
                                                 value={selectedDates}
                                                 onChange={handleDateChange}
-                                                minDate={selectedDates[0] ? selectedDates[0] : dayjs()}
+                                                minDate={selectedDates[0] ? selectedDates[0] : dayjs().add(1, 'day')}
                                                 shouldDisableDate={shouldDisableDate}
                                                 maxDate={maxDay}
                                                 slots={{ day: (props) => <DateRangePickerDay {...props} className={props.isHighlighting ? 'range-highlight' : ''} /> }}

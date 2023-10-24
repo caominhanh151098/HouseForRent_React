@@ -660,7 +660,7 @@ const BookBody = () => {
                                   <DateRangeCalendar
                                     value={tempBookDay}
                                     onChange={handleDateChange}
-                                    minDate={tempBookDay[0] ? tempBookDay[0] : dayjs()}
+                                    minDate={tempBookDay[0] ? tempBookDay[0] : dayjs().add(1,'day')}
                                     shouldDisableDate={shouldDisableDate}
                                     maxDate={maxDay}
                                     slots={{ day: (props) => <DateRangePickerDay {...props} className={props.isHighlighting ? 'range-highlight' : ''} /> }}
