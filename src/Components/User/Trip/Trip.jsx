@@ -23,9 +23,11 @@ import Typography from '@mui/joy/Typography';
 const Trip = () => {
     const [reservation, setReversation] = useState(false);
     const token = localStorage.getItem('jwt')
+    const [loadingReservation, setLoadingReservation] = useState(false);
 
     useEffect(() => {
         const getReversation = async () => {
+            setLoadingReservation(true);
             const response = await axios.get(API_GET_HISTORY_RESERVATION, {
                 headers: {
                     'Content-Type': 'Application/json',
@@ -39,8 +41,10 @@ const Trip = () => {
                     return dateB - dateA;
                 });
                 setReversation(sortedReservations)
+                setLoadingReservation(false);
             } else {
                 console.log('lỗi');
+                setLoadingReservation(false);
             }
         }
         getReversation();
@@ -175,6 +179,15 @@ const Trip = () => {
         setReversation(sortedReservations);
     }
 
+    const [filteredStatus, setFilteredStatus] = useState(null);
+
+    const handleFilterStatus = (status) => {
+        setFilteredStatus(status);
+
+        const filterReservation = [...reservation].filter(reservation => reservation.status === status);
+        setReversation(filterReservation)
+    }
+
     return (
         <>
             <ToastContainer
@@ -190,178 +203,185 @@ const Trip = () => {
             />
             <HeaderFormUser />
             {
-                reservation && reservation.length > 0 ? (
-                    <div className='div-trip-form-user'>
-                        <Box sx={{ width: '100%' }}>
-                            <Tabs
-                                value={value}
-                                onChange={handleChange}
-                                textColor="secondary"
-                                indicatorColor="secondary"
-                                aria-label="secondary tabs example"
-                            >
-                                <Tab value="one" label="Thông tin nhà" style={{ marginRight: "1%", padding: "0px 98px" }} />
-                                <Tab value="two" label={`Ngày đặt ${sortOrder === 'ASC' ? '↓' : '↑'}`} />
-                                <Tab value="three" label="Trạng thái" />
-                            </Tabs>
-                            {value === 'two' && (
-                                <div className='condition-sort-date-reservation'>
-                                    <Box
-                                        sx={{
-                                            flexGrow: 1,
-                                            display: 'flex',
-                                            justifyContent: 'center',
-                                            gap: 2,
-                                            flexWrap: 'wrap',
-                                            '& > *': { minWidth: 0, flexBasis: 200 },
-                                        }}
-                                    >
-                                        <div style={{ justifyContent: 'center' }}>
-                                            <List
-                                                variant="outlined"
-                                                sx={{
-                                                    maxWidth: 300,
-                                                    borderRadius: 'sm',
-                                                }}
-                                            >
-                                                <ListItem>
-                                                    <ListItemButton onClick={() => handleSortClick('ASC')}>Mới nhất</ListItemButton>
-                                                </ListItem>
-                                                <ListItem>
-                                                    <ListItemButton onClick={() => handleSortClick('DESC')}>Cũ nhất</ListItemButton>
-                                                </ListItem>
-                                            </List>
-                                        </div>
-                                    </Box>
-                                </div>
-                            )}
-                            {value === 'three' && (
-                                <div className='condition-sort-status-reservation'>
-                                    <Box
-                                        sx={{
-                                            flexGrow: 1,
-                                            display: 'flex',
-                                            justifyContent: 'center',
-                                            gap: 2,
-                                            flexWrap: 'wrap',
-                                            '& > *': { minWidth: 0, flexBasis: 200 },
-                                        }}
-                                    >
-                                        <div style={{ justifyContent: 'center' }}>
-                                            <List
-                                                variant="outlined"
-                                                sx={{
-                                                    maxWidth: 300,
-                                                    borderRadius: 'sm',
-                                                }}
-                                            >
-                                                <ListItem>
-                                                    <ListItemButton onClick={() => handleSortClick('ASC')}>Đang chờ duyệt <i className="fas fa-hourglass-half"></i></ListItemButton>
-                                                </ListItem>
-                                                <ListItem>
-                                                    <ListItemButton onClick={() => handleSortClick('DESC')}>Đang chờ check-in <i className="fas fa-clock"></i></ListItemButton>
-                                                </ListItem>
-                                                <ListItem>
-                                                    <ListItemButton onClick={() => handleSortClick('DESC')}>Đã huỷ <i className="fas fa-ban"></i></ListItemButton>
-                                                </ListItem>
-                                            </List>
-                                        </div>
-                                    </Box>
-                                </div>
-                            )}
-                        </Box>
-                        <div>
-                            {
-                                displayedHouses && displayedHouses.map((house, index) => (
-                                    <div className='div-details-reservation-history'>
-                                        <div style={{ display: 'flex' }}>
-                                            <div style={{ marginRight: '5%' }}>
-                                                <HouseSlider house={house.house} />
+                loadingReservation ? (
+                    <div style={{ textAlign: 'center' }}>
+                        <div class="loadingio-spinner-ellipsis-vy8amekyxyo"><div class="ldio-sesojbulmx">
+                            <div></div><div></div><div></div><div></div><div></div>
+                        </div></div>
+                    </div>
+                ) :
+                    reservation && reservation.length > 0 ? (
+                        <div className='div-trip-form-user'>
+                            <Box sx={{ width: '100%' }}>
+                                <Tabs
+                                    value={value}
+                                    onChange={handleChange}
+                                    textColor="secondary"
+                                    indicatorColor="secondary"
+                                    aria-label="secondary tabs example"
+                                >
+                                    <Tab value="one" label="Thông tin nhà" style={{ marginRight: "1%", padding: "0px 98px" }} />
+                                    <Tab value="two" label={`Ngày đặt ${sortOrder === 'ASC' ? '↓' : '↑'}`} />
+                                    <Tab value="three" label="Trạng thái" />
+                                </Tabs>
+                                {value === 'two' && (
+                                    <div className='condition-sort-date-reservation'>
+                                        <Box
+                                            sx={{
+                                                flexGrow: 1,
+                                                display: 'flex',
+                                                justifyContent: 'center',
+                                                gap: 2,
+                                                flexWrap: 'wrap',
+                                                '& > *': { minWidth: 0, flexBasis: 200 },
+                                            }}
+                                        >
+                                            <div style={{ justifyContent: 'center' }}>
+                                                <List
+                                                    variant="outlined"
+                                                    sx={{
+                                                        maxWidth: 300,
+                                                        borderRadius: 'sm',
+                                                    }}
+                                                >
+                                                    <ListItem>
+                                                        <ListItemButton onClick={() => handleSortClick('ASC')}>Mới nhất</ListItemButton>
+                                                    </ListItem>
+                                                    <ListItem>
+                                                        <ListItemButton onClick={() => handleSortClick('DESC')}>Cũ nhất</ListItemButton>
+                                                    </ListItem>
+                                                </List>
                                             </div>
-                                            <div style={{ width: '360px' }}>
-                                                <h3>{house.house.typeRoom}</h3>
-                                                <h2>{house.house.hotelName}</h2>
-                                                <h3 className='price-detail-reservation-history'>${house.house.price} / đêm</h3>
-                                            </div>
-                                        </div>
-                                        <div style={{ marginRight: '7%' }}>
-                                            <h3>{formatDate(house.checkInDate)}  -  {formatDate(house.checkOutDate)}</h3>
-                                            <h3 className='total-price-detail-reservation-history'>Tổng: {house.totalPrice} $</h3>
-                                        </div>
-                                        <div className='div-detail-status-reservation-history'>
-                                            {house.status === 'AWAITING_APPROVAL' && (
-                                                <>
-                                                    <h3 className='approval-status-reversation'>Đang chờ duyệt <i className="fas fa-hourglass-half spinning"></i></h3>
-                                                    <h3 onClick={() => {
-                                                        setHouseSelected(prev => house);
-                                                        toggleCancelReservation()
-                                                    }}
-                                                    ><i className="fas fa-trash trash"></i></h3>
-                                                </>
-                                            )}
-                                            {house.status === "WAIT_FOR_CHECKIN" && (
-                                                <>
-                                                    <h3 className='checkin-status-reversation'>Đang chờ Check-in <i className="fas fa-clock"></i></h3>
-                                                    <h3 onClick={() => {
-                                                        setHouseSelected(prev => house);
-                                                        toggleCancelReservation()
-                                                    }}
-                                                    > <i className="fas fa-trash trash"></i></h3>
-                                                </>
-                                            )}
-                                            {house.status === 'CANCEL' && (
-                                                <h3 className='cancel-status-reversation'>Đã huỷ <i className="fas fa-ban"></i></h3>
-                                            )}
-                                            {house.status === 'WAITING_FOR_TRANSACTION' && (
-                                                <>
-                                                    <h3 className='approval-status-reversation'>Đang chờ giao dịch <i className="fas fa-hourglass spinning"></i></h3>
-                                                    <h3 onClick={() => {
-                                                        setHouseSelected(prev => house);
-                                                        toggleCancelReservation()
-                                                    }}
-                                                    > <i className="fas fa-trash trash"></i></h3>
-                                                </>
-                                            )}
-                                            {house.status === 'FINISH' && (
-                                                <h3>Đã hoàn thành <i className="fas fa-check"></i></h3>
-                                            )}
-                                            {house.status === 'REFUND' && (
-                                                <h3>Đã hoàn tiền <i className="fas fa-undo"></i></h3>
-                                            )}
-                                        </div>
+                                        </Box>
                                     </div>
-                                ))
+                                )}
+                                {value === 'three' && (
+                                    <div className='condition-sort-status-reservation'>
+                                        <Box
+                                            sx={{
+                                                flexGrow: 1,
+                                                display: 'flex',
+                                                justifyContent: 'center',
+                                                gap: 2,
+                                                flexWrap: 'wrap',
+                                                '& > *': { minWidth: 0, flexBasis: 200 },
+                                            }}
+                                        >
+                                            <div style={{ justifyContent: 'center' }}>
+                                                <List
+                                                    variant="outlined"
+                                                    sx={{
+                                                        maxWidth: 300,
+                                                        borderRadius: 'sm',
+                                                    }}
+                                                >
+                                                    <ListItem>
+                                                        <ListItemButton >Đang chờ duyệt <i className="fas fa-hourglass-half"></i></ListItemButton>
+                                                    </ListItem>
+                                                    <ListItem>
+                                                        <ListItemButton >Đang chờ check-in <i className="fas fa-clock"></i></ListItemButton>
+                                                    </ListItem>
+                                                    <ListItem>
+                                                        <ListItemButton>Đã huỷ <i className="fas fa-ban"></i></ListItemButton>
+                                                    </ListItem>
+                                                </List>
+                                            </div>
+                                        </Box>
+                                    </div>
+                                )}
+                            </Box>
+                            <div>
+                                {
+                                    displayedHouses && displayedHouses.map((house, index) => (
+                                        <div className='div-details-reservation-history'>
+                                            <div style={{ display: 'flex' }}>
+                                                <div style={{ marginRight: '5%' }}>
+                                                    <HouseSlider house={house.house} />
+                                                </div>
+                                                <div style={{ width: '360px' }}>
+                                                    <h3>{house.house.typeRoom}</h3>
+                                                    <h2>{house.house.hotelName}</h2>
+                                                    <h3 className='price-detail-reservation-history'>${house.house.price} / đêm</h3>
+                                                </div>
+                                            </div>
+                                            <div style={{ marginRight: '7%' }}>
+                                                <h3>{formatDate(house.checkInDate)}  -  {formatDate(house.checkOutDate)}</h3>
+                                                <h3 className='total-price-detail-reservation-history'>Tổng: {house.totalPrice} $</h3>
+                                            </div>
+                                            <div className='div-detail-status-reservation-history'>
+                                                {house.status === 'AWAITING_APPROVAL' && (
+                                                    <>
+                                                        <h3 className='approval-status-reversation'>Đang chờ duyệt <i className="fas fa-hourglass-half spinning"></i></h3>
+                                                        <h3 onClick={() => {
+                                                            setHouseSelected(prev => house);
+                                                            toggleCancelReservation()
+                                                        }}
+                                                        ><i className="fas fa-trash trash"></i></h3>
+                                                    </>
+                                                )}
+                                                {house.status === "WAIT_FOR_CHECKIN" && (
+                                                    <>
+                                                        <h3 className='checkin-status-reversation'>Đang chờ Check-in <i className="fas fa-clock"></i></h3>
+                                                        <h3 onClick={() => {
+                                                            setHouseSelected(prev => house);
+                                                            toggleCancelReservation()
+                                                        }}
+                                                        > <i className="fas fa-trash trash"></i></h3>
+                                                    </>
+                                                )}
+                                                {house.status === 'CANCEL' && (
+                                                    <h3 className='cancel-status-reversation'>Đã huỷ <i className="fas fa-ban"></i></h3>
+                                                )}
+                                                {house.status === 'WAITING_FOR_TRANSACTION' && (
+                                                    <>
+                                                        <h3 className='approval-status-reversation'>Đang chờ giao dịch <i className="fas fa-hourglass spinning"></i></h3>
+                                                        <h3 onClick={() => {
+                                                            setHouseSelected(prev => house);
+                                                            toggleCancelReservation()
+                                                        }}
+                                                        > <i className="fas fa-trash trash"></i></h3>
+                                                    </>
+                                                )}
+                                                {house.status === 'FINISH' && (
+                                                    <h3>Đã hoàn thành <i className="fas fa-check"></i></h3>
+                                                )}
+                                                {house.status === 'REFUND' && (
+                                                    <h3>Đã hoàn tiền <i className="fas fa-undo"></i></h3>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))
+                                }
+                            </div>
+                            {
+                                reservation && reservation.length > housesPerPage && (
+                                    <div className='container-pagination' style={{ top: '178%', left: '25%' }}>
+                                        <Pagination
+                                            currentPage={currentPage}
+                                            totalPages={totalPages}
+
+                                            // itemsPerPage={housesPerPage}
+                                            onPageChange={handlePageChange}
+                                            handlePrevPage={handlePrevPage}
+                                            handleNextPage={handleNextPage}
+                                        />
+                                    </div>
+                                )
                             }
                         </div>
-                        {
-                            reservation && reservation.length > housesPerPage && (
-                                <div className='container-pagination' style={{ top: '178%', left: '25%' }}>
-                                    <Pagination
-                                        currentPage={currentPage}
-                                        totalPages={totalPages}
-
-                                        // itemsPerPage={housesPerPage}
-                                        onPageChange={handlePageChange}
-                                        handlePrevPage={handlePrevPage}
-                                        handleNextPage={handleNextPage}
-                                    />
-                                </div>
-                            )
-                        }
-                    </div>
-                ) : (
-                    <div className='div-trip-form-user'>
-                        <h1>Chuyến đi</h1 >
-                        <hr className='hr-form-user' />
-                        <h2>Chưa có chuyến đi nào được đặt... vẫn chưa!</h2>
-                        <p>Đã đến lúc phủi bụi hành lý và bắt đầu chuẩn bị cho chuyến phiêu lưu tiếp theo của bạn rồi</p>
-                        <Link to='/'>
-                            <button className='btn-start-search-on-div-trip'>Bắt đầu tìm kiếm</button>
-                        </Link>
-                        <hr className='hr-form-user' />
-                        <p>Bạn không tìm thấy đặt phòng/đặt chỗ của mình ở đây? <a className='a-tag-form-user' href="https://www.airbnb.com.vn/help?audience=guest">Truy cập Trung tâm trợ giúp</a> </p>
-                    </div >
-                )
+                    ) : (
+                        <div className='div-trip-form-user'>
+                            <h1>Chuyến đi</h1 >
+                            <hr className='hr-form-user' />
+                            <h2>Chưa có chuyến đi nào được đặt... vẫn chưa!</h2>
+                            <p>Đã đến lúc phủi bụi hành lý và bắt đầu chuẩn bị cho chuyến phiêu lưu tiếp theo của bạn rồi</p>
+                            <Link to='/'>
+                                <button className='btn-start-search-on-div-trip'>Bắt đầu tìm kiếm</button>
+                            </Link>
+                            <hr className='hr-form-user' />
+                            <p>Bạn không tìm thấy đặt phòng/đặt chỗ của mình ở đây? <a className='a-tag-form-user' href="https://www.airbnb.com.vn/help?audience=guest">Truy cập Trung tâm trợ giúp</a> </p>
+                        </div >
+                    )
             }
             {(
                 <div className={`overlay2 ${isOverLayCancelReservation ? '' : 'd-none'}`} >

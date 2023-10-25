@@ -1108,8 +1108,14 @@ const Header = () => {
             isOpenDropMenuLoginWithJWT && (
               <div className="dropdown-menu-login">
                 <div className="dropdown-menu-choice">Tin nhắn</div>
+                <Link className="link-user-login"
+                  to={'/trip'}>
                 <div className="dropdown-menu-choice">Chuyến đi</div>
+                </Link>
+                <Link className="link-user-login"
+                  to={'/wish-lists'}>
                 <div className="dropdown-menu-choice">Danh sách yêu thích</div>
+                </Link>
                 <hr />
                 {
                   userInfo?.role ?
