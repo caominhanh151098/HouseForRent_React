@@ -12,7 +12,7 @@ const AccountSetting = () => {
             <div className='div-account-setting-form-user'>
                 <div>
                     <h1>Tài khoản</h1>
-                    <h3>{userInfo && userInfo.firstName && userInfo.firstName} {userInfo && userInfo.lastName && userInfo.lastName}, {userInfo && userInfo.email && userInfo.email}  · <a className='a-tag-form-user' href="">Truy cập hồ sơ</a></h3>
+                    <h3>{userInfo && userInfo.firstName && userInfo.firstName} {userInfo && userInfo.lastName && userInfo.lastName}, {userInfo && userInfo.email && userInfo.email}  · <Link to={'/user/show'} className='a-tag-form-user' href="">Truy cập hồ sơ</Link></h3>
                 </div>
                 <div className='choices-in-account-setting-div'>
                     <Link className='link-to-choice-account-setting' to={'/account-settings/personal-info'}>

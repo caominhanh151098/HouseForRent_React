@@ -308,6 +308,7 @@
 
 .title-details-fix-book-body {
     display: flex;
+    flex-direction: column;
     margin-top: 10px;
     margin-right: 10px;
 }
@@ -471,3 +472,23 @@
     margin-bottom: 15px;
 }
 
+.error-details-exception{
+    height: 200px;
+    width: 336px;
+    position: absolute;
+    top: 10%;
+    border-radius: 15px;
+    left: 5%;
+    box-shadow: 0 0 28px rgba(0, 0, 0, 0.2);
+    display: flex;
+}
+
+.div-icon-error{
+    font-size: 40px;
+    margin: 15px;
+    color: red;
+}
+
+.div-details-reason-error{
+    
+}

@@ -310,6 +310,14 @@ const HouseList = () => {
         await handleAddFavorite(item.id, idHouseSelected, item.name);
     }
 
+    const formatCurrency = (item) => {
+        const formater = new Intl.NumberFormat('vi-VN', {
+            style:'currency',
+            currency: 'VND'
+        })
+        return formater.format(item).replace('₫', 'VNĐ')
+    }
+
     return (
         <div>
             <ToastContainer
@@ -383,7 +391,7 @@ const HouseList = () => {
                                         }}>
                                             Xem vị trí
                                         </button> */}
-                                            <p style={{ marginTop: '10px' }}><span style={{ fontWeight: 'bold' }}>${house.price} </span>/ đêm</p>
+                                            <p style={{ marginTop: '10px' }}><span style={{ fontWeight: 'bold' }}>{formatCurrency(house.price)} </span>/ đêm</p>
                                         </div>
                                     </div>
                                 )

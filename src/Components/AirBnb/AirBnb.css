@@ -1263,7 +1263,7 @@ header {
 .custom-div-icon-leaflet {
     background-color: white;
     color: #010101;
-    padding: 2px 0px;
+    padding: 2px 20px;
     text-align: center !important;
     display: flex;
     justify-content: center;
@@ -2169,4 +2169,19 @@ hr {
 
 .button-next-modal:hover {
     background-color: black;
+}
+
+.error-page{
+    margin-left: 15%;
+    height: 433px;
+}
+
+.link-tag-error{
+    color: black;
+}
+
+.img-tag-error{
+    position: absolute;
+    top: 10%;
+    left: 70%;
 }

@@ -22,6 +22,7 @@ import Typography from '@mui/joy/Typography';
 
 const Trip = () => {
     const [reservation, setReversation] = useState(false);
+    const [tempReservation, setTempReservation] = useState();
     const token = localStorage.getItem('jwt')
     const [loadingReservation, setLoadingReservation] = useState(false);
 
@@ -42,6 +43,7 @@ const Trip = () => {
                 });
                 setReversation(sortedReservations)
                 setLoadingReservation(false);
+                setTempReservation(sortedReservations)
             } else {
                 console.log('lỗi');
                 setLoadingReservation(false);
@@ -74,6 +76,7 @@ const Trip = () => {
     }
 
     console.log("reservation", reservation);
+    console.log("tempReservation", tempReservation);
 
     const [value, setValue] = React.useState('one');
 
@@ -182,10 +185,39 @@ const Trip = () => {
     const [filteredStatus, setFilteredStatus] = useState(null);
 
     const handleFilterStatus = (status) => {
-        setFilteredStatus(status);
+        setLoadingReservation(true)
+        setTimeout(() => {
+            setFilteredStatus(status);
 
-        const filterReservation = [...reservation].filter(reservation => reservation.status === status);
-        setReversation(filterReservation)
+            const filterReservation = [...tempReservation].filter(reservation => reservation.status === status);
+            setReversation(filterReservation)
+            setLoadingReservation(false)
+            if (filterReservation.length === 0 && tempReservation.length > 0) {
+                setIsOverLayNotFilter(true);
+            }
+        }, [500])
+    }
+
+    const handleFilterAll = () => {
+        setFilteredStatus('all')
+        setLoadingReservation(true)
+        setTimeout(() => {
+            setReversation(tempReservation)
+            setLoadingReservation(false)
+        }, [500])
+    }
+
+    const [isOverLayNotFilter, setIsOverLayNotFilter] = useState(false);
+    const toggleNotFilter = () => {
+        setIsOverLayNotFilter(!isOverLayNotFilter)
+    }
+
+    const formatCurrency = (item) => {
+        const formater = new Intl.NumberFormat('vi-VN', {
+            style: 'currency',
+            currency: 'VND'
+        })
+        return formater.format(item).replace('₫', 'VNĐ')
     }
 
     return (
@@ -222,7 +254,7 @@ const Trip = () => {
                                 >
                                     <Tab value="one" label="Thông tin nhà" style={{ marginRight: "1%", padding: "0px 98px" }} />
                                     <Tab value="two" label={`Ngày đặt ${sortOrder === 'ASC' ? '↓' : '↑'}`} />
-                                    <Tab value="three" label="Trạng thái" />
+                                    <Tab value="three" label={`Trạng thái ${filteredStatus === 'AWAITING_APPROVAL' ? ': Đang chờ duyệt' : filteredStatus === 'WAIT_FOR_CHECKIN' ? ': Đang chờ check-in' : filteredStatus === 'CANCEL' ? ': Đã huỷ' : filteredStatus === 'WAITING_FOR_TRANSACTION' ? ': Đang chờ giao dịch' : filteredStatus === 'all' ? '' : ''}`} />
                                 </Tabs>
                                 {value === 'two' && (
                                     <div className='condition-sort-date-reservation'>
@@ -276,13 +308,22 @@ const Trip = () => {
                                                     }}
                                                 >
                                                     <ListItem>
-                                                        <ListItemButton >Đang chờ duyệt <i className="fas fa-hourglass-half"></i></ListItemButton>
+                                                        <ListItemButton onClick={() => handleFilterAll()}>Tất cả </ListItemButton>
                                                     </ListItem>
                                                     <ListItem>
-                                                        <ListItemButton >Đang chờ check-in <i className="fas fa-clock"></i></ListItemButton>
+                                                        <ListItemButton onClick={() => handleFilterStatus('AWAITING_APPROVAL')}>Đang chờ duyệt <i className="fas fa-hourglass-half"></i></ListItemButton>
                                                     </ListItem>
                                                     <ListItem>
-                                                        <ListItemButton>Đã huỷ <i className="fas fa-ban"></i></ListItemButton>
+                                                        <ListItemButton onClick={() => handleFilterStatus('WAIT_FOR_CHECKIN')}>Đang chờ check-in <i className="fas fa-clock"></i></ListItemButton>
+                                                    </ListItem>
+                                                    <ListItem>
+                                                        <ListItemButton onClick={() => handleFilterStatus('CANCEL')}>Đã huỷ <i className="fas fa-ban"></i></ListItemButton>
+                                                    </ListItem>
+                                                    <ListItem>
+                                                        <ListItemButton onClick={() => handleFilterStatus('WAITING_FOR_TRANSACTION')}>Đang chờ giao dịch <i className="fas fa-hourglass"></i></ListItemButton>
+                                                    </ListItem>
+                                                    <ListItem>
+                                                        <ListItemButton onClick={() => handleFilterStatus('FINISH')}>Đã hoàn thành <i className="fas fa-hourglass"></i></ListItemButton>
                                                     </ListItem>
                                                 </List>
                                             </div>
@@ -301,12 +342,12 @@ const Trip = () => {
                                                 <div style={{ width: '360px' }}>
                                                     <h3>{house.house.typeRoom}</h3>
                                                     <h2>{house.house.hotelName}</h2>
-                                                    <h3 className='price-detail-reservation-history'>${house.house.price} / đêm</h3>
+                                                    <h3 className='price-detail-reservation-history'>{formatCurrency(house.house.price)} / đêm</h3>
                                                 </div>
                                             </div>
                                             <div style={{ marginRight: '7%' }}>
                                                 <h3>{formatDate(house.checkInDate)}  -  {formatDate(house.checkOutDate)}</h3>
-                                                <h3 className='total-price-detail-reservation-history'>Tổng: {house.totalPrice} $</h3>
+                                                <h3 className='total-price-detail-reservation-history'>Tổng: {formatCurrency(house.totalPrice)}</h3>
                                             </div>
                                             <div className='div-detail-status-reservation-history'>
                                                 {house.status === 'AWAITING_APPROVAL' && (
@@ -369,19 +410,129 @@ const Trip = () => {
                                 )
                             }
                         </div>
-                    ) : (
-                        <div className='div-trip-form-user'>
-                            <h1>Chuyến đi</h1 >
-                            <hr className='hr-form-user' />
-                            <h2>Chưa có chuyến đi nào được đặt... vẫn chưa!</h2>
-                            <p>Đã đến lúc phủi bụi hành lý và bắt đầu chuẩn bị cho chuyến phiêu lưu tiếp theo của bạn rồi</p>
-                            <Link to='/'>
-                                <button className='btn-start-search-on-div-trip'>Bắt đầu tìm kiếm</button>
-                            </Link>
-                            <hr className='hr-form-user' />
-                            <p>Bạn không tìm thấy đặt phòng/đặt chỗ của mình ở đây? <a className='a-tag-form-user' href="https://www.airbnb.com.vn/help?audience=guest">Truy cập Trung tâm trợ giúp</a> </p>
-                        </div >
-                    )
+                    ) :
+                        reservation.length == 0 && tempReservation.length > 0 ? (
+                            <div className='div-trip-form-user'>
+                                <Box sx={{ width: '100%' }}>
+                                    <Tabs
+                                        value={value}
+                                        onChange={handleChange}
+                                        textColor="secondary"
+                                        indicatorColor="secondary"
+                                        aria-label="secondary tabs example"
+                                    >
+                                        <Tab value="one" label="Thông tin nhà" style={{ marginRight: "1%", padding: "0px 98px" }} />
+                                        <Tab value="two" label={`Ngày đặt ${sortOrder === 'ASC' ? '↓' : '↑'}`} />
+                                        <Tab value="three" label={`Trạng thái ${filteredStatus === 'AWAITING_APPROVAL' ? ': Đang chờ duyệt' : filteredStatus === 'WAIT_FOR_CHECKIN' ? ': Đang chờ check-in' : filteredStatus === 'CANCEL' ? ': Đã huỷ' : filteredStatus === 'WAITING_FOR_TRANSACTION' ? ': Đang chờ giao dịch' : filteredStatus === 'all' ? '' : ''}`} />
+                                    </Tabs>
+                                    {value === 'two' && (
+                                        <div className='condition-sort-date-reservation'>
+                                            <Box
+                                                sx={{
+                                                    flexGrow: 1,
+                                                    display: 'flex',
+                                                    justifyContent: 'center',
+                                                    gap: 2,
+                                                    flexWrap: 'wrap',
+                                                    '& > *': { minWidth: 0, flexBasis: 200 },
+                                                }}
+                                            >
+                                                <div style={{ justifyContent: 'center' }}>
+                                                    <List
+                                                        variant="outlined"
+                                                        sx={{
+                                                            maxWidth: 300,
+                                                            borderRadius: 'sm',
+                                                        }}
+                                                    >
+                                                        <ListItem>
+                                                            <ListItemButton onClick={() => handleSortClick('ASC')}>Mới nhất</ListItemButton>
+                                                        </ListItem>
+                                                        <ListItem>
+                                                            <ListItemButton onClick={() => handleSortClick('DESC')}>Cũ nhất</ListItemButton>
+                                                        </ListItem>
+                                                    </List>
+                                                </div>
+                                            </Box>
+                                        </div>
+                                    )}
+                                    {value === 'three' && (
+                                        <div className='condition-sort-status-reservation'>
+                                            <Box
+                                                sx={{
+                                                    flexGrow: 1,
+                                                    display: 'flex',
+                                                    justifyContent: 'center',
+                                                    gap: 2,
+                                                    flexWrap: 'wrap',
+                                                    '& > *': { minWidth: 0, flexBasis: 200 },
+                                                }}
+                                            >
+                                                <div style={{ justifyContent: 'center' }}>
+                                                    <List
+                                                        variant="outlined"
+                                                        sx={{
+                                                            maxWidth: 300,
+                                                            borderRadius: 'sm',
+                                                        }}
+                                                    >
+                                                        <ListItem>
+                                                            <ListItemButton onClick={() => handleFilterAll()}>Tất cả </ListItemButton>
+                                                        </ListItem>
+                                                        <ListItem>
+                                                            <ListItemButton onClick={() => handleFilterStatus('AWAITING_APPROVAL')}>Đang chờ duyệt <i className="fas fa-hourglass-half"></i></ListItemButton>
+                                                        </ListItem>
+                                                        <ListItem>
+                                                            <ListItemButton onClick={() => handleFilterStatus('WAIT_FOR_CHECKIN')}>Đang chờ check-in <i className="fas fa-clock"></i></ListItemButton>
+                                                        </ListItem>
+                                                        <ListItem>
+                                                            <ListItemButton onClick={() => handleFilterStatus('CANCEL')}>Đã huỷ <i className="fas fa-ban"></i></ListItemButton>
+                                                        </ListItem>
+                                                        <ListItem>
+                                                            <ListItemButton onClick={() => handleFilterStatus('WAITING_FOR_TRANSACTION')}>Đang chờ giao dịch <i className="fas fa-hourglass"></i></ListItemButton>
+                                                        </ListItem>
+                                                        <ListItem>
+                                                            <ListItemButton onClick={() => handleFilterStatus('FINISH')}>Đã hoàn thành <i className="fas fa-hourglass"></i></ListItemButton>
+                                                        </ListItem>
+                                                    </List>
+                                                </div>
+                                            </Box>
+                                        </div>
+                                    )}
+                                </Box>
+                                <div>
+                                    <h1>Không tìm thấy chuyến đi nào phù hợp</h1>
+                                </div>
+                                {(
+                                    <div className={`overlay2 ${isOverLayNotFilter ? '' : 'd-none'}`} >
+                                        <div className={`appearing-div ${isOverLayNotFilter ? 'active' : ''}`} style={{ width: '600px' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                <h1><i class="fa-solid fa-circle-exclamation"></i></h1>
+                                            </div>
+                                            <hr />
+                                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                                <img style={{ width: '12%' }} src="https://www.seekpng.com/png/full/957-9571167_airbnb-png.png" alt="" />
+                                                <h2>Không tìm thấy chuyến đi nào phù hợp</h2>
+                                                <button style={{ width: '90%' }} className="btn-continue-with-toggle-login-success" onClick={toggleNotFilter}>Đóng</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        ) :
+                            (
+                                <div className='div-trip-form-user'>
+                                    <h1>Chuyến đi</h1 >
+                                    <hr className='hr-form-user' />
+                                    <h2>Chưa có chuyến đi nào được đặt... vẫn chưa!</h2>
+                                    <p>Đã đến lúc phủi bụi hành lý và bắt đầu chuẩn bị cho chuyến phiêu lưu tiếp theo của bạn rồi</p>
+                                    <Link to='/'>
+                                        <button className='btn-start-search-on-div-trip'>Bắt đầu tìm kiếm</button>
+                                    </Link>
+                                    <hr className='hr-form-user' />
+                                    <p>Bạn không tìm thấy đặt phòng/đặt chỗ của mình ở đây? <a className='a-tag-form-user' href="https://www.airbnb.com.vn/help?audience=guest">Truy cập Trung tâm trợ giúp</a> </p>
+                                </div >
+                            )
             }
             {(
                 <div className={`overlay2 ${isOverLayCancelReservation ? '' : 'd-none'}`} >
@@ -424,6 +575,21 @@ const Trip = () => {
                                         onClick={() => handleCancelReservation(houseSelected.id)}>Huỷ</button>
                                 )
                             }
+                        </div>
+                    </div>
+                </div>
+            )}
+            {(
+                <div className={`overlay2 ${isOverLayNotFilter ? '' : 'd-none'}`} >
+                    <div className={`appearing-div ${isOverLayNotFilter ? 'active' : ''}`} style={{ width: '600px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <h1><i class="fa-solid fa-circle-exclamation"></i></h1>
+                        </div>
+                        <hr />
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                            <img style={{ width: '12%' }} src="https://www.seekpng.com/png/full/957-9571167_airbnb-png.png" alt="" />
+                            <h2>Không tìm thấy chuyến đi nào phù hợp</h2>
+                            <button style={{ width: '90%' }} className="btn-continue-with-toggle-login-success" onClick={toggleNotFilter}>Đóng</button>
                         </div>
                     </div>
                 </div>

@@ -541,12 +541,13 @@ const Body = () => {
     });
 
     const customIcon = (price) => {
-        const roundedPrice = Math.ceil(price);
+        // const roundedPrice = Math.ceil(price);
+        const formatPrice = formatCurrencyOnMap(price);
 
         return divIcon({
             className: ' test',
             html: `<div class='custom-div-icon-leaflet'> 
-        $${roundedPrice}
+        ${formatPrice} 
       </div>`,
         });
     };
@@ -1013,6 +1014,21 @@ const Body = () => {
         await handleAddFavorite(item.id, idHouseSelected, item.name);
     }
 
+    const formatCurrency = (item) => {
+        const formater = new Intl.NumberFormat('vi-VN', {
+            style:'currency',
+            currency: 'VND'
+        })
+        return formater.format(item).replace('₫', 'VNĐ')
+    }
+
+    const formatCurrencyOnMap = (item) => {
+        const formater = new Intl.NumberFormat('vi-VN', {
+            style:'currency',
+            currency: 'VND'
+        })
+        return formater.format(item).replace('₫', '')
+    }
 
     return (
         <div>
@@ -1080,9 +1096,9 @@ const Body = () => {
                                                 </div>
                                             </div>
                                             <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                                <button className='btn-distance'>Tối thiểu <br /> $ {minRange}</button>
+                                                <button className='btn-distance'>Tối thiểu <br /> {formatCurrency(minRange)} </button>
                                                 <span style={{ fontSize: '22px' }}>-</span>
-                                                <button className='btn-distance'>Tối đa <br /> $ {maxRange}</button>
+                                                <button className='btn-distance'>Tối đa <br /> {formatCurrency(maxRange)}</button>
                                             </div>
 
                                         </div>
@@ -1359,7 +1375,7 @@ const Body = () => {
                                             </div>
                                             <div style={{ margin: '0px 20px' }}>
                                                 <h2>{location.info.hotelName}</h2>
-                                                <p style={{ fontSize: '17px' }}> <span style={{ fontWeight: 'bold' }}>${location.info.price}</span>  / đêm</p>
+                                                <p style={{ fontSize: '17px' }}> <span style={{ fontWeight: 'bold' }}>{formatCurrency(location.info.price)}</span>  / đêm</p>
                                             </div>
                                         </div>
                                     </Popup>
@@ -1435,7 +1451,7 @@ const Body = () => {
                                                     <i class="fa-solid fa-star"></i>&nbsp;{house?.review}</span> */}
                                                         </div>
                                                         <span>{formattedToday} - {formattedFutureDate}</span>
-                                                        <p style={{ marginTop: '10px' }}><span style={{ fontWeight: 'bold' }}>${house.price} </span>/ đêm</p>
+                                                        <p style={{ marginTop: '10px' }}><span style={{ fontWeight: 'bold' }}>{formatCurrency(house.price)} </span>/ đêm</p>
                                                     </div>
                                                 </div>
                                             )
@@ -1474,7 +1490,7 @@ const Body = () => {
                                                                 </div>
                                                                 <div style={{ margin: '0px 20px' }}>
                                                                     <h2>{location.info.hotelName}</h2>
-                                                                    <p style={{ fontSize: '17px' }}> <span style={{ fontWeight: 'bold' }}>${location.info.price}</span>  / đêm</p>
+                                                                    <p style={{ fontSize: '17px' }}> <span style={{ fontWeight: 'bold' }}>{formatCurrency(location.info.price)}</span>  / đêm</p>
                                                                 </div>
                                                             </div>
                                                         </Popup>
@@ -1560,7 +1576,7 @@ const Body = () => {
                                                         <i class="fa-solid fa-star"></i>&nbsp;{house?.review}</span> */}
                                                         </div>
                                                         <span>{formattedToday} - {formattedFutureDate}</span>
-                                                        <p style={{ marginTop: '10px' }}><span style={{ fontWeight: 'bold' }}>${house.price} </span>/ đêm</p>
+                                                        <p style={{ marginTop: '10px' }}><span style={{ fontWeight: 'bold' }}>{formatCurrency(house.price)} </span>/ đêm</p>
                                                     </div>
                                                 </div>
                                             )
@@ -1614,7 +1630,7 @@ const Body = () => {
                                                                 <i class="fa-solid fa-star"></i>&nbsp;{house?.review}</span> */}
                                                                 </div>
                                                                 <span>{formattedToday} - {formattedFutureDate}</span>
-                                                                <p style={{ marginTop: '10px' }}><span style={{ fontWeight: 'bold' }}>${house.price} </span>/ đêm</p>
+                                                                <p style={{ marginTop: '10px' }}><span style={{ fontWeight: 'bold' }}>{formatCurrency(house.price)} </span>/ đêm</p>
                                                             </div>
                                                         </div>
                                                     )

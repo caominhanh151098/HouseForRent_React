@@ -538,6 +538,14 @@ const BodyDetail = () => {
     };
 
     console.log("shouldDisableDate", shouldDisableDate);
+
+    const formatCurrency = (item) => {
+        const formater = new Intl.NumberFormat('vi-VN', {
+            style:'currency',
+            currency: 'VND'
+        })
+        return formater.format(item).replace('₫', 'VNĐ')
+    }
     return (
         <>
             <ToastContainer
@@ -1451,7 +1459,7 @@ const BodyDetail = () => {
                         <div style={{ marginLeft: '20px' }}>
                             {
                                 housePrice && (
-                                    <h1>$ {housePrice.price} <span style={{ fontWeight: '200', fontSize: '20px' }}> / đêm</span></h1>
+                                    <h1 style={{lineHeight:'0.7'}}>{formatCurrency(housePrice.price)} <span style={{ fontWeight: '200', fontSize: '20px' }}> / đêm</span></h1>
                                 )
                             }
                             <p>Tổng trước thuế</p>

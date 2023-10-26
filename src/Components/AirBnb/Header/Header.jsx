@@ -1163,8 +1163,6 @@ const Header = () => {
           }
         </div>
         {(
-
-
           <div className={`overlay2 ${isOverLayLoginForm ? '' : 'd-none'}`} >
             <div className={`appearing-div ${isOverLayLoginForm ? 'active' : ''}`}>
               <div id="recaptcha-container" />
