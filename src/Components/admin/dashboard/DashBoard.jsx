@@ -540,7 +540,7 @@ function DashBoard() {
             <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 className="h2">Dashboard</h1>
             </div>
-            <table className="table">
+            {/* <table className="table">
                 <thead>
                     <th>
                         <td>id</td>
@@ -562,7 +562,7 @@ function DashBoard() {
                     ))}
                 </tbody>
 
-            </table>
+            </table> */}
 
             <div style={{ height: "900px" }}>
                 <div style={{ height: '25%', display: 'flex' }}>

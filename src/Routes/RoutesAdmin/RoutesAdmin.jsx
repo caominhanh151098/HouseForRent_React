@@ -9,8 +9,8 @@ import UserList from '../../Components/admin/userList/UserList';
 import Reports from '../../Components/admin/report/Reports';
 import useScript from '../../Hooks/custom/useScript';
 import Layout from '../../Components/admin/layout/Layout';
-import "../../../node_modules/bootstrap/dist/css/bootstrap.min.css";
-import "../../../node_modules/bootstrap/dist/js/bootstrap.min.js";
+
+import "bootstrap/dist/js/bootstrap.min";
 import "../../../node_modules/@fortawesome/fontawesome-free/css/all.min.css";
 import "../../assets/css/app.min.css";
 import "../../assets/css/icons.min.css";
@@ -21,6 +21,8 @@ import Refund from '../../Components/admin/process/Refund';
 import HouseBan from '../../Components/admin/history/HouseBan';
 import RefundCreate from '../../Components/admin/policy/RefundCreate';
 import RefundPolicyTable from '../../Components/admin/policy/RefundPolicyTable';
+import '../../component/layout_hosting/navbarHosting.css';
+
 
 
 
@@ -32,7 +34,7 @@ function RoutesAdmin() {
 
 
   return (
-    <>
+    <div className='local-bootstrap'>
       <Routes>
         <Route
           path='/admin/*'
@@ -54,7 +56,7 @@ function RoutesAdmin() {
           }
         />
       </Routes>
-    </>
+    </div>
   );
 }
 

@@ -1025,17 +1025,239 @@
   margin-right: -4%;
 }
 
-.trash{
+.trash {
   cursor: pointer;
   transition: transform 0.4s ease;
 }
 
-.trash:hover{
+.trash:hover {
   transform: scale(1.2);
 }
 
-.group-btn-cancel-and-close-resersation{
+.group-btn-cancel-and-close-resersation {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
+
+.btn-close-reservation {
+  font-size: 22px;
+  padding: 10px 10px;
+  border-radius: 15px;
+  background: white;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.btn-close-reservation:hover {
+  background: #d7d7d7;
+}
+
+.btn-confirm-cancel-reservation {
+  padding: 10px 23px;
+  font-size: 22px;
+  background: black;
+  color: white;
+  border-radius: 15px;
+  cursor: pointer;
+}
+
+.btn-confirm-cancel-reservation:hover {
+  background: #3c3b3bd6;
+}
+
+
+@keyframes ldio-ijfzxu11m4 {
+  0% {
+    transform: translate(7px, 41px) scale(0);
+  }
+
+  25% {
+    transform: translate(7px, 41px) scale(0);
+  }
+
+  50% {
+    transform: translate(7px, 41px) scale(1);
+  }
+
+  75% {
+    transform: translate(41px, 41px) scale(1);
+  }
+
+  100% {
+    transform: translate(75px, 41px) scale(1);
+  }
+}
+
+@keyframes ldio-ijfzxu11m4-r {
+  0% {
+    transform: translate(75px, 41px) scale(1);
+  }
+
+  100% {
+    transform: translate(75px, 41px) scale(0);
+  }
+}
+
+@keyframes ldio-ijfzxu11m4-c {
+  0% {
+    background: #000000
+  }
+
+  25% {
+    background: #000000
+  }
+
+  50% {
+    background: #020202
+  }
+
+  75% {
+    background: #000000
+  }
+
+  100% {
+    background: #000000
+  }
+}
+
+.ldio-ijfzxu11m4 div {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  transform: translate(41px, 41px) scale(1);
+  background: #000000;
+  animation: ldio-ijfzxu11m4 1s infinite cubic-bezier(0, 0.5, 0.5, 1);
+}
+
+.ldio-ijfzxu11m4 div:nth-child(1) {
+  background: #000000;
+  transform: translate(75px, 41px) scale(1);
+  animation: ldio-ijfzxu11m4-r 0.25s infinite cubic-bezier(0, 0.5, 0.5, 1), ldio-ijfzxu11m4-c 1s infinite step-start;
+}
+
+.ldio-ijfzxu11m4 div:nth-child(2) {
+  animation-delay: -0.25s;
+  background: #000000;
+}
+
+.ldio-ijfzxu11m4 div:nth-child(3) {
+  animation-delay: -0.5s;
+  background: #000000;
+}
+
+.ldio-ijfzxu11m4 div:nth-child(4) {
+  animation-delay: -0.75s;
+  background: #020202;
+}
+
+.ldio-ijfzxu11m4 div:nth-child(5) {
+  animation-delay: -1s;
+  background: #000000;
+}
+
+.loadingio-spinner-ellipsis-xy4aloyie7 {
+  width: 58px;
+  height: 58px;
+  display: inline-block;
+  overflow: hidden;
+  background: none;
+}
+
+.ldio-ijfzxu11m4 {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform: translateZ(0) scale(0.58);
+  backface-visibility: hidden;
+  transform-origin: 0 0;
+  /* see note above */
+}
+
+.ldio-ijfzxu11m4 div {
+  box-sizing: content-box;
+}
+
+.css-dzijul-JoyListItemButton-root {
+  justify-content: center;
+}
+
+.condition-sort-date-reservation {
+  position: absolute;
+  left: 59%;
+  top: 9%;
+  box-shadow: 0px 5px 11px rgba(0, 0, 0, 0.2);
+  background: white;
+}
+
+.condition-sort-status-reservation {
+  position: absolute;
+  left: 87%;
+  top: 7%;
+  box-shadow: 0px 5px 11px rgba(0, 0, 0, 0.2);
+  background: white;
+}
+
+
+@keyframes ldio-sesojbulmx {
+   0% { transform: translate(12px,80px) scale(0); }
+  25% { transform: translate(12px,80px) scale(0); }
+  50% { transform: translate(12px,80px) scale(1); }
+  75% { transform: translate(80px,80px) scale(1); }
+ 100% { transform: translate(148px,80px) scale(1); }
+}
+@keyframes ldio-sesojbulmx-r {
+   0% { transform: translate(148px,80px) scale(1); }
+ 100% { transform: translate(148px,80px) scale(0); }
+}
+@keyframes ldio-sesojbulmx-c {
+   0% { background: #000000 }
+  25% { background: #000000 }
+  50% { background: #000000 }
+  75% { background: #000000 }
+ 100% { background: #000000 }
+}
+.ldio-sesojbulmx div {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  transform: translate(80px,80px) scale(1);
+  background: #000000;
+  animation: ldio-sesojbulmx 1s infinite cubic-bezier(0,0.5,0.5,1);
+}
+.ldio-sesojbulmx div:nth-child(1) {
+  background: #000000;
+  transform: translate(148px,80px) scale(1);
+  animation: ldio-sesojbulmx-r 0.25s infinite cubic-bezier(0,0.5,0.5,1), ldio-sesojbulmx-c 1s infinite step-start;
+}.ldio-sesojbulmx div:nth-child(2) {
+  animation-delay: -0.25s;
+  background: #000000;
+}.ldio-sesojbulmx div:nth-child(3) {
+  animation-delay: -0.5s;
+  background: #000000;
+}.ldio-sesojbulmx div:nth-child(4) {
+  animation-delay: -0.75s;
+  background: #000000;
+}.ldio-sesojbulmx div:nth-child(5) {
+  animation-delay: -1s;
+  background: #000000;
+}
+.loadingio-spinner-ellipsis-vy8amekyxyo {
+  width: 200px;
+  height: 200px;
+  display: inline-block;
+  overflow: hidden;
+  background: #ffffff;
+}
+.ldio-sesojbulmx {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform: translateZ(0) scale(1);
+  backface-visibility: hidden;
+  transform-origin: 0 0; /* see note above */
+}
+.ldio-sesojbulmx div { box-sizing: content-box; }

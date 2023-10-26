@@ -69,7 +69,7 @@ const Header = () => {
   const [isOverLayVerifyEmail, setIsOverLayVerifyEmail] = useState(false);
   const [isOverFormSuccess, setIsOverFormSuccess] = useState(false);
 
-  const [selectedCountry, setSelectedCountry] = useState(null);
+  const [selectedCountry, setSelectedCountry] = useState({ code: 'VN', label: 'Vietnam', phone: '84' });;
   const [phoneNumber, setPhoneNumber] = useState('');
   const [valueOTP, setValueOTP] = useState("");
   const [user, setUser] = useState({});
@@ -1108,8 +1108,14 @@ const Header = () => {
             isOpenDropMenuLoginWithJWT && (
               <div className="dropdown-menu-login">
                 <div className="dropdown-menu-choice">Tin nhắn</div>
+                <Link className="link-user-login"
+                  to={'/trip'}>
                 <div className="dropdown-menu-choice">Chuyến đi</div>
+                </Link>
+                <Link className="link-user-login"
+                  to={'/wish-lists'}>
                 <div className="dropdown-menu-choice">Danh sách yêu thích</div>
+                </Link>
                 <hr />
                 {
                   userInfo?.role ?
@@ -1512,6 +1518,24 @@ const Header = () => {
               <hr />
             </div>
 
+          </div>
+        )}
+        {(
+          <div className={`overlay2 ${isOverlayLoginSuccess ? '' : 'd-none'}`} >
+            <div className={`appearing-div ${isOverlayLoginSuccess ? 'active' : ''}`} style={{ width: '666px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                {/* <i style={{ marginRight: '21%' }}
+                  onClick={toggleLoginSuccess} class="fa-solid fa-chevron-left close-description" ></i> */}
+                <h1>Đăng nhập thành công</h1>
+              </div>
+              <hr />
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <img style={{ width: '12%' }} src="https://www.seekpng.com/png/full/957-9571167_airbnb-png.png" alt="" />
+                <h2>Chào mừng bạn đến với Airbnb</h2>
+                <p>Khám phá các nơi ở và trải nghiệm độc đáo trên thế giới</p>
+                <button className="btn-continue-with-toggle-login-success" onClick={toggleLoginSuccess}>Tiếp tục</button>
+              </div>
+            </div>
           </div>
         )}
       </header>

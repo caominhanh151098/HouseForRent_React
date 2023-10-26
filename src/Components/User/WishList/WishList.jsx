@@ -11,6 +11,7 @@ import { Link } from 'react-router-dom'
 const WishList = () => {
     const userInfo = JSON.parse(localStorage.getItem('userInfo'));
     const [userWishLists, setUserWishLists] = useState([]);
+    const [loadingWishList, setLoadingWishList] = useState(false);
 
     const token = localStorage.getItem('jwt')
     useEffect(() => {
@@ -32,6 +33,13 @@ const WishList = () => {
         }
         handleSaveChanges();
     }, [userWishLists])
+
+    useEffect(() => {
+        setLoadingWishList(true);
+        setTimeout(() => {
+            setLoadingWishList(false)
+        }, [500])
+    }, [])
 
     const handleDeleteWishListById = async (id, name) => {
         try {
@@ -61,7 +69,7 @@ const WishList = () => {
         setIsOverLayDeleteForm(!isOverLayDeleteForm)
     }
 
-   
+
 
     return (
         <>
@@ -81,26 +89,33 @@ const WishList = () => {
                 <h1>Yêu thích</h1>
                 <div className='lists-wish-container'>
                     {
-                        userWishLists && userWishLists.map((item, index) => (
-                            <div key={index} className='wish-details-div'>
-                                <div className='container-card'>
-                                    <Link to={`/wish-lists/${item.id}/${encodeURIComponent(item.name)}`}>
-                                        <img
-                                            className='img-wish-details'
-                                            src={item.images[0]} alt="" />
-                                    </Link>
-                                    <span onClick={() => {
-                                        setSelectedWishList(item);
-                                        toggleDeleteForm()
-                                    }}
-                                        className="icon-container">
-                                        <i class="fa-solid fa-circle-xmark"></i>
-                                    </span>
-                                </div>
-                                <h2>{item.name}</h2>
-                                <p onClick={toggleDeleteForm}>Đã lưu {item.quantityHouse} mục</p>
+                        loadingWishList ? (
+                            <div style={{ textAlign: 'center' }}>
+                                <div class="loadingio-spinner-ellipsis-vy8amekyxyo"><div class="ldio-sesojbulmx">
+                                    <div></div><div></div><div></div><div></div><div></div>
+                                </div></div>
                             </div>
-                        ))
+                        ) :
+                            userWishLists && userWishLists.map((item, index) => (
+                                <div key={index} className='wish-details-div'>
+                                    <div className='container-card'>
+                                        <Link to={`/wish-lists/${item.id}/${encodeURIComponent(item.name)}`}>
+                                            <img
+                                                className='img-wish-details'
+                                                src={item.images[0]} alt="" />
+                                        </Link>
+                                        <span onClick={() => {
+                                            setSelectedWishList(item);
+                                            toggleDeleteForm()
+                                        }}
+                                            className="icon-container">
+                                            <i class="fa-solid fa-circle-xmark"></i>
+                                        </span>
+                                    </div>
+                                    <h2>{item.name}</h2>
+                                    <p onClick={toggleDeleteForm}>Đã lưu {item.quantityHouse} mục</p>
+                                </div>
+                            ))
                     }
 
                     {(
