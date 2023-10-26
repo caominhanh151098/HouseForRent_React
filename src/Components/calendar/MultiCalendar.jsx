@@ -688,7 +688,7 @@ export default function MultiCalendar() {
                                                                         </div>
                                                                     </div>
                                                                     <div className='mt-5 mb-4'>
-                                                                        <button onClick={() => handleUpdateOther} className='fs-5 btn-luu'>
+                                                                        <button onClick={() => handleUpdateOther()} className='fs-5 btn-luu'>
                                                                             Lưu
                                                                         </button>
                                                                     </div>

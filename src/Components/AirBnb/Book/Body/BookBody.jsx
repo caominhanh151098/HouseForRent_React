@@ -64,6 +64,40 @@ const BookBody = () => {
 
   const [checkAvailableRoom, setCheckAvailableRoom] = useState(false)
 
+  const [priceDetails, setPriceDetails] = useState({
+    priceNormal: 0,
+    priceWeekend: 0,
+    petPrice: 0,
+    exGuessPrice: 0,
+    cleanPrice: 0,
+    shortStayCleanPrice: 0,
+    servicePrice: 0,
+    totalPrice: 0,
+  });
+
+  const searchFee = {
+    cleanFee: {
+      feeType: "CLEANING",
+      name: "Phí vệ sinh"
+    },
+    sTCFee: {
+      feeType: "SHORT_STAY_CLEANING",
+      name: "Phí vệ sinh cho kỳ ở ngắn"
+    },
+    petFee: {
+      feeType: "PET",
+      name: "Phí thú cưng"
+    },
+    exGuessFee: {
+      feeType: "EXTRA_GUESS",
+      name: "Phí khách bổ sung"
+    },
+    serviceFee: {
+      feeType: "SERVICE_FEE",
+      name: "Phí dịch vụ dành cho khách"
+    }
+  }
+
   const goDay = GoDay ? new Date(GoDay) : null
   console.log("goDay", goDay);
   const backDay = BackDay ? new Date(BackDay) : null
@@ -285,12 +319,10 @@ const BookBody = () => {
     let counter = 0;
     let weekendArr = []
     while (currentDate.isBefore(endDate) || currentDate.isSame(endDate)) {
-      if (currentDate.day() === 6 && currentDate.add(1, 'day').day() === 0 || currentDate.day() === 0 && currentDate.add(1, 'day').day() === 1) {
+      if (currentDate.day() === 5 || currentDate.day() === 6) {
         weekendDays++;
         weekendArr.push(currentDate.format('YYYY-MM-DD'));
-        console.log(weekendArr);
         setWeekendDayDetails(weekendArr);
-        console.log(weekendDayDetails);
       }
       currentDate = currentDate.add(1, 'day');
       counter++;
@@ -361,6 +393,7 @@ const BookBody = () => {
   console.log("convert dayjs", dayjs(bookDay[1]));
 
   console.log("numberOfNights", numberOfNights);
+  console.log("BookDay", bookDay);
 
   const requestDetail = house?.requestDetail;
   const requestMaxGuest = requestDetail ? requestDetail.match(/\d+/) : null;
@@ -596,6 +629,76 @@ const BookBody = () => {
 
     return isReserved || isBlocked;
   };
+
+  useEffect(() => {
+    let priceNormal = 0;
+    let priceWeekend = 0;
+    let petPrice = 0;
+    let exGuessPrice = 0;
+    let cleanPrice = 0;
+    let shortStayCleanPrice = 0;
+    let cleaningPrice = 0;
+    let serviceFee = 0;
+    let totalPrice = 0;
+
+    if (countWeekendDay) {
+      priceNormal = housePrice?.price * (numberOfNights - countWeekendDay);
+      priceWeekend = housePrice?.weekendPrice * countWeekendDay;
+    }
+    else
+      priceNormal = housePrice?.price * numberOfNights;
+
+    const petFee = housePrice?.feeHouses?.find(item => {
+      return item.fee.name === searchFee.petFee.name && item.fee.feeType === searchFee.petFee.feeType;
+    })
+    if (petFee) {
+      petPrice = countPets > 0 ? petFee.price : 0;
+    }
+    const exGuessFee = housePrice?.feeHouses?.find(item => {
+      return item.fee.name === searchFee.exGuessFee.name && item.fee.feeType === searchFee.exGuessFee.feeType;
+    })
+    if (exGuessFee && exGuessFee.other < +CountOld + +CountYoung)
+      exGuessPrice = (+CountOld + +CountYoung - exGuessFee.other) * exGuessFee.price * numberOfNights;
+
+    const cleanFee = housePrice?.feeHouses?.find(item => {
+      return item.fee.name === searchFee.cleanFee.name && item.fee.feeType === searchFee.cleanFee.feeType;
+    })
+    const sTCFee = housePrice?.feeHouses?.find(item => {
+      return item.fee.name === searchFee.sTCFee.name && item.fee.feeType === searchFee.sTCFee.feeType;
+    })
+
+    if (cleanFee) {
+      if (sTCFee && numberOfNights < 3) {
+        shortStayCleanPrice = sTCFee.price;
+        cleaningPrice = shortStayCleanPrice;
+      }
+      else {
+        cleanPrice = cleanFee.price;
+        cleaningPrice = cleanPrice;
+      }
+    }
+
+    serviceFee = housePrice?.feeHouses?.find(item => {
+      return item.fee.name === searchFee.serviceFee.name && item.fee.feeType === searchFee.serviceFee.feeType
+    }).price;
+
+    const price = priceNormal + priceWeekend + exGuessPrice + petPrice + cleaningPrice;
+    totalPrice = price + price * serviceFee / 100;
+
+    setPriceDetails({
+      ...priceDetails,
+      priceNormal: priceNormal,
+      priceWeekend: priceWeekend,
+      petPrice: petPrice,
+      exGuessPrice: exGuessPrice,
+      cleanPrice: cleanPrice,
+      shortStayCleanPrice: shortStayCleanPrice,
+      servicePrice: serviceFee,
+      totalPrice: Math.round(totalPrice / 1000) * 1000
+    })
+
+  }, [housePrice, countWeekendDay, navigate])
+  console.log("NHÀ THẬT GIÁ THẬT", priceDetails);
 
   return (
     <>
