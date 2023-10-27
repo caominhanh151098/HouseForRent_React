@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "../AirBnb.css"
 import FormHeader from "./FormHeader";
 import CalenderPicker from "./CalenderPicker";
@@ -888,7 +888,11 @@ const Header = () => {
     { code: 'ZW', label: 'Zimbabwe', phone: '263' },
   ];
 
+  const imgRef = useRef(null);
 
+  const handleClick = () => {
+    window.location.href = 'http://localhost:3000/';
+  };
 
   return (
     <>
@@ -908,13 +912,14 @@ const Header = () => {
       />
       <header>
         <div className={`overlay ${showFormHeader ? 'active' : ''}`} onClick={() => setShowFormHeader(false)}></div>
-        <Link to={'/'}>
+        
           <img
-            className="img-header"
+            className="img-header"  ref={imgRef} 
+            onClick={handleClick} 
             src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Airbnb_Logo_B%C3%A9lo.svg/2560px-Airbnb_Logo_B%C3%A9lo.svg.png"
             alt=""
           />
-        </Link>
+       
 
         <div className="search-box">
           <div className="button-group">

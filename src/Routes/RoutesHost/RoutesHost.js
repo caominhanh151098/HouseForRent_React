@@ -34,6 +34,7 @@ import '../../../node_modules/@fortawesome/fontawesome-free/css/all.min.css';
 import MultiCalendar from '../../Components/calendar/MultiCalendar';
 // import MultiCalendar from './../../Components/calendar/MultiCalendar';
 import '../../component/layout_hosting/bstrap/css/bootstrap2.css';
+import Error from '../../Components/AirBnb/Error/Error';
 const RoutesHost = () => {
   return (
     <div className='local-bootstrap'>

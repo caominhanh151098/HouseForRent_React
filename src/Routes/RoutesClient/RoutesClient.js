@@ -32,7 +32,7 @@ const RoutesClient = () => {
       <Route path='/book/:houseID/:CountOld/:CountYoung/:CountBaby/:CountPet/:GoDay/:BackDay' element={<BookHouse />} />
       <Route path='/book/:houseID/:CountOld/:CountYoung/:CountBaby/:CountPet/:GoDay/:BackDay/:paymentID/:tnxRef' element={<BookHouse />} />
       <Route path='/error/:houseID/:CountOld/:CountYoung/:CountBaby/:CountPet/:GoDay/:BackDay' element={<ErrorBookBody />} />
-      <Route path='*' element={<Error />} />
+      
     </Routes>
   );
 }
