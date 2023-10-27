@@ -29,15 +29,15 @@ import AllReservation from './../../component/hosting/main/AllReservation';
 // import ShowCalendar from './../../component/hosting/main/ShowCalendar.jsx';
 import RevenueHost from './../../component/hosting/main/RevenueHost';
 import Reviews from './../../component/hosting/main/Reviews';
-// import '../../../node_modules/bootstrap/dist/css/bootstrap.min.css';
-// import '../../../node_modules/bootstrap/dist/js/bootstrap.min.js'
-// import '../../../node_modules/@fortawesome/fontawesome-free/css/all.min.css';
+import '../../../node_modules/bootstrap/dist/css/bootstrap.min.css';
+import '../../../node_modules/bootstrap/dist/js/bootstrap.min.js'
+import '../../../node_modules/@fortawesome/fontawesome-free/css/all.min.css';
 import MultiCalendar from '../../Components/calendar/MultiCalendar';
 // import MultiCalendar from './../../Components/calendar/MultiCalendar';
 
 const RoutesHost = () => {
   return (
-    <div className='local-bootstrap'>
+    <div  >
       <Routes>
         <Route path='/host/firstCreateRoom' element={<First_create_room />} />
         <Route path='/host/create/b1/shareAdd' element={<B1_share_add />} />

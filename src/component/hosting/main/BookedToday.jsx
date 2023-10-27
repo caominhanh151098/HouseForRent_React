@@ -7,6 +7,8 @@ import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import NavbarHosting from '../../layout_hosting/NavbarHosting';
 import dayjs from 'dayjs';
+import BookFooter from './../../../Components/AirBnb/Book/Footer/BookFooter';
+import FooterFormUser from '../../../Components/User/FooterFormUser';
 function BookedToday() {
     const [type, setType] = useState("willCheckOut")
     const [willCheckOut, setWillCheckOut] = useState([])
@@ -16,6 +18,9 @@ function BookedToday() {
     const [waitApproval, setApproval] = useState([])
     const [render, setRender] = useState(false)
     const [detail, setDetail] = useState({})
+    const today = new Date(); // Lấy ngày hiện tại
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
     useEffect(() => {
         async function getData() {
             let res = await axios.get(`http://localhost:8080/api/host/reservation/willCheckOut`, {
@@ -211,7 +216,7 @@ function BookedToday() {
     return (
         <>
             <NavbarHosting type="bookedToday" ></NavbarHosting>
-            <div className='col-10 ' style={{ marginLeft: '100px' }}>
+            <div className='col-10 ' style={{ marginLeft: '100px' ,marginBottom:'100px'}}>
                 <div className='fs-3 mt-5 mb-5'>Chào mừng chủ nhà </div>
                 <div className='fs-4 mb-4'>
                     Đặt phòng /đặt chỗ của bạn
@@ -247,10 +252,15 @@ function BookedToday() {
                                             <td>{item.house.hotelName}</td>
                                             <td style={{ textAlign: 'center' }}>{(dayjs(item.checkInDate)).format('YYYY-MM-DD')}</td>
                                             <td style={{ textAlign: 'center' }}>{(dayjs(item.checkOutDate)).format('YYYY-MM-DD')}</td>
-                                            <td style={{ textAlign: 'center' }}>{item.totalPrice} $</td>
+                                            <td style={{ textAlign: 'center' }}>{item.totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ')} </td>
                                             <td>
-                                                <i data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="fa-solid fa-circle-info fa-xl" onClick={() => handleshowGuestDetail(item.id)}></i>
-                                                <i class="fa-solid fa-flag-checkered fs-4  ms-3"  onClick={() => finish(item.id)}></i>
+                                                <button data-bs-toggle="modal" data-bs-target="#staticBackdrop" className='btn-i     ' onClick={() => handleshowGuestDetail(item.id)}>Chi tiết</button>
+                                                <button class="btn-i "  onClick={() => finish(item.id)}>Hoàn thành</button>
+                                                {
+                                                    new Date(item.checkOutDate) < new Date ()?
+                                                    <i class="fa-solid fa-triangle-exclamation fs-4 ms-3"></i>
+                                                    :""
+                                                }
                                             </td>
 
                                         </tr>
@@ -269,10 +279,15 @@ function BookedToday() {
                                                 <td>{item.house.hotelName}</td>
                                                 <td style={{ textAlign: 'center' }}>{(dayjs(item.checkInDate)).format('YYYY-MM-DD')}</td>
                                                 <td style={{ textAlign: 'center' }}>{(dayjs(item.checkOutDate)).format('YYYY-MM-DD')}</td>
-                                                <td style={{ textAlign: 'center' }}>{item.totalPrice} $</td>
+                                                <td style={{ textAlign: 'center' }}>{item.totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ')} </td>
                                                 <td>
-                                                    <i data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="fa-solid fa-circle-info fa-xl" onClick={() => handleshowGuestDetail(item.id)}></i>
-                                                    <i class="fa-solid fa-flag-checkered fs-4  ms-3"  onClick={() => finish(item.id)}></i>
+                                                    <button data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="btn-i" onClick={() => handleshowGuestDetail(item.id)}>Chi tiết</button>
+                                                    <button class="btn-i"  onClick={() => finish(item.id)}>Hoàn thành</button>
+                                                    {
+                                                    new Date(item.checkOutDate) < new Date ()?
+                                                    <i class="fa-solid fa-triangle-exclamation fs-4 ms-3"></i>
+                                                    :""
+                                                }
                                                 </td>
                                             </tr>
                                             </>
@@ -290,9 +305,11 @@ function BookedToday() {
                                                     <td>{item.house.hotelName}</td>
                                                     <td style={{ textAlign: 'center' }}>{(dayjs(item.checkInDate)).format('YYYY-MM-DD')}</td>
                                                     <td style={{ textAlign: 'center' }}>{(dayjs(item.checkOutDate)).format('YYYY-MM-DD')}</td>
-                                                    <td style={{ textAlign: 'center' }}>{item.totalPrice} $</td>
-                                                    <td><i class="fa-solid fa-trash-can fa-lg" onClick={() => submit(item.id)}></i></td>
-                                                    <td><i data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="fa-solid fa-circle-info fa-xl"></i></td>
+                                                    <td style={{ textAlign: 'center' }}>{item.totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ')} </td>
+                                                    <td><button class="btn-i" style={{paddingRight:'8px',paddingLeft:'8px'}} onClick={() => submit(item.id)}>Huỷ</button>
+                                                    <button data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="btn-i" onClick={() => handleshowGuestDetail(item.id)}>Chi tiết</button>
+                                                    </td>
+                                                        
                                                 </tr>
                                                 </>
 
@@ -309,9 +326,12 @@ function BookedToday() {
                                                         <td>{item.house.hotelName}</td>
                                                         <td style={{ textAlign: 'center' }}>{(dayjs(item.checkInDate)).format('YYYY-MM-DD')}</td>
                                                         <td style={{ textAlign: 'center' }}>{(dayjs(item.checkOutDate)).format('YYYY-MM-DD')}</td>
-                                                        <td style={{ textAlign: 'center' }}>{item.totalPrice} $</td>
-                                                        <td><i class="fa-solid fa-trash-can fa-lg" onClick={() => submit(item.id)}></i></td>
-                                                        <td><i data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="fa-solid fa-circle-info fa-xl" onClick={() => handleshowGuestDetail(item.id)}></i></td>
+                                                        <td style={{ textAlign: 'center' }}>{item.totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ')} </td>
+                                                        <td>
+                                                            <button class="btn-i" style={{paddingRight:'8px',paddingLeft:'8px'}} onClick={() => submit(item.id)}>Huỷ</button>
+                                                            <button data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="btn-i" onClick={() => handleshowGuestDetail(item.id)}>Chi tiết</button>
+                                                            </td>
+                                                       
                                                     </tr>
                                                     </>
 
@@ -328,7 +348,7 @@ function BookedToday() {
                                                             <td>{item.house.hotelName}</td>
                                                             <td style={{ textAlign: 'center' }}>{(dayjs(item.checkInDate)).format('YYYY-MM-DD')}</td>
                                                             <td style={{ textAlign: 'center' }}>{(dayjs(item.checkOutDate)).format('YYYY-MM-DD')}</td>
-                                                            <td style={{ textAlign: 'center' }}>{item.totalPrice} $</td>
+                                                            <td style={{ textAlign: 'center' }}>{item.totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ')} </td>
                                                             <td><i class="fa-solid fa-x fa-lg" onClick={() => deny(item.id)}></i></td>
                                                             <td><i class="fa-solid fa-check fa-xl" onClick={() => accept(item.id)}></i></td>
                                                             <td><i data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="fa-solid fa-circle-info fa-xl" onClick={() => handleshowGuestDetail(item.id)}></i></td>
@@ -383,6 +403,7 @@ function BookedToday() {
                     </div>
                 </div>
             </div>
+            <FooterFormUser></FooterFormUser>
         </>
     )
 }

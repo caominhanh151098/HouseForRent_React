@@ -873,9 +873,9 @@ const BodyDetail = () => {
                                                                         <div style={{ height: `${maxHeight}px` }}
                                                                             className='div-detail-where-you-sleep' key={index}>
                                                                             <div className="svg-container">
-                                                                                {Array.from({ length: item.bedDetail[0].quantity }, (_, i) => (
+                                                                                {Array?.from({ length: item?.bedDetail[0]?.quantity }, (_, i) => (
                                                                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" role="presentation" focusable="false">
-                                                                                        <path fillRule="evenodd" d={item.bedDetail[0].iconPath}>
+                                                                                        <path fillRule="evenodd" d={item?.bedDetail[0]?.iconPath}>
                                                                                         </path>
                                                                                     </svg>
                                                                                 ))}

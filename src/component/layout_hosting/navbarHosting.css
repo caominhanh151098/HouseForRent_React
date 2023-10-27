@@ -21,3 +21,8 @@
     text-decoration: none !important;
     padding: 5px 10px 5px 10px;
 }
+.white{
+
+    background-color: white !important;
+    border-color: white !important;
+}

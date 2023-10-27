@@ -37,7 +37,7 @@ export default function MultiCalendar() {
     const [priceEvent, setPriceEvent] = useState([])
     const [listDom, setListDom] = useState([])
     const [listHouse, setListHouse] = useState([])
-    const [houseID, setHouse] = useState(1)
+    const [houseID, setHouse] = useState(0)
     const [blockStatus, setBlockStatus] = useState(true)
     const [blockingDateRangeEvt,setBlockingDateRange]=useState([])
     const [listBlockingResevation,setListBlockingReservation]=useState([])
@@ -73,7 +73,7 @@ export default function MultiCalendar() {
           }
           currentDate.setDate(currentDate.getDate() + 1);
         }
-        console.log(dateArray);
+      
         return dateArray;
       }
       
@@ -131,7 +131,7 @@ export default function MultiCalendar() {
         item.getDay()!==0 && item.getDay()!==6?
         (
             {
-                title: `$${price}`,
+                title: `${price?price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ'):""}`,
                 color: 'transparent',   // an option!
                 textColor: 'black',
                 start: dayjs(item).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
@@ -141,7 +141,7 @@ export default function MultiCalendar() {
         ):
         (
             {
-                title: `$${weekendPrice}`,
+                title: `${weekendPrice? weekendPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ'):""}`,
                 color: 'transparent',   // an option!
                 textColor: 'black',
                 start: dayjs(item).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
@@ -153,7 +153,7 @@ export default function MultiCalendar() {
         getDateRange().map((item) =>
         (
             {
-                title: `$${price}`,
+                title: `${price?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ')}`,
                 color: 'transparent',   // an option!
                 textColor: 'black',
                 start: dayjs(item).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
@@ -188,21 +188,31 @@ export default function MultiCalendar() {
                     }
                 });
             if (valueOf("CLEANING", res.data)) {
+           
                 setClean(valueOf("CLEANING", res.data).price)
+            }else{
+                setClean(0)
             }
             if (valueOf("SHORT_STAY_CLEANING", res.data)) {
                 setshortClean(valueOf("SHORT_STAY_CLEANING", res.data).price)
+            }else{
+                setshortClean(0)
             }
             if (valueOf("PET", res.data)) {
                 setPet(valueOf("PET", res.data).price)
+            }else{
+                setPet(0)
             }
             if (valueOf("EXTRA_GUESS", res.data)) {
                 setOther(valueOf("EXTRA_GUESS", res.data).other)
                 setOtherPrice(valueOf("EXTRA_GUESS", res.data).price)
+            }else{
+                setOther(1)
+                setOtherPrice(0)
             }
         }
         getData();
-    }, [houseID])
+    }, [houseID,typeShow])
     useEffect(() => {
         async function getData() {
             let res = await axios.get(`http://localhost:8080/api/multiCalendars/client/getBlockingDate/${houseID}`,
@@ -211,7 +221,9 @@ export default function MultiCalendar() {
                         'Authorization': `Bearer ${localStorage.getItem("jwt")}`
                     }
                 });
-            let x = res?.data?.map((item) => ({
+            let x = res?.data?.map((item) => (
+                
+                {
                 title: 'Đã chặn',
                 color: '#818181',   // an option!
                 textColor: 'blue',
@@ -441,7 +453,7 @@ export default function MultiCalendar() {
 
 
             <div className='d-flex'>
-                <div className='col-8'>
+                <div className='col-8' style={{height:'120%'}}>
                     <FullCalendar
                         plugins={[multiMonthPlugin, interactionPlugin]}
                         initialView="multiMonthYear"
@@ -475,14 +487,14 @@ export default function MultiCalendar() {
                                         <div className='fs-4 mt-3 mb-3'>Định giá </div>
                                         <div className='d-flex justify-content-between col-8 mb-4'>
                                             <div className='fs-5'>Giá cơ sở</div>
-                                            <div className='fs-5'>USD</div>
+                                            <div className='fs-5'>VNĐ   </div>
                                         </div>
                                         <div>
                                             <div onClick={() => setTypeShow("updatePrice")} className='border rounded-3 col-8 container-btn-price pt-3 mb-3 ' >
                                                 <div className='fs-5 ms-5 '>Mỗi đêm</div>
                                                 <div className='d-flex ms-5 '>
-                                                    <i class="fa-solid fa-dollar-sign fa-xl fs-3 mt-4 me-1"></i>
-                                                    <div className='fs-3 fw-bold mt-1'>{price}</div>
+                                                 
+                                                    <div className='fs-3 fw-bold mt-1'>{price?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ')}</div>
                                                 </div>
 
                                             </div>
@@ -497,8 +509,8 @@ export default function MultiCalendar() {
                                                     : <div onClick={() => setTypeShow("updateWeekendPrice")} className='border rounded-3 col-8 container-btn-price pt-3 mb-3' >
                                                         <div className=' ms-5 fs-5'>Giá tùy chỉnh cho cuối tuần</div>
                                                         <div className='d-flex ms-5 '>
-                                                            <i class="fa-solid fa-dollar-sign fa-xl fs-3 mt-4 me-1"></i>
-                                                            <div className='fs-3 fw-bold mt-1'>{weekendPrice}</div>
+                                                            
+                                                            <div className='fs-3 fw-bold mt-1'>{weekendPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ')}</div>
                                                         </div>
                                                     </div>
                                             }
@@ -518,11 +530,11 @@ export default function MultiCalendar() {
                                     <>
                                         <div className='pt-200'>
                                             <div className='fs-4 text-center mb-5 mt-3 me-5'>Mỗi đêm</div>
-                                            <div className='d-flex mb-5' style={{ marginLeft: '35%' }}>
-                                                <i class="fa-solid fa-dollar-sign fa-xl fs-2 mt-5 "></i>
+                                            <div className='d-flex mb-5' style={{ marginLeft: '20%' }}>
+                                                
                                                 <input onChange={(e) => setNewPrice(e.target.value)} type="number" className='col-8 fw-bold fs-1 mt-3' value={newPrice} />
                                             </div>
-                                            <div className='ms-5 fs-5'>Giá cho khách (trước thuế) ${((newPrice * (serviceFee / 100)) +parseInt(newPrice)).toFixed(2) }</div>
+                                            <div className='ms-5 fs-5'>Giá cho khách (trước thuế) {((newPrice * (serviceFee / 100)) +parseInt(newPrice))?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ') }</div>
                                             <div className='mt-5 mb-4'>
                                                 <button onClick={handleUpdatePrice} className='fs-5 btn-luu'>
                                                     Lưu
@@ -541,8 +553,8 @@ export default function MultiCalendar() {
                                         <>
                                             <div className='pt-200'>
                                                 <div className='fs-4 text-center mb-5 mt-3 me-5'>Giá tùy chỉnh cho cuối tuần</div>
-                                                <div className='d-flex mb-5' style={{ marginLeft: '35%',paddingBottom:'70px' }}>
-                                                    <i class="fa-solid fa-dollar-sign fa-xl fs-2 mt-5 "></i>
+                                                <div className='d-flex mb-5' style={{ marginLeft: '20%',paddingBottom:'70px' }}>
+                                                  
                                                     <input onChange={(e) => SetNewWeekendPrice(e.target.value)} type="number" className='col-8 fs-1 mt-3 fw-bold ' value={newWeekendPrice} />
                                                 </div>
                                                 <div className='mt-5 mb-4'>
@@ -567,31 +579,32 @@ export default function MultiCalendar() {
                                                     <div onClick={() => setTypeShow("CLEANING")} className='border rounded-3 col-8 container-btn-price pt-3 mb-2' >
                                                         <div className='fs-5 ms-5'>Mức phí cho mỗi kì ở</div>
                                                         <div className='d-flex ms-5 '>
-                                                            <i class="fa-solid fa-dollar-sign fa-xl fs-3 mt-4 me-1"></i>
-                                                            <div className='fs-3 mt-1 fw-bold'>{clean}</div>
+                                                           
+                                                            <div className='fs-3 mt-1 fw-bold'>{parseInt(clean)?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ')}</div>
+                                                     
                                                         </div>
                                                     </div>
                                                     <div onClick={() => setTypeShow("SHORT_STAY_CLEANING")} className='border rounded-3 col-8 container-btn-price pt-3 mb-3' >
                                                         <div className='fs-5 ms-5'>Mức phí cho mỗi kì ở ngắn</div>
                                                         <div className='d-flex ms-5 '>
-                                                            <i class="fa-solid fa-dollar-sign fa-xl fs-3 mt-4 me-1"></i>
-                                                            <div className='fs-3 mt-1 fw-bold'>{shortClean}</div>
+                                                          
+                                                            <div className='fs-3 mt-1 fw-bold'>{parseInt(shortClean)?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ')}</div>
                                                         </div>
                                                     </div>
                                                     <div className='fs-4 mb-3'>Phí thú cưng :</div>
                                                     <div onClick={() => setTypeShow("PET")} className='border rounded-3 col-8 container-btn-price pt-3 mb-3' >
                                                         <div className='fs-5 ms-5'>Mức phí cho mỗi kì ở</div>
                                                         <div className='d-flex ms-5 '>
-                                                            <i class="fa-solid fa-dollar-sign fa-xl fs-3 mt-4 me-1"></i>
-                                                            <div className='fs-3 mt-1 fw-bold'>{pet}</div>
+                                                           
+                                                            <div className='fs-3 mt-1 fw-bold'>{parseInt(pet)?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ')}</div>
                                                         </div>
                                                     </div>
                                                     <div className='fs-4 mb-3 '>Phí khách bố sung :</div>
                                                     <div onClick={() => setTypeShow("EXTRA_GUESS")} className='border rounded-3 col-8 container-btn-price pt-3 mb-4' >
                                                         <div className='fs-5 ms-5'>sau {other} khách , mỗi đêm</div>
                                                         <div className='d-flex ms-5 '>
-                                                            <i class="fa-solid fa-dollar-sign fa-xl fs-3 mt-4 me-1"></i>
-                                                            <div className='fs-3 mt-1 fw-bold'>{otherPrice}</div>
+                                                          
+                                                            <div className='fs-3 mt-1 fw-bold'>{parseInt(otherPrice)?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ')}</div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -602,9 +615,9 @@ export default function MultiCalendar() {
                                                 <>
                                                     <div className='pt-200'>
                                                         <div className='fs-4 text-center mb-5 mt-3 me-5'>Phí vệ sinh</div>
-                                                        <div className='d-flex mb-5 pb-80' style={{ marginLeft: '35%' }}>
-                                                            <i class="fa-solid fa-dollar-sign fa-xl fs-2 mt-5 "></i>
-                                                            <input onChange={(e) => setClean(e.target.value)} type="number" className='col-8 fs-1 mt-3 fw-bold' value={clean} />
+                                                        <div className='d-flex mb-5 pb-80' style={{ marginLeft: '20%' }}>
+                                                           
+                                                            <input onChange={(e) => setClean(e.target.value)} type="number" className='col-8 fs-1 mt-3 fw-bold' value={parseInt(clean)} />
                                                         </div>
                                                         <div className='mt-5 mb-4'>
                                                             <button onClick={() => handleUpdateSurcharge("CLEANING", clean)} className='fs-5 btn-luu'>
@@ -626,9 +639,9 @@ export default function MultiCalendar() {
                                                         <div className='pt-200'>
                                                             <div className='fs-4 text-center mb-2 mt-3 me-5'>Phí vệ sinh cho kỳ ở ngắn</div>
                                                             <div className='fs-6 mb-5 text-center pe-5'>Mức phí cho 1 hoặc 2 đêm</div>
-                                                            <div className='d-flex mb-5 pb-80' style={{ marginLeft: '35%' }}>
-                                                                <i class="fa-solid fa-dollar-sign fa-xl fs-2 mt-5 "></i>
-                                                                <input onChange={(e) => setshortClean(e.target.value)} type="number" className='col-8 fs-1 mt-3 fw-bold' value={shortClean} />
+                                                            <div className='d-flex mb-5 pb-80' style={{ marginLeft: '20%' }}>
+                                                             
+                                                                <input onChange={(e) => setshortClean(e.target.value)} type="number" className='col-8 fs-1 mt-3 fw-bold' value={parseInt(shortClean)} />
                                                             </div>
                                                             <div className='mt-5 mb-4'>
                                                                 <button onClick={() => handleUpdateSurcharge("SHORT_STAY_CLEANING", shortClean)} className='btn-luu fs-5'>
@@ -650,9 +663,9 @@ export default function MultiCalendar() {
                                                             <div className='pt-200'>
                                                                 <div className='fs-4 text-center mb-2 mt-3 me-5'>Phí thú cưng</div>
                                                                 <div className='fs-6 mb-5 text-center pe-5'>Mức phí cho mỗi kì ở</div>
-                                                                <div className='d-flex mb-5 pb-80' style={{ marginLeft: '35%' }}>
-                                                                    <i class="fa-solid fa-dollar-sign fa-xl fs-2 mt-5 "></i>
-                                                                    <input onChange={(e) => setPet(e.target.value)} type="number" className='col-8 fs-1 mt-3 fw-bold' value={pet} />
+                                                                <div className='d-flex mb-5 pb-80' style={{ marginLeft: '20%' }}>
+                                                                  
+                                                                    <input onChange={(e) => setPet(e.target.value)} type="number" className='col-8 fs-1 mt-3 fw-bold' value={parseInt(pet)} />
                                                                 </div>
                                                                 <div className='mt-5 mb-4'>
                                                                     <button onClick={() => handleUpdateSurcharge("PET", pet)} className='fs-5 btn-luu'>
@@ -675,9 +688,9 @@ export default function MultiCalendar() {
                                                                     <div className='fs-4 text-center mb-2 mt-3 me-5'>Phí khách bổ sung</div>
                                                                     <div className='mb-3 pe-5 fs-6 text-center'>Mức phí cho mỗi đêm</div>
                                                                   
-                                                                    <div className='d-flex pb-80' style={{ marginLeft: '35%' }}>
-                                                                        <i class="fa-solid fa-dollar-sign fa-xl fs-2 mt-5 "></i>
-                                                                        <input onChange={(e) => setOtherPrice(e.target.value)} type="number" className='col-8 fs-1 mt-3 fw-bold' value={otherPrice} />
+                                                                    <div className='d-flex pb-80' style={{ marginLeft: '20%' }}>
+                                                                      
+                                                                        <input onChange={(e) => setOtherPrice(e.target.value)} type="number" className='col-8 fs-1 mt-3 fw-bold' value={parseInt(otherPrice)} />
                                                                     </div>
                                                                     <div className='d-flex'>
                                                                         <div className='fs-5 me-3'>Cho mỗi khách sau</div>
@@ -742,6 +755,9 @@ export default function MultiCalendar() {
                             </>
                     }
                 </div>
+            </div>
+            <div style={{marginBottom:"200px"}}>
+                footer
             </div>
         </>
 

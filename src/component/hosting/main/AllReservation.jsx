@@ -212,7 +212,7 @@ function AllReservation() {
                         <div className={`fs-5 me-3 ms-3 pointer pb-3 fw-bold ${type == "all" ? "selected" : ""}`} style={{ color: 'grey' }} onClick={() => { setType("all"); setCurrentPage(0); handleShowList("all"); }}> Tất cả</div>
                     </div>
                     <div style={{ height: '300px' }}>
-                        <table className='col-6 table table-striped' style={{ border: 'solid 1px gray', width: '95%' }}>
+                        <table className='col-12 table table-striped' style={{ border: 'solid 1px gray', width: '95%' }}>
                             <thead>
                                 <th className='col-2' style={{ height: '40px', padding: '10px', verticalAlign: 'middle' }}>Tên khách hàng</th>
                                 <th className='col-1' style={{ height: '40px', padding: '10px', verticalAlign: 'middle' }}>Số điện thoại</th>
@@ -238,7 +238,7 @@ function AllReservation() {
                                                 <td >{(dayjs(item.checkInDate)).format('YYYY-MM-DD')}</td>
                                                 <td >{(dayjs(item.checkOutDate
                                                     )).format('YYYY-MM-DD')}</td>
-                                                <td style={{ textAlign: 'center' }}>{item.totalPrice} $</td>
+                                                <td style={{ textAlign: 'center' }}>{item.totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ')}</td>
                                             </tr>
                                         </>
                                     ))

@@ -87,9 +87,9 @@ function EditRule() {
 
     }
     const formatHour = (time) => {
-        let parts = time.split(':');
+        let parts = time;
         var hour = parts[0];
-        let minute = parts[1];
+        let minute = '00';
 
         // Kết hợp giờ và phút để tạo chuỗi định dạng mới
         let formattedTime = hour + ':' + minute;
