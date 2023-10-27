@@ -1564,13 +1564,11 @@ const BodyDetail = () => {
                     </div>
                     <div style={{marginLeft:'3%', marginRight:'-2%'}}>
                         {
-                            selectedDates[0] ? selectedDates[1] ? (
+                            selectedDates[0] && selectedDates[1] ? (
                                 <Link to={`/book/${houseID}/${countOld}/${countYoung}/${countBaby}/${countPets}/${selectedDates[0].format('YYYY-MM-DD')}/${selectedDates[1].format('YYYY-MM-DD')}`}
                                     onClick={handleClick}>
                                     <GradientButton >Đặt phòng</GradientButton>
                                 </Link>
-                            ) : (
-                                <GradientButton onClick={handleCheckAvailableRoom}>Kiểm tra tình trạng còn phòng</GradientButton>
                             ) : (
                                 <GradientButton onClick={handleCheckAvailableRoom}>Kiểm tra tình trạng còn phòng</GradientButton>
                             )
