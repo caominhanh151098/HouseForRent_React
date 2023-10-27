@@ -41,7 +41,6 @@ function LeftSideBar({ children }) {
         banList: false,
         refund: false,
         refundPolicy: false
-
     })
 
     const location = useLocation();
