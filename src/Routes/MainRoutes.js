@@ -9,7 +9,7 @@ const MainRoutes = () => {
   return (
     <>
       <RoutesClient />
-      <RoutesHost/>
+      <RoutesHost />
       <RoutesAdmin />
     </>
   )
