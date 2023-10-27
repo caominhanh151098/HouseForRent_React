@@ -639,7 +639,7 @@ const BookBody = () => {
     let cleanPrice = 0;
     let shortStayCleanPrice = 0;
     let cleaningPrice = 0;
-    let serviceFee = 0;
+    let servicePrice = 0;
     let totalPrice = 0;
 
     if (countWeekendDay && housePrice?.weekendPrice) {
@@ -679,12 +679,15 @@ const BookBody = () => {
       }
     }
 
-    serviceFee = housePrice?.feeHouses?.find(item => {
+    const serviceFee = housePrice?.feeHouses?.find(item => {
       return item.fee.name === searchFee.serviceFee.name && item.fee.feeType === searchFee.serviceFee.feeType
     }).price;
 
     const price = priceNormal + priceWeekend + exGuessPrice + petPrice + cleaningPrice;
-    totalPrice = price + price * serviceFee / 100;
+    servicePrice = price * serviceFee / 100;
+
+
+    totalPrice = price + servicePrice;
 
     setPriceDetails({
       ...priceDetails,
@@ -694,7 +697,7 @@ const BookBody = () => {
       exGuessPrice: exGuessPrice,
       cleanPrice: cleanPrice,
       shortStayCleanPrice: shortStayCleanPrice,
-      servicePrice: serviceFee,
+      servicePrice: servicePrice,
       totalPrice: Math.round(totalPrice / 1000) * 1000
     })
 
@@ -961,7 +964,7 @@ const BookBody = () => {
         <hr style={{ width: '82%' }} /> */}
 
           {
-            !userInfo && (
+            !userInfo ? (
               <div>
                 <h2 style={{ padding: "0px 56px" }}>Đăng nhập hoặc đăng ký để đặt phòng/đặt chỗ</h2>
                 <div className='payment-text-body'>
@@ -1028,8 +1031,47 @@ const BookBody = () => {
                 <hr style={{ width: '82%' }} />
               </div>
             )
+              :
+              (
+                <>
+                  <div className='cancellation-policy-text-body'>
+                    <h2>Chính sách huỷ</h2>
+                    <p><span style={{ fontWeight: 'bold' }}>Huỷ miễn phí trước {bookDay[0].format('D [thg] M YYYY')}.</span>
+                      <span> Bạn được hoàn tiền một phần nếu hủy trước khi nhận phòng vào {bookDay[0].format('D [thg] M YYYY')}. Sau thời gian đó, số tiền hoàn lại sẽ phụ thuộc vào thời điểm bạn hủy.</span></p>
+                  </div>
+                  <hr style={{ width: '82%' }} />
+                  <div className='cancellation-policy-text-body'>
+                    <h2>Quy chuẩn chung</h2>
+                    <p>Chúng tôi yêu cầu tất cả khách phải ghi nhớ một số quy chuẩn đơn giản để làm một vị khách tuyệt vời.</p>
+                    <p>1. Tuân thủ nội quy nhà</p>
+                    <p>2. Giữ gìn ngôi nhà như thể đó là nhà bạn</p>
+                  </div>
+                  <hr style={{ width: '82%' }} />
+                  <div className='cancellation-policy-text-body'>
+                    <p>
+                      <span>Bằng việc chọn nút bên dưới, tôi đồng ý với </span>
+                      <span className='span-tag-text-body'>Nội quy nhà của Chủ nhà,</span>
+                      <a className='a-tag-text-body' href=""> Quy chuẩn chung đối với khách, </a>
+                      <span className='span-tag-text-body'>Chính sách đặt lại và hoàn tiền của Airbnb,</span>
+                      <a className='a-tag-text-body' href=""> Điều khoản trả trước một phần,</a>
+                      <span> và đồng ý rằng Airbnb có thể </span>
+                      <span className='span-tag-text-body'>tính phí vào phương thức thanh toán của tôi</span>
+                      <span> nếu tôi phải chịu trách nhiệm về thiệt hại.</span>
+                    </p>
+                  </div>
+                  <div className='btn-confirm-payment-text-body'>
+                    {
+                      house && house?.status == "ACCEPTED" ?
+                        (<GradientButton onClick={() => { toggleOverlayConfirmPay() }}>Xác nhận và thanh toán</GradientButton>)
+                        :
+                        (<GradientButton>Không thể đặt phòng</GradientButton>)
+                    }
+
+                  </div>
+                </>
+              )
           }
-          
+
           {/* <div className='payment-text-body' style={{ margin: '25px 59px' }}>
             <h2>Bắt buột cho chuyến đi của bạn</h2>
             <div className='required-for-your-trip'>
@@ -1083,38 +1125,6 @@ const BookBody = () => {
             </div>
           </div> */}
           {/* <hr style={{ width: '82%' }} /> */}
-          <div className='cancellation-policy-text-body'>
-            <h2>Chính sách huỷ</h2>
-            <p><span style={{ fontWeight: 'bold' }}>Huỷ miễn phí trước {bookDay[0].format('D [thg] M YYYY')}.</span>
-              <span> Bạn được hoàn tiền một phần nếu hủy trước khi nhận phòng vào {bookDay[0].format('D [thg] M YYYY')}. Sau thời gian đó, số tiền hoàn lại sẽ phụ thuộc vào thời điểm bạn hủy.</span></p>
-          </div>
-          <hr style={{ width: '82%' }} />
-          <div className='cancellation-policy-text-body'>
-            <h2>Quy chuẩn chung</h2>
-            <p>Chúng tôi yêu cầu tất cả khách phải ghi nhớ một số quy chuẩn đơn giản để làm một vị khách tuyệt vời.</p>
-            <p>1. Tuân thủ nội quy nhà</p>
-            <p>2. Giữ gìn ngôi nhà như thể đó là nhà bạn</p>
-          </div>
-          <hr style={{ width: '82%' }} />
-          <div className='cancellation-policy-text-body'>
-            <p>
-              <span>Bằng việc chọn nút bên dưới, tôi đồng ý với </span>
-              <span className='span-tag-text-body'>Nội quy nhà của Chủ nhà,</span>
-              <a className='a-tag-text-body' href=""> Quy chuẩn chung đối với khách, </a>
-              <span className='span-tag-text-body'>Chính sách đặt lại và hoàn tiền của Airbnb,</span>
-              <a className='a-tag-text-body' href=""> Điều khoản trả trước một phần,</a>
-              <span> và đồng ý rằng Airbnb có thể </span>
-              <span className='span-tag-text-body'>tính phí vào phương thức thanh toán của tôi</span>
-              <span> nếu tôi phải chịu trách nhiệm về thiệt hại.</span>
-            </p>
-          </div>
-          <div className='btn-confirm-payment-text-body'>
-            <GradientButton onClick={() => {
-              // handleConfirmPayment();
-              toggleOverlayConfirmPay()
-            }}>Xác nhận và thanh toán</GradientButton>
-          </div>
-
 
 
           {(
@@ -1179,7 +1189,7 @@ const BookBody = () => {
                               }
                             </div>
                             <div>
-                              <p>{housePrice && numberOfNights ? formatCurrency(housePrice?.price * (numberOfNights - countWeekendDay)) : 'Tối thiểu 1 ngày'}</p>
+                              <p>{housePrice && numberOfNights ? formatCurrency(priceDetails.priceNormal) + "đ" : 'Tối thiểu 1 ngày'}</p>
                             </div>
                             {
                               isOpenAveragePriceDayDetail && (
@@ -1199,18 +1209,18 @@ const BookBody = () => {
                       }
 
                       {
-                        housePrice && countWeekendDay > 0 && (
+                        housePrice && countWeekendDay > 0 && housePrice?.weekendPrice && (
                           <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
                             <div>
                               {
                                 housePrice && countWeekendDay > 0 && (
                                   <p onClick={handleOpenWeekendDayDetail}
-                                    className='detail-text-payment-book-body'>{formatCurrency(housePrice?.weekendDays) ? formatCurrency(housePrice.weekendPrice) : formatCurrency(housePrice.price)} x {countWeekendDay} đêm (Cuối tuần)</p>
+                                    className='detail-text-payment-book-body'>{formatCurrency(housePrice?.weekendDays) ? formatCurrency(housePrice.weekendPrice) : formatCurrency(housePrice.price)}đ x {countWeekendDay} đêm (Cuối tuần)</p>
                                 )
                               }
                             </div>
                             <div>
-                              <p>{housePrice && countWeekendDay > 0 && housePrice?.weekendPrice ? formatCurrency(housePrice?.weekendPrice * countWeekendDay) : formatCurrency(housePrice?.price * countWeekendDay)}</p>
+                              <p>{housePrice && countWeekendDay > 0 && housePrice?.weekendPrice ? formatCurrency(housePrice?.weekendPrice * countWeekendDay) : formatCurrency(housePrice?.price * countWeekendDay)}đ</p>
                             </div>
                             {
                               isOpenWeekendDetail && (
@@ -1234,100 +1244,66 @@ const BookBody = () => {
                           </div>
                         )
                       }
-                      <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
-                        <div>
-                          {
-                            housePrice &&
-                            housePrice?.feeHouses &&
-                            numberOfNights >= 3 &&
-                            housePrice.feeHouses[0] &&
-                            (
-                              <p className='detail-text-payment-book-body'>{housePrice?.feeHouses[0]?.fee.name}</p>
-                            )
-                          }
-                        </div>
-                        <div>
-                          {
-                            housePrice &&
-                            housePrice?.feeHouses &&
-                            numberOfNights >= 3 &&
-                            housePrice.feeHouses[0] &&
-                            (
-                              <p>{formatCurrency(housePrice?.feeHouses[0]?.price)}</p>
-                            )
-                          }
-                        </div>
-                      </div>
-                      <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
-                        <div>
-                          {
-                            housePrice &&
-                            housePrice?.feeHouses &&
-                            numberOfNights === 2 &&
-                            housePrice.feeHouses[0] &&
-                            (
-                              <p className='detail-text-payment-book-body'>{housePrice?.feeHouses[1]?.fee.name}</p>
-                            )
-                          }
-                        </div>
-                        <div>
-                          {
-                            housePrice &&
-                            housePrice?.feeHouses &&
-                            numberOfNights === 2 &&
-                            housePrice.feeHouses[0] &&
-                            (
-                              <p>{formatCurrency(housePrice?.feeHouses[1]?.price)}</p>
-                            )
-                          }
-                        </div>
-                      </div>
-                      <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
-                        <div>
-                          {
-                            housePrice &&
-                            housePrice?.feeHouses &&
-                            housePrice.feeHouses[2] &&
-                            countPets > 0 && (
-                              <p className='detail-text-payment-book-body'>{housePrice?.feeHouses[2]?.fee.name}</p>
-                            )
-                          }
-                        </div>
-                        <div>
-                          {
-                            housePrice &&
-                            housePrice?.feeHouses &&
-                            housePrice.feeHouses[0] &&
-                            countPets > 0 && (
-                              <p>{formatCurrency(housePrice?.feeHouses[2]?.price)}</p>
-                            )
-                          }
-                        </div>
-                      </div>
-                      <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
-                        <div>
-                          {
-                            housePrice &&
-                            housePrice?.feeHouses &&
-                            housePrice.feeHouses[3] &&
-                            housePrice?.feeHouses[3]?.other &&
-                            ((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other) > 0) && (
-                              <p className='detail-text-payment-book-body'>{housePrice?.feeHouses[3]?.fee.name}</p>
-                            )
-                          }
-                        </div>
-                        <div>
-                          {
-                            housePrice &&
-                            housePrice?.feeHouses &&
-                            housePrice.feeHouses[3] &&
-                            housePrice?.feeHouses[3]?.other &&
-                            ((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other) > 0) && (
-                              <p>{formatCurrency(((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other)) * housePrice?.feeHouses[3]?.price)}</p>
-                            )
-                          }
-                        </div>
-                      </div>
+                      {
+                        priceDetails?.cleanPrice != 0 && (
+                          <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
+                            <div>
+                              <p className='detail-text-payment-book-body'>Phí vệ sinh</p>
+                            </div>
+                            <div>
+                              <p>{formatCurrency(priceDetails?.cleanPrice)}đ</p>
+                            </div>
+                          </div>
+                        )
+                      }
+                      {
+                        priceDetails?.shortStayCleanPrice != 0 && (
+                          <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
+                            <div>
+                              <p className='detail-text-payment-book-body'>Phí vệ sinh cho kỳ ở ngắn</p>
+                            </div>
+                            <div>
+                              <p>{formatCurrency(priceDetails?.shortStayCleanPrice)}đ</p>
+                            </div>
+                          </div>
+                        )
+                      }
+                      {
+                        priceDetails?.petPrice != 0 && (
+                          <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
+                            <div>
+                              <p className='detail-text-payment-book-body'>Phí thú cưng</p>
+                            </div>
+                            <div>
+                              <p>{formatCurrency(priceDetails?.petPrice)}đ</p>
+                            </div>
+                          </div>
+                        )
+                      }
+                      {
+                        priceDetails?.exGuessPrice != 0 && (
+                          <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
+                            <div>
+                              <p className='detail-text-payment-book-body'>Phí khách bổ sung</p>
+                            </div>
+                            <div>
+                              <p>{formatCurrency(priceDetails?.exGuessPrice)}đ</p>
+                            </div>
+                          </div>
+                        )
+                      }
+                      {
+                        priceDetails?.servicePrice != 0 && (
+                          <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
+                            <div>
+                              <p className='detail-text-payment-book-body'>Phí dịch vụ Airbnb</p>
+                            </div>
+                            <div>
+                              <p>{formatCurrency(priceDetails?.servicePrice)}đ</p>
+                            </div>
+                          </div>
+                        )
+                      }
                     </div>
                     <hr style={{ width: '95%', margin: '-10px 10px' }} />
                     <div className='price-detail-fixed-book-detail'>
@@ -1337,19 +1313,7 @@ const BookBody = () => {
                         </div>
                         <div>
                           <h3>
-                            {
-                              housePrice &&
-                              housePrice.feeHouses &&
-                              numberOfNights && formatCurrency((
-                                housePrice.price * (numberOfNights - countWeekendDay) +
-                                (countWeekendDay > 0 && housePrice.weekendPrice ? housePrice.weekendPrice * countWeekendDay : housePrice.price * countWeekendDay) +
-                                (numberOfNights >= 3 && housePrice.feeHouses[0]?.price || 0) +
-                                (numberOfNights === 2 && housePrice.feeHouses[1]?.price || 0) +
-                                (countPets > 0 && housePrice.feeHouses[2]?.price || 0) +
-                                ((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other) > 0 &&
-                                  ((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other)) * housePrice.feeHouses[3]?.price || 0)
-                              ).toFixed(2))
-                            }
+                            {priceDetails?.totalPrice > 0 && formatCurrency((priceDetails?.totalPrice))}đ
                           </h3>
                         </div>
                       </div>
@@ -1371,14 +1335,16 @@ const BookBody = () => {
             (
               <div className={`overlay2 ${formConfirm ? '' : 'd-none'}`} >
                 <div className={`appearing-div ${formConfirm ? 'active' : ''}`} style={{ width: '650px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'center' }}>
-                    <h1>Thanh toán thành công</h1>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <i style={{ marginRight: '29%' }}
+                      onClick={toggleOverlayConfirmPay} class="fa-solid fa-chevron-left close-description" ></i>
+                    <h2>Xác nhận thanh toán</h2>
                   </div>
                   <hr />
                   <div>
                     <div style={{ display: 'contents', border: 'none' }}
                       className='fixed-div-payment-book-body'>
-                      <div className='title-details-fix-book-body'>
+                      <div className='title-details-fix-book-body' style={{ flexDirection: 'row' }}>
                         <div>
                           {
                             house.images && (
@@ -1417,23 +1383,11 @@ const BookBody = () => {
                       <div className='price-detail-fixed-book-detail'>
                         <div className='total-fixed-book-detail' style={{ margin: '20px 11px' }}>
                           <div>
-                            <h2>Tổng <span className='span-tag-text-body'>(USD)</span> </h2>
+                            <h2>Tổng <span className='span-tag-text-body'>(VNĐ)</span> </h2>
                           </div>
                           <div>
                             <h3>
-                              {
-                                housePrice &&
-                                housePrice.feeHouses &&
-                                numberOfNights && '$' + (
-                                  housePrice.price * (numberOfNights - countWeekendDay) +
-                                  (countWeekendDay > 0 && housePrice.weekendPrice ? housePrice.weekendPrice * countWeekendDay : housePrice.price * countWeekendDay) +
-                                  (numberOfNights >= 3 && housePrice.feeHouses[0]?.price || 0) +
-                                  (numberOfNights === 2 && housePrice.feeHouses[1]?.price || 0) +
-                                  (countPets > 0 && housePrice.feeHouses[2]?.price || 0) +
-                                  ((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other) > 0 &&
-                                    ((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other)) * housePrice.feeHouses[3]?.price || 0)
-                                ).toFixed(2)
-                              }
+                              {priceDetails?.totalPrice > 0 && formatCurrency((priceDetails?.totalPrice))}đ
                             </h3>
                           </div>
                         </div>
@@ -1549,100 +1503,66 @@ const BookBody = () => {
                     </div>
                   )
                 }
-                <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
-                  <div>
-                    {
-                      housePrice &&
-                      housePrice?.feeHouses &&
-                      numberOfNights >= 3 &&
-                      housePrice.feeHouses[0] &&
-                      (
-                        <p className='detail-text-payment-book-body'>{housePrice?.feeHouses[0]?.fee.name}</p>
-                      )
-                    }
-                  </div>
-                  <div>
-                    {
-                      housePrice &&
-                      housePrice?.feeHouses &&
-                      numberOfNights >= 3 &&
-                      housePrice.feeHouses[0] &&
-                      (
+                {
+                  priceDetails?.cleanPrice != 0 && (
+                    <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
+                      <div>
+                        <p className='detail-text-payment-book-body'>Phí vệ sinh</p>
+                      </div>
+                      <div>
                         <p>{formatCurrency(priceDetails?.cleanPrice)}đ</p>
-                      )
-                    }
-                  </div>
-                </div>
-                <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
-                  <div>
-                    {
-                      housePrice &&
-                      housePrice?.feeHouses &&
-                      numberOfNights < 3 &&
-                      housePrice.feeHouses[0] &&
-                      (
-                        <p className='detail-text-payment-book-body'>{housePrice?.feeHouses[1]?.fee.name}</p>
-                      )
-                    }
-                  </div>
-                  <div>
-                    {
-                      housePrice &&
-                      housePrice?.feeHouses &&
-                      numberOfNights < 3 &&
-                      housePrice.feeHouses[0] &&
-                      (
+                      </div>
+                    </div>
+                  )
+                }
+                {
+                  priceDetails?.shortStayCleanPrice != 0 && (
+                    <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
+                      <div>
+                        <p className='detail-text-payment-book-body'>Phí vệ sinh cho kỳ ở ngắn</p>
+                      </div>
+                      <div>
                         <p>{formatCurrency(priceDetails?.shortStayCleanPrice)}đ</p>
-                      )
-                    }
-                  </div>
-                </div>
-                <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
-                  <div>
-                    {
-                      housePrice &&
-                      housePrice?.feeHouses &&
-                      housePrice.feeHouses[2] &&
-                      countPets > 0 && (
-                        <p className='detail-text-payment-book-body'>{housePrice?.feeHouses[2]?.fee.name}</p>
-                      )
-                    }
-                  </div>
-                  <div>
-                    {
-                      housePrice &&
-                      housePrice?.feeHouses &&
-                      housePrice.feeHouses[0] &&
-                      countPets > 0 && (
+                      </div>
+                    </div>
+                  )
+                }
+                {
+                  priceDetails?.petPrice != 0 && (
+                    <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
+                      <div>
+                        <p className='detail-text-payment-book-body'>Phí thú cưng</p>
+                      </div>
+                      <div>
                         <p>{formatCurrency(priceDetails?.petPrice)}đ</p>
-                      )
-                    }
-                  </div>
-                </div>
-                <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
-                  <div>
-                    {
-                      housePrice &&
-                      housePrice?.feeHouses &&
-                      housePrice.feeHouses[3] &&
-                      housePrice?.feeHouses[3]?.other &&
-                      ((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other) > 0) && (
-                        <p className='detail-text-payment-book-body'>{housePrice?.feeHouses[3]?.fee.name}</p>
-                      )
-                    }
-                  </div>
-                  <div>
-                    {
-                      housePrice &&
-                      housePrice?.feeHouses &&
-                      housePrice.feeHouses[3] &&
-                      housePrice?.feeHouses[3]?.other &&
-                      ((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other) > 0) && (
+                      </div>
+                    </div>
+                  )
+                }
+                {
+                  priceDetails?.exGuessPrice != 0 && (
+                    <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
+                      <div>
+                        <p className='detail-text-payment-book-body'>Phí khách bổ sung</p>
+                      </div>
+                      <div>
                         <p>{formatCurrency(priceDetails?.exGuessPrice)}đ</p>
-                      )
-                    }
-                  </div>
-                </div>
+                      </div>
+                    </div>
+                  )
+                }
+                {
+                  priceDetails?.servicePrice != 0 && (
+                    <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
+                      <div>
+                        <p className='detail-text-payment-book-body'>Phí dịch vụ Airbnb</p>
+                      </div>
+                      <div>
+                        <p>{formatCurrency(priceDetails?.servicePrice)}đ</p>
+                      </div>
+                    </div>
+                  )
+                }
               </div>
               <hr style={{ width: '95%', margin: '-10px 10px' }} />
               <div className='price-detail-fixed-book-detail'>
