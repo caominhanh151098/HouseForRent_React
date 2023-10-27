@@ -423,6 +423,7 @@ const Reports = () => {
                     pointBorderColor: "#fff",
                     pointHoverRadius: 0,
                     tension: 0.4,
+                    fill: true,
                     data: dataDisplay.data,
                 },
             ],
@@ -505,6 +506,7 @@ const Reports = () => {
                     pointBorderColor: "#fff",
                     pointHoverRadius: 0,
                     tension: 0.4,
+                    fill: true,
                     data: dataDisplay.data,
                 },
             ],
@@ -530,7 +532,7 @@ const Reports = () => {
                             </Tabs>
                         </Box>
                         <CustomTabPanel value={value} index={0}>
-                            <div className="mt-3" style={{ position: "relative", height: "50%", background: "white", top: "-35%", width: "90%", marginLeft: "5%", borderRadius: "15px", border: "1px solid rgb(219, 210, 210)", height: "auto", color: "black" }}>
+                            <div className="mt-3" style={{ position: "relative", height: "50%", background: "white", top: "-35%", width: "90%", marginLeft: "5%", borderRadius: "15px", border: "1px solid rgb(219, 210, 210)", height: "auto", color: "black", padding: "2%" }}>
                                 <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
                                     <h5 className="h5">Profits</h5>
                                     <div>
@@ -571,7 +573,7 @@ const Reports = () => {
                                 <div className="row align-items-sm-center mb-4">
                                     <div className="col-sm mb-3 mb-sm-0">
                                         <div className="d-flex align-items-center">
-                                            <span className="h4">${totalPriceProfit || 0} USD</span>
+                                            <span className="h4">{new Intl.NumberFormat('vn-VN', {style: 'currency', currency: 'VND'}).format(parseFloat(totalPriceProfit)) || 0} </span>
                                         </div>
                                     </div>
 
@@ -593,7 +595,7 @@ const Reports = () => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div>
+                                    <div className="mb-5">
                                         {chartDataProfit && chartDataProfit.labels && chartDataProfit.labels.length > 0 && (
                                             <Line ref={canvas} data={chartDataProfit} options={chartOptions} />
                                         )}
@@ -601,7 +603,7 @@ const Reports = () => {
                                     <div>
                                         <TableContainer component={Paper}>
                                             <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                                                <caption>A basic table example with a caption</caption>
+                                                <caption>Best 5 House have profit on top in month</caption>
                                                 <TableHead>
                                                     <TableRow>
                                                         <TableCell>Name House</TableCell>
@@ -623,7 +625,7 @@ const Reports = () => {
                                                             <TableCell align="right">{item.user.firstName || ""}</TableCell>
                                                             <TableCell align="right">{item.user.phone || ""}</TableCell>
                                                             <TableCell align="right">{item.user.email || ""}</TableCell>
-                                                            <TableCell align="right">{item.totalPrice || ""}</TableCell>
+                                                            <TableCell align="right">{new Intl.NumberFormat('vi-VN', { style :'currency', currency: 'VND'}).format(parseFloat(item.totalPrice)) || ""}</TableCell>
                                                         </TableRow>
                                                     ))}
                                                 </TableBody>

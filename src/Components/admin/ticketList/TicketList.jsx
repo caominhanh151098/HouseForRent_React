@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "../ticketList/TicketListCSS.css";
-import diamond from "../../../assets/images/animat-rocket-color.gif";
+import rocket from "../../../assets/images/animat-rocket-color.gif";
 import img from "../../../assets/images/animat-diamond-color.gif";
 import img2 from "../../../assets/images/users/avatar-2.jpg"
 import axios from "axios";
@@ -15,7 +15,8 @@ import Fab from '@mui/material/Fab';
 import CheckIcon from '@mui/icons-material/Check';
 import SaveIcon from '@mui/icons-material/Save';
 import { Dropdown, DropdownButton, Form, InputGroup } from "react-bootstrap";
-
+import { ToastContainer, toast } from 'react-toastify';
+import "../../../../node_modules/react-toastify/dist/ReactToastify.css";
 
 const SERVICE_ID = "service_jvlas79";
 const TEMPLATE_ID = "template_hsk232n";
@@ -23,6 +24,7 @@ const PUBLIC_KEY = "ZrnhuJTlDmN2xJsgA";
 
 function TicketList() {
 
+    const [rocketLoading, setRocketLoading] = useState(false);
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
     const [houses, setHouses] = useState([]);
@@ -34,15 +36,23 @@ function TicketList() {
         type: "DESC"
     });
 
+
+
     useEffect(() => {
         async function getData() {
+
             const response = await axios.get("http://localhost:8080/api/admin/houses");
-            const data = response.data.content;
-            data.sort((a, b) => new Date(b.createDate) - new Date(a.createDate));
-            setHouses(data);
+            if (response) {
+                const data = response.data.content;
+                data.sort((a, b) => new Date(b.createDate) - new Date(a.createDate));
+
+                setHouses(data);
+                setRocketLoading(true);
+            }
+
         }
         getData();
-    }, [])
+    }, [houses])
 
     const handleSetListImg = (data) => {
         setListImg(data);
@@ -77,18 +87,6 @@ function TicketList() {
         })
         return elements;
     }
-
-    const reloadPage = () => {
-        window.location.reload();
-    };
-
-    const showAcceptedMessage = () => {
-        const acceptedElement = document.getElementById("accepted-message");
-        acceptedElement.style.opacity = "1";
-        setTimeout(() => {
-            acceptedElement.style.opacity = "0";
-        }, 5000);
-    };
 
     const handleExportPDF = async (item) => {
         if (!loading) {
@@ -138,9 +136,17 @@ function TicketList() {
                     setHouse(newHouse);
                     setSuccess(true);
                     setLoading(false);
+                    toast.success('Success', {
+                        position: "top-center",
+                        autoClose: 2000
+                    })
                 })
                 .catch(error => {
                     console.error('error upload PDF:', error);
+                    toast.error('Lỗi upload PDF', {
+                        position: "top-center",
+                        autoClose: 6000
+                    })
                 });
         }
 
@@ -177,7 +183,7 @@ function TicketList() {
 
         if (house.id && house.status) {
             updateData();
-            reloadPage();
+            houses.filter((e) => e.id === house.id);
         }
     }, [house]);
 
@@ -254,6 +260,7 @@ function TicketList() {
             <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 className="h2">Browse Tickets</h1>
             </div>
+            <ToastContainer />
             <div className="col-5">
                 <InputGroup className="mb-3">
                     <DropdownButton
@@ -272,11 +279,11 @@ function TicketList() {
                     <Form.Control onChange={(e) => handleSearch(e.target.value || " ")} />
                 </InputGroup>
             </div>
-            <div className="row row-cols-1 row-cols-md-3 g-4">
+            {rocketLoading ? <div className="row row-cols-1 row-cols-md-3 g-4">
                 {houses?.map((house, index) => (
                     <div className="col">
 
-                        <div style={{ width: "350px" }} className="card">
+                        <div style={{ width: "350px", height: "740px" }} className="card">
                             <div id={`carouselExampleCaptions${index}`} className="carousel slide" data-bs-ride="carousel">
                                 <div className="carousel-indicators">
                                     {house?.images?.map((image, i) =>
@@ -318,7 +325,7 @@ function TicketList() {
                             <div className="card-body">
                                 <h5 className="card-title">{house.hotelName}</h5>
                                 <p className="card-text">
-                                    {house.description.listingDescription}
+                                    {house.description.listingDescription.length > 200 ? house.description.listingDescription.slice(0, 200) + "..." : house.description.listingDescription}
                                 </p>
                                 <p className="card-text">
                                     {house.quantityOfGuests} khách · {house.quantityOfRooms} phòng ngủ · {house.quantityOfBeds} giường · {house.quantityOfBathrooms} phòng tắm
@@ -366,7 +373,7 @@ function TicketList() {
                                                     <img className="m-2 size-of-img-house" src={image.srcImg || ""} />
                                                 ))}
                                                 <div data-bs-target={`#exampleModal${index}-${index}`} data-bs-toggle="modal" data-bs-dismiss="modal" className="img-overlay" onClick={() => handleSetListImg(house.images)}>
-                                                    <img className="m-2 img-house" src={house.images[4].srcImg || ""} />
+                                                    <img className="m-2 img-house-pointer" src={house.images[4].srcImg || ""} />
                                                     <div className="overlay-text">+{house.images.length - 5 || 0}</div>
                                                 </div>
                                             </div>
@@ -398,19 +405,19 @@ function TicketList() {
                                                 <div className="price-top">
                                                     <div>
                                                         <div style={{ marginBottom: "50px" }} >
-                                                            <p className="d-flex justify-content-between">Giá cơ sở: <span>{house?.price.split(".00")}$</span></p>
-                                                            <p className="d-flex justify-content-between">Phí dịch vụ dành cho khách: <span>{(house?.price * 0.14).toFixed(2)}$</span></p>
+                                                            <p className="d-flex justify-content-between">Giá cơ sở: <span>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(parseFloat(house?.price))}</span></p>
+                                                            <p className="d-flex justify-content-between">Phí dịch vụ dành cho khách: <span>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(parseFloat(house?.price * 0.14))}</span></p>
                                                             <div className="d-flex justify-content-center">
                                                                 <hr style={{ width: "90%" }} />
                                                             </div>
-                                                            <p className="d-flex justify-content-between">Giá cho khách (Trước thuế):  <span>{(parseFloat(house?.price.split(".00")) + parseFloat(Math.ceil(house?.price * 0.14))).toFixed(2)}$</span></p>
+                                                            <p className="d-flex justify-content-between">Giá cho khách:  <span>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(parseFloat(house?.price * 0.14) + parseFloat(house?.price))}</span></p>
                                                         </div>
 
                                                     </div>
 
                                                 </div>
                                                 <div className="price-bot">
-                                                    <p className="d-flex justify-content-between">Lợi nhuận kiếm được: <span>{((parseFloat(house?.price.split(".00")) + parseFloat(Math.ceil(house?.price * 0.14))) * 0.15).toFixed(2)}$</span></p>
+                                                    <p className="d-flex justify-content-between">Lợi nhuận kiếm được: <span>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(parseFloat(house?.price * 0.03) + parseFloat(house?.price * 0.14))}</span></p>
                                                 </div>
                                             </div>
 
@@ -429,7 +436,7 @@ function TicketList() {
                                                 <p>{house?.description?.guestAccess}</p>
                                                 {house?.description?.other && (
                                                     <>
-                                                        <h6 className="h6">Tiện ích khác</h6>
+                                                        <h6 className="h6">Thông tin khác</h6>
                                                         <p>{house?.description?.other}</p>
                                                     </>
                                                 )}
@@ -530,28 +537,7 @@ function TicketList() {
                                                 Close
                                             </button>
                                             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                                <Box sx={{ m: 1, position: 'relative' }}>
-                                                    <Fab
-                                                        aria-label="save"
-                                                        color="primary"
-                                                        sx={buttonSx}
-                                                        onClick={() => handleExportPDF(house)}
-                                                    >
-                                                        {success ? <CheckIcon /> : <SaveIcon />}
-                                                    </Fab>
-                                                    {loading && (
-                                                        <CircularProgress
-                                                            size={68}
-                                                            sx={{
-                                                                color: green[500],
-                                                                position: 'absolute',
-                                                                top: -6,
-                                                                left: -6,
-                                                                zIndex: 1,
-                                                            }}
-                                                        />
-                                                    )}
-                                                </Box>
+
                                                 <Box sx={{ m: 1, position: 'relative' }}>
                                                     <Button
                                                         variant="contained"
@@ -559,7 +545,7 @@ function TicketList() {
                                                         disabled={loading}
                                                         onClick={() => handleExportPDF(house)}
                                                     >
-                                                        Accept terms
+                                                        Accept
                                                     </Button>
                                                     {loading && (
                                                         <CircularProgress
@@ -576,9 +562,6 @@ function TicketList() {
                                                     )}
                                                 </Box>
                                             </Box>
-                                            <button onClick={() => handleExportPDF(house)} type="button" className="btn btn-success">
-                                                Accept
-                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -633,13 +616,14 @@ function TicketList() {
                             </div>
                         </>
 
-                        {/* <div id="accepted-message" className="accepted">
-                            Accept
-                        </div> */}
                     </div>
                 ))}
 
             </div>
+                :
+                <div className="d-flex justify-content-center">
+                    <img style={{ width: "250px", height: "250px" }} src={rocket} />
+                </div>}
         </div>
     )
 }
