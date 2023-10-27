@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState , useRef} from 'react'
 import "./User.css"
 import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
@@ -24,17 +24,22 @@ const HeaderFormUser = () => {
   }
 
   // console.log("userInfo", userInfo);
+  const imgRef = useRef(null);
+
+  const handleClick = () => {
+    window.location.href = 'http://localhost:3000/';
+  };
 
   return (
     <>
       <div className='div-header-form-user'>
-        <Link to={'/'}>
+        
           <img
-            className="img-header"
+            className="img-header" ref={imgRef} onClick={handleClick}
             src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Airbnb_Logo_B%C3%A9lo.svg/2560px-Airbnb_Logo_B%C3%A9lo.svg.png"
             alt=""
           />
-        </Link>
+       
         <div className="header-2">
           {
             jwtValue && jwtValue ? (

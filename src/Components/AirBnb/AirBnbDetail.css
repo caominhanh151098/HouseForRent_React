@@ -111,7 +111,7 @@
 
 .avatar {
     width: 5%;
-    height: 10%;
+    height: 7%;
     position: absolute;
     margin: 17px 171px;
     cursor: pointer;
@@ -162,6 +162,7 @@
     max-height: 90%;
     width: 730px;
     right: auto !important;
+    top: auto !important;
 }
 
 .appearing-div.active {
