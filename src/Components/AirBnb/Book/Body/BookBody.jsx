@@ -708,6 +708,7 @@ const BookBody = () => {
     })
     return formater.format(item).replace('₫', '')
   }
+  const userInfo = JSON.parse(localStorage.getItem('userInfo'));
 
   return (
     <>
@@ -960,7 +961,7 @@ const BookBody = () => {
         <hr style={{ width: '82%' }} /> */}
 
           {
-            !userLogin && (
+            !userInfo && (
               <div>
                 <h2 style={{ padding: "0px 56px" }}>Đăng nhập hoặc đăng ký để đặt phòng/đặt chỗ</h2>
                 <div className='payment-text-body'>
@@ -1024,11 +1025,12 @@ const BookBody = () => {
                     Tiếp tục bằng Email
                   </button>
                 </div>
+                <hr style={{ width: '82%' }} />
               </div>
             )
           }
-          <hr style={{ width: '82%' }} />
-          <div className='payment-text-body' style={{ margin: '25px 59px' }}>
+          
+          {/* <div className='payment-text-body' style={{ margin: '25px 59px' }}>
             <h2>Bắt buột cho chuyến đi của bạn</h2>
             <div className='required-for-your-trip'>
               <div style={{ width: '80%' }}>
@@ -1079,8 +1081,8 @@ const BookBody = () => {
                 </div>
               )}
             </div>
-          </div>
-          <hr style={{ width: '82%' }} />
+          </div> */}
+          {/* <hr style={{ width: '82%' }} /> */}
           <div className='cancellation-policy-text-body'>
             <h2>Chính sách huỷ</h2>
             <p><span style={{ fontWeight: 'bold' }}>Huỷ miễn phí trước {bookDay[0].format('D [thg] M YYYY')}.</span>
