@@ -1975,7 +1975,7 @@ span:nth-last-child(3) {
     right: 7px !important;
 }
 
-.div-confirm-otp-phone {
+.div-confirm-otp-phone{
     background: white;
     width: 30%;
     height: 60px;
@@ -1985,6 +1985,14 @@ span:nth-last-child(3) {
     border-radius: 14px;
     margin-bottom: 20px;
     margin-left: 35px;
+}
+
+.error-otp {
+    border: 2px solid rgb(190, 0, 0) !important;
+}
+
+.error-otp > .input-confirm-otp-phone {
+    color: rgb(190, 0, 0);
 }
 
 .input-confirm-otp-phone {

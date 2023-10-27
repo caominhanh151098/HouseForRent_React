@@ -642,7 +642,7 @@ const BookBody = () => {
     let serviceFee = 0;
     let totalPrice = 0;
 
-    if (countWeekendDay) {
+    if (countWeekendDay && housePrice?.weekendPrice) {
       priceNormal = housePrice?.price * (numberOfNights - countWeekendDay);
       priceWeekend = housePrice?.weekendPrice * countWeekendDay;
     }
@@ -1172,7 +1172,7 @@ const BookBody = () => {
                               {
                                 housePrice && (
                                   <p onClick={handleOpenAveragePriceDayDetail}
-                                    className='detail-text-payment-book-body'>{formatCurrency(housePrice.price)} x {numberOfNights - countWeekendDay} đêm (Trong tuần)  </p>
+                                    className='detail-text-payment-book-body'>{formatCurrency(housePrice.price)}đ x {numberOfNights - countWeekendDay} đêm (Trong tuần)  </p>
                                 )
                               }
                             </div>
@@ -1454,8 +1454,8 @@ const BookBody = () => {
                 <div>
                   {
                     house.images && (
-                      <img style={{width:'120px', height:'120px'}}
-                      className='img-div-fixed-book-body'
+                      <img style={{ width: '120px', height: '120px' }}
+                        className='img-div-fixed-book-body'
                         src={house?.images[0]?.srcImg} alt="" />
                     )
                   }
@@ -1487,12 +1487,12 @@ const BookBody = () => {
                         {
                           housePrice && (
                             <p onClick={handleOpenAveragePriceDayDetail}
-                              className='detail-text-payment-book-body'>{formatCurrency(housePrice.price)} x {numberOfNights - countWeekendDay} đêm (Trong tuần)  </p>
+                              className='detail-text-payment-book-body'>{formatCurrency(housePrice.price)}đ x {numberOfNights - countWeekendDay} đêm (Trong tuần)  </p>
                           )
                         }
                       </div>
                       <div>
-                        <p>{housePrice && numberOfNights ? formatCurrency(housePrice?.price * (numberOfNights - countWeekendDay)) : 'Tối thiểu 1 ngày'}</p>
+                        <p>{housePrice && numberOfNights ? formatCurrency(priceDetails.priceNormal) + "đ" : 'Tối thiểu 1 ngày'}</p>
                       </div>
                       {
                         isOpenAveragePriceDayDetail && (
@@ -1512,18 +1512,18 @@ const BookBody = () => {
                 }
 
                 {
-                  housePrice && countWeekendDay > 0 && (
+                  housePrice && countWeekendDay > 0 && housePrice?.weekendPrice && (
                     <div className='total-fixed-book-detail' style={{ margin: '-10px 15px', marginBottom: '10px' }}>
                       <div>
                         {
                           housePrice && countWeekendDay > 0 && (
                             <p onClick={handleOpenWeekendDayDetail}
-                              className='detail-text-payment-book-body'>{formatCurrency(housePrice?.weekendDays) ? formatCurrency(housePrice.weekendPrice) : formatCurrency(housePrice.price)} x {countWeekendDay} đêm (Cuối tuần)</p>
+                              className='detail-text-payment-book-body'>{formatCurrency(housePrice?.weekendDays) ? formatCurrency(housePrice.weekendPrice) : formatCurrency(housePrice.price)}đ x {countWeekendDay} đêm (Cuối tuần)</p>
                           )
                         }
                       </div>
                       <div>
-                        <p>{housePrice && countWeekendDay > 0 && housePrice?.weekendPrice ? formatCurrency(housePrice?.weekendPrice * countWeekendDay) : formatCurrency(housePrice?.price * countWeekendDay)}</p>
+                        <p>{housePrice && countWeekendDay > 0 && housePrice?.weekendPrice ? formatCurrency(housePrice?.weekendPrice * countWeekendDay) : formatCurrency(housePrice?.price * countWeekendDay)}đ</p>
                       </div>
                       {
                         isOpenWeekendDetail && (
@@ -1566,7 +1566,7 @@ const BookBody = () => {
                       numberOfNights >= 3 &&
                       housePrice.feeHouses[0] &&
                       (
-                        <p>{formatCurrency(housePrice?.feeHouses[0]?.price)}</p>
+                        <p>{formatCurrency(priceDetails?.cleanPrice)}đ</p>
                       )
                     }
                   </div>
@@ -1576,7 +1576,7 @@ const BookBody = () => {
                     {
                       housePrice &&
                       housePrice?.feeHouses &&
-                      numberOfNights === 2 &&
+                      numberOfNights < 3 &&
                       housePrice.feeHouses[0] &&
                       (
                         <p className='detail-text-payment-book-body'>{housePrice?.feeHouses[1]?.fee.name}</p>
@@ -1587,10 +1587,10 @@ const BookBody = () => {
                     {
                       housePrice &&
                       housePrice?.feeHouses &&
-                      numberOfNights === 2 &&
+                      numberOfNights < 3 &&
                       housePrice.feeHouses[0] &&
                       (
-                        <p>{formatCurrency(housePrice?.feeHouses[1]?.price)}</p>
+                        <p>{formatCurrency(priceDetails?.shortStayCleanPrice)}đ</p>
                       )
                     }
                   </div>
@@ -1612,7 +1612,7 @@ const BookBody = () => {
                       housePrice?.feeHouses &&
                       housePrice.feeHouses[0] &&
                       countPets > 0 && (
-                        <p>{formatCurrency(housePrice?.feeHouses[2]?.price)}</p>
+                        <p>{formatCurrency(priceDetails?.petPrice)}đ</p>
                       )
                     }
                   </div>
@@ -1636,7 +1636,7 @@ const BookBody = () => {
                       housePrice.feeHouses[3] &&
                       housePrice?.feeHouses[3]?.other &&
                       ((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other) > 0) && (
-                        <p>{formatCurrency(((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other)) * housePrice?.feeHouses[3]?.price)}</p>
+                        <p>{formatCurrency(priceDetails?.exGuessPrice)}đ</p>
                       )
                     }
                   </div>
@@ -1653,16 +1653,7 @@ const BookBody = () => {
                       {
                         housePrice &&
                         housePrice.feeHouses &&
-                        numberOfNights && formatCurrency((
-                          housePrice.price * (numberOfNights - countWeekendDay) +
-                          (countWeekendDay > 0 && housePrice.weekendPrice ? housePrice.weekendPrice * countWeekendDay : housePrice.price * countWeekendDay) +
-                          (numberOfNights >= 3 && housePrice.feeHouses[0]?.price || 0) +
-                          (numberOfNights === 2 && housePrice.feeHouses[1]?.price || 0) +
-                          (countPets > 0 && housePrice.feeHouses[2]?.price || 0) +
-                          ((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other) > 0 &&
-                            ((countOld + countYoung) - Number(housePrice?.feeHouses[3]?.other)) * housePrice.feeHouses[3]?.price || 0)
-                        ).toFixed(2))
-                      }
+                        numberOfNights && formatCurrency(priceDetails?.totalPrice)}đ
                     </h3>
                   </div>
                 </div>

@@ -59,6 +59,7 @@ const Header = () => {
   const [selectedRegion, setSelectedRegion] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [suggestions, setSuggestions] = useState([]);
+  const [errorOTP, setErrorOTP] = useState(false);
   const [isOpenDropMenuLogin, setIsOpenDropMenuLogin] = useState(false);
   const [isOpenDropMenuLoginWithJWT, setIsOpenDropMenuLoginWithJWT] = useState(false);
   const [isOverLayLoginForm, setIsOpenLayLoginForm] = useState(false);
@@ -297,6 +298,11 @@ const Header = () => {
     setIsOpenDropMenuLogin(!isOpenDropMenuLogin)
   }
 
+  const handleChangeOTPValue = (e) => {
+    setValueOTP(e?.target?.value);
+    setErrorOTP(false);
+  }
+
   const toggleLoginForm = () => {
     setIsOpenLayLoginForm(!isOverLayLoginForm)
     if (isOpenDropMenuLogin) {
@@ -401,7 +407,8 @@ const Header = () => {
           setIsOverlayLoginSuccess(true);
         }
       }).catch((err) => {
-        console.log(err)
+        console.log("111111111",err)
+        setErrorOTP(true);
         setLoadingSingup(false);
       })
   }
@@ -1281,10 +1288,9 @@ const Header = () => {
               <div className='container-login-form'>
                 <h3>Nhập mã mà chúng tôi gửi qua SMS tới số {selectedCountry ? `(+${selectedCountry.phone})` : ''} {phoneNumber}</h3>
               </div>
-              <div className="div-confirm-otp-phone">
+              <div className={`div-confirm-otp-phone ${errorOTP ? 'error-otp' : ''}`}>
                 <input className="input-confirm-otp-phone"
-
-                  type="tel" placeholder="------" maxLength="6" value={valueOTP} onChange={(e) => setValueOTP(e?.target?.value)} />
+                  type="tel" placeholder="------" maxLength="6" value={valueOTP} onChange={handleChangeOTPValue} />
               </div>
               <hr />
               <div className="continue-with-otp-phone">

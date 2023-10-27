@@ -21,6 +21,7 @@ class UserService {
         axios.post(`http://localhost:8080/api/auth/register`, data)
             .then(resp => {
                 if (resp.status == 200) {
+                    localStorage.setItem('userInfo', JSON.stringify(resp.data.userInfo))
                     return localStorage.setItem("jwt", resp.data.token);
                 }
             })
