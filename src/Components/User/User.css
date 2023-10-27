@@ -1362,8 +1362,110 @@
   justify-content: space-between;
 }
 
-.avatar-verify-avatar-timework{
+.avatar-verify-avatar-timework {
   width: 120px;
   height: 120px;
   border-radius: 50%;
+}
+
+.div-detail-user-info {
+  margin-left: 10%;
+  width: 100%;
+}
+
+.container-infomation-userinfo {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.div-infomation-verify-userinfo {
+  width: 50%;
+  display: flex;
+  align-items: center;
+  line-height: 1.6;
+}
+
+.div-infomation-verify-userinfo svg {
+  margin-right: 13px;
+}
+
+.ask-about-div-host {
+  box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: 30px;
+  font-size: 20px;
+  padding: 0px 30px;
+  cursor: pointer;
+}
+
+.ask-about-div-host:hover {
+  background: #ededed;
+}
+
+.book-help {
+  height: 250px;
+  background: #ECF6E0;
+  width: 250px;
+  border-radius: 10px;
+  margin-bottom: 5%;
+  cursor: pointer;
+  position: relative;
+}
+
+.guidebook {
+  position: absolute;
+  bottom: 0;
+  width: 70%;
+  margin-left: 5%;
+  line-height: 1.5;
+  color: black;
+}
+
+.btn-show-all-revies-on-host {
+  padding: 15px 15px;
+  font-size: 22px;
+  background: white;
+  border-radius: 15px;
+  cursor: pointer;
+}
+
+.css-1h9z7r5-MuiButtonBase-root-MuiTab-root {
+  color: black !important;
+  background: white !important;
+  font-size: 16px !important;
+  font-style: italic;
+}
+
+.css-heg063-MuiTabs-flexContainer {
+  display: block !important;
+}
+
+.avatar-user-reviews {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin-right: 15px;
+}
+
+.details-reviews-mini{
+  border: 1px solid #00000080;
+  border-radius: 15px;
+  /* margin: 7px 0px; */
+  margin-left: 0%;
+  padding: 12px;
+  margin-right: 3%;
+  margin-bottom: 3%;
+}
+
+.img-house-reviews-from-guest{
+  width: 120px;
+  height: 100px;
+  border-radius: 12px;
+}
+
+.div-details-reviews-from-guest-and-host{
+  max-height: 600px;
+  overflow: auto;
 }

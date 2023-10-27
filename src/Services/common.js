@@ -26,3 +26,6 @@ export const API_ADD_FAVORITE_HOUSE ='http://localhost:8080/api/house/client/add
 export const API_DETAILS_WISH_LIST ='http://localhost:8080/api/house/client/wishlists/';
 export const API_GET_HISTORY_RESERVATION = 'http://localhost:8080/api/reservation/history';
 export const API_CANCEL_RESERVATION = 'http://localhost:8080/api/reservation/cancel/';
+export const API_GET_ALL_INFORMATION_USER ='http://localhost:8080/api/client/users/detail/';
+export const API_GET_REVIEWS_FROM_GUEST = 'http://localhost:8080/api/client/users/detail/review/1/'
+export const API_GET_REVIEWS_FROM_HOST = 'http://localhost:8080/api/client/users/detail/review/2/'
