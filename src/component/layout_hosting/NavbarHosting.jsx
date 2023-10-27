@@ -8,6 +8,14 @@ import './navbarHosting.css';
 import { useState } from 'react';
 function NavbarHosting(props) {
   const [choose, setChoose] = useState(props.type)
+  const navigate = useNavigate();
+  const handleLogOut = () => {
+    localStorage.removeItem('jwt');
+    localStorage.removeItem('userInfo');
+    localStorage.removeItem('userWishLists');
+    navigate('/loggout', { replace: true });
+    window.location.reload();
+  }
   return (
     <div className='pt-3'>
       <div className="d-flex flex-column flex-md-row align-items-center pb-3 mb-4 mx-4 border-bottom">
@@ -18,7 +26,7 @@ function NavbarHosting(props) {
             alt=""
           />
         </Link>
-        <div className='d-flex justify-content-between col-5 ' style={{ marginLeft: '220px' }}>
+        <div className='d-flex justify-content-between col-5 ' style={{ marginLeft: '100px' }}>
           <Link className={`item btn-nb fw-bold ${choose == "bookedToday" ? "choosed" : ""} `} to={'/host/BookedToday'}><div className='item' onClick={() => setChoose("bookedToday")}> Hôm nay</div> </Link>
           <Link className={`item btn-nb fw-bold ${choose == "message" ? "choosed" : ""} `}><div  onClick={() => setChoose("message")} className='item'>Hộp thư đến</div></Link>
           <Link className={`item btn-nb fw-bold ${choose == "calendar" ? "choosed" : ""} `} to={'/host/calendar'}><div  className='item' onClick={() => setChoose("calendar")}> Lịch</div> </Link>
@@ -33,8 +41,20 @@ function NavbarHosting(props) {
               <li><Link className="dropdown-item" to={"/host/reviews"}>Đánh giá của khách hàng</Link></li>            </ul>
           </div>
         </div>
-        <div style={{ marginLeft: "300px" }}>
-          <img style={{ width: '45px', height: '45px', borderRadius: '50%' }} src="https://media.istockphoto.com/id/1016744004/vector/profile-placeholder-image-gray-silhouette-no-photo.jpg?s=612x612&w=0&k=20&c=mB6A9idhtEtsFXphs1WVwW_iPBt37S2kJp6VpPhFeoA=" alt="" />
+        <div style={{ marginLeft: "200px" }}>
+        <div class="dropdown  " >
+  <button class="btn btn-secondary dropdown-toggle  white" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+  <img style={{ width: '45px', height: '45px', borderRadius: '50%' }} src="https://media.istockphoto.com/id/1016744004/vector/profile-placeholder-image-gray-silhouette-no-photo.jpg?s=612x612&w=0&k=20&c=mB6A9idhtEtsFXphs1WVwW_iPBt37S2kJp6VpPhFeoA=" alt="" />
+  </button>
+  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+    <li><Link className="dropdown-item" >Hồ sơ</Link></li>
+    <li><Link className="dropdown-item" to={"/account-settings"}>Tài khoản</Link></li>
+    <li><Link className="dropdown-item" to={"/"}>Chuyển sang chế độ du lịch</Link></li>
+    <li onClick={handleLogOut}><Link className="dropdown-item"  >Đăng xuất</Link></li>
+
+  </ul>
+</div>
+        
         </div>
       </div>
     </div>

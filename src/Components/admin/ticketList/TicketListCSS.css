@@ -12,13 +12,13 @@
     width: 220px;
 }
 
-.img-house {
+.img-house-pointer {
     cursor: pointer;
     height: 185px;
     width: 220px;
 }
 
-.img-house:hover {
+.img-house-pointer:hover {
     filter: brightness(0.9);
 }
 

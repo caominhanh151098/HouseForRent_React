@@ -205,7 +205,7 @@ function RevenueHost() {
     return (
         <>
             <NavbarHosting type={"revenueHost"}></NavbarHosting>
-            <div className='col-7 container-revenue'>
+            <div className='col-9 container-revenue ' style={{marginBottom:"200px"}}>
                 <div className='fs-2 mb-5'>Lịch sử giao dịch</div>
                 <div className=' d-flex justify-content-between pb-3 mb-3 border-bottom'>
                     <div className='fs-5'>Các khoản thanh toán đã hoàn tất</div>
@@ -261,7 +261,7 @@ function RevenueHost() {
                     </div>
                 </div>
                 <div className='d-flex justify-content-between mb-3'>
-                    <div className='fs-4'> Tổng doanh thu : {total.toFixed(2)} $</div>
+                    <div className='fs-4'> Tổng doanh thu : {total.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ')} </div>
                     <div><button>xuất file CSV</button></div>
                 </div>
                 {
@@ -289,7 +289,7 @@ function RevenueHost() {
                                             <td>{item.user.lastName}</td>
                                             <td>{item.house.hotelName}</td>
                                             <td>{(dayjs(item.completeDate)).format('YYYY-MM-DD')}</td>
-                                            <td>{item.totalPrice*97/100} $</td>
+                                            <td>{(item.totalPrice*97/100).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ')} </td>
                                         </tr>
 
                                     ))
@@ -302,6 +302,7 @@ function RevenueHost() {
                 }
 
             </div>
+           
         </>
     )
 } export default RevenueHost

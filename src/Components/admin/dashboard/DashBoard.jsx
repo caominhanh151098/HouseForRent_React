@@ -22,6 +22,7 @@ import SockJS from "sockjs-client";
 import axios from "axios";
 import Stomp from "stompjs";
 import useFetchReservationToday from "../../../Hooks/admin/dashboard/useFetchReservationToday";
+import { format } from "date-fns";
 
 Chart.register(...registerables);
 var CanvasJS = CanvasJSReact.CanvasJS;
@@ -41,7 +42,6 @@ function DashBoard() {
                 total += data.y
             }
         }
-        console.log(total);
         const dataLastMonth = profitsLastMonth[0]?.dataPoints;
         let total1 = 0;
         if (dataLastMonth) {
@@ -49,9 +49,7 @@ function DashBoard() {
                 total1 += data.y
             }
         }
-        console.log(total1);
         const percent = ((total - total1) / total1) * 100;
-        console.log(percent);
         const newPercent = percent.toFixed(2);
 
         return newPercent;
@@ -387,7 +385,7 @@ function DashBoard() {
         datasets: [
             {
                 label: '# of Votes',
-                data: [700 , 300],
+                data: [700, 300],
                 backgroundColor: ["#377dff", "rgba(55, 125, 255, 0.35)"],
                 borderColor: ["#ffffff", "#ffffff"],
                 borderWidth: 4,
@@ -406,6 +404,7 @@ function DashBoard() {
     const [dataShow, setDataShow] = useState([])
     const [totalShow, setTotalShow] = useState(0);
     const [reservationTest, setReservationTest] = useState({});
+    // const [dataProcessed, setDataProcessed] = useState(false);
 
 
 
@@ -413,12 +412,24 @@ function DashBoard() {
         if (dataToday) {
             let total = 0;
             dataToday.forEach((item) => {
+                let price = item.totalPrice;
+                let tempService = 0;
+                let tempHost = 0;
                 item?.bookingFees.forEach((e) => {
                     if (e.type === 'SERVICE_FEE') {
                         const fee = parseFloat(e.value) / 100;
+                        price -= (price * fee);
                         total += fee * item.totalPrice;
+                        tempService = fee * item.totalPrice;
+                    }
+                    if (e.type === 'HOST_FEE') {
+                        const fee = parseFloat(e.value) / 100;
+                        total += fee * price;
+                        tempHost = fee * price;
                     }
                 })
+                const surplus = item.totalPrice - tempService - tempHost;
+                item.totalPrice = surplus;
             })
 
             const newChart = { ...dataChart };
@@ -428,7 +439,7 @@ function DashBoard() {
             newChart.datasets[0].data = newArr;
 
             setDataShow(dataToday);
-            setTotalShow(total.toFixed(2))
+            setTotalShow(total);
             setDataChart(newChart)
         }
     }, [dataToday])
@@ -453,6 +464,7 @@ function DashBoard() {
 
                     const newData = JSON.parse(response.body);
                     setSocketData((prev) => [...prev, newData]);
+                    // setSocketData(newData)
 
                 });
             }
@@ -484,6 +496,7 @@ function DashBoard() {
         const test = {
             id: item.id,
             status: 'FINISH',
+            completeDate: format(new Date(), 'yyyy-MM-dd'),
             totalPrice: item.totalPrice
         }
         setReservationTest(test);
@@ -492,7 +505,7 @@ function DashBoard() {
     useEffect(() => {
         async function updateData() {
             try {
-                await axios.patch(`http://localhost:8080/api/admin/profits/update/${reservationTest.id}`, { status: reservationTest.status, totalPrice: reservationTest.totalPrice }, {
+                await axios.patch(`http://localhost:8080/api/admin/profits/update/${reservationTest.id}`, { status: reservationTest.status, totalPrice: reservationTest.totalPrice, completeDate: reservationTest.completeDate }, {
                     headers: {
                         'Content-Type': 'application/json'
                     }
@@ -510,15 +523,30 @@ function DashBoard() {
 
     useEffect(() => {
 
-        socketData.pop();
         let total = 0;
 
-        socketData[socketData.length - 1]?.bookingFees?.forEach((e) => {
-            if (e.type === 'SERVICE_FEE') {
-                const fee = parseFloat(e.value) / 100;
-                total = socketData[socketData.length - 1].totalPrice * fee;
-            }
-        })
+        const dataSave = socketData[socketData.length - 1];
+        if (dataSave) {
+            dataSave?.bookingFees?.forEach((e) => {
+                const temp = parseFloat(dataSave.totalPrice);
+                let tempService = 0;
+                let tempHost = 0;
+
+                if (e.type === 'SERVICE_FEE') {
+                    const fee = parseFloat(e.value) / 100;
+                    total += temp * fee;
+                    tempService = temp * fee;
+                }
+                if (e.type === 'HOST_FEE') {
+                    const fee = parseFloat(e.value) / 100;
+                    const surplus = temp - tempService;
+                    total += surplus * fee;
+                    tempHost = surplus * fee;
+                }
+                dataSave.totalPrice = temp - tempService - tempHost;
+
+            })
+        }
 
         const newChart = { ...dataChart };
         const newArr = [...newChart.datasets[0].data];
@@ -526,13 +554,15 @@ function DashBoard() {
         newArr[1] = parseInt(total);
         newChart.datasets[0].data = newArr;
 
-        setDataShow((prev) => [socketData[socketData.length - 1], ...prev])
-        setTotalShow(prev => (parseFloat(prev) + parseFloat(total.toFixed(2))).toFixed(2));
+        setDataShow((prev) => [dataSave, ...prev])
+
+        setTotalShow(prev => (parseFloat(prev) + total));
         setDataChart(newChart)
+        // if (!dataProcessed) {
+
+        //     setDataProcessed(true);
+        // }
     }, [socketData]);
-
-
-
 
 
     return (
@@ -644,7 +674,7 @@ function DashBoard() {
                             <Doughnut data={data} options={option} />
                             <div style={{ position: 'absolute', bottom: '70px', left: '105px', textAlign: "center" }}>
                                 <small style={{ fontSize: "15px", textTransform: "uppercase", letterSpacing: ".03125rem", fontWeight: "600" }}>Project balance</small> <br />
-                                <span style={{ fontSize: "1.4109375rem", fontWeight: "600", lineHeight: "1.2" }}>${totalShow || 0}</span>
+                                <span style={{ fontSize: "1.4109375rem", fontWeight: "600", lineHeight: "1.2" }}>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(totalShow) || 0 + 'đ'}</span>
                             </div>
                         </div>
                         {/* <Line config={config} data={data} /> */}
@@ -661,8 +691,8 @@ function DashBoard() {
                                 {dataShow?.map((data) => (
                                     <tr>
                                         <td>
-                                            <div className='d-flex align-items-center justify-content-center'>
-                                                <img className="img-tbody" src={data?.user?.avatar || defaultAva} />
+                                            <div className='d-flex align-items-center '>
+                                                <img className="img-tbody me-2" src={data?.user?.avatar || defaultAva} />
                                                 {data?.house?.hotelName}
                                             </div>
                                         </td>
@@ -672,8 +702,8 @@ function DashBoard() {
                                             </span>
 
                                         </td>
-                                        <td className="align-middle " style={{ color: "lightgreen", fontFamily: "monospace", fontWeight: "bolder", fontSize: "23px" }}>
-                                            ${data?.totalPrice}
+                                        <td className="align-middle" style={{ color: "lightgreen", fontFamily: "monospace", fontWeight: "bolder", fontSize: "23px" }}>
+                                            {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(data?.totalPrice)}
                                         </td>
                                     </tr>
 
@@ -681,8 +711,8 @@ function DashBoard() {
                                 <tr>
 
                                     <td>
-                                        <div className='d-flex align-items-center justify-content-center'>
-                                            <img className="img-tbody" src="https://res.cloudinary.com/didieklbo/image/upload/f_auto,q_auto/v1/AvatarUser/jig2yadz7mfmrc01qtje" />
+                                        <div className='d-flex align-items-center'>
+                                            <img className="img-tbody me-2" src="https://res.cloudinary.com/didieklbo/image/upload/f_auto,q_auto/v1/AvatarUser/jig2yadz7mfmrc01qtje" />
                                             Apartment-3 bedrooms view Thành Phố +swimming pool
                                         </div>
                                     </td>
