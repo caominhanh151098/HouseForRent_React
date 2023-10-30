@@ -1335,9 +1335,7 @@ const BookBody = () => {
             (
               <div className={`overlay2 ${formConfirm ? '' : 'd-none'}`} >
                 <div className={`appearing-div ${formConfirm ? 'active' : ''}`} style={{ width: '650px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <i style={{ marginRight: '29%' }}
-                      onClick={toggleOverlayConfirmPay} class="fa-solid fa-chevron-left close-description" ></i>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent:'center' }}>
                     <h2>Xác nhận thanh toán</h2>
                   </div>
                   <hr />

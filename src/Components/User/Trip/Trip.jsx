@@ -252,9 +252,9 @@ const Trip = () => {
                                     indicatorColor="secondary"
                                     aria-label="secondary tabs example"
                                 >
-                                    <Tab value="one" label="Thông tin nhà" style={{ marginRight: "1%", padding: "0px 98px" }} />
-                                    <Tab value="two" label={`Ngày đặt ${sortOrder === 'ASC' ? '↓' : '↑'}`} />
-                                    <Tab value="three" label={`Trạng thái ${filteredStatus === 'AWAITING_APPROVAL' ? ': Đang chờ duyệt' : filteredStatus === 'WAIT_FOR_CHECKIN' ? ': Đang chờ check-in' : filteredStatus === 'CANCEL' ? ': Đã huỷ' : filteredStatus === 'WAITING_FOR_TRANSACTION' ? ': Đang chờ giao dịch' : filteredStatus === 'all' ? '' : ''}`} />
+                                    <Tab value="one" label="Thông tin nhà" style={{ marginRight: "33%", padding: "0px 98px" }} />
+                                    <Tab value="two" style={{ marginRight: "26%"}}  label={`Ngày đặt ${sortOrder === 'ASC' ? '↓' : '↑'}`} />
+                                    <Tab value="three"  label={`Trạng thái ${filteredStatus === 'AWAITING_APPROVAL' ? ': Đang chờ duyệt' : filteredStatus === 'WAIT_FOR_CHECKIN' ? ': Đang chờ check-in' : filteredStatus === 'CANCEL' ? ': Đã huỷ' : filteredStatus === 'WAITING_FOR_TRANSACTION' ? ': Đang chờ giao dịch' : filteredStatus === 'all' ? '' : ''}`} />
                                 </Tabs>
                                 {value === 'two' && (
                                     <div className='condition-sort-date-reservation'>
@@ -396,7 +396,7 @@ const Trip = () => {
                             </div>
                             {
                                 reservation && reservation.length > housesPerPage && (
-                                    <div className='container-pagination' style={{ top: '178%', left: '25%' }}>
+                                    <div className='container-pagination' style={{ top: '100%', left: '25%' }}>
                                         <Pagination
                                             currentPage={currentPage}
                                             totalPages={totalPages}

@@ -1125,7 +1125,7 @@ const BodyDetail = () => {
                                                         </h2>
                                                         {
                                                             houseReview.reviewPointHouse && (
-                                                                <div class="rating-container" style={{ width: '130%' }}>
+                                                                <div class="rating-container" style={{ width: '100%' }}>
                                                                     <div class="rating-label" >
                                                                         <span>Mức độ sạch sẽ: </span>
                                                                     </div>
@@ -1139,7 +1139,7 @@ const BodyDetail = () => {
                                                         }
                                                         {
                                                             houseReview.reviewPointHouse && (
-                                                                <div class="rating-container" style={{ width: '130%' }}>
+                                                                <div class="rating-container" style={{ width: '100%' }}>
                                                                     <div class="rating-label" >
                                                                         <span>Độ chính xác :</span>
                                                                     </div>
@@ -1153,7 +1153,7 @@ const BodyDetail = () => {
                                                         }
                                                         {
                                                             houseReview.reviewPointHouse && (
-                                                                <div class="rating-container" style={{ width: '130%' }}>
+                                                                <div class="rating-container" style={{ width: '100%' }}>
                                                                     <div
                                                                         class="rating-label" >Giao tiếp: </div>
                                                                     <span
@@ -1167,7 +1167,7 @@ const BodyDetail = () => {
                                                         }
                                                         {
                                                             houseReview.reviewPointHouse && (
-                                                                <div class="rating-container" style={{ width: '130%' }}>
+                                                                <div class="rating-container" style={{ width: '100%' }}>
                                                                     <div class="rating-label" >Vị trí: </div>
                                                                     <span
                                                                         className='review-point'>{houseReview.reviewPointHouse.locationPoint}</span>
@@ -1180,7 +1180,7 @@ const BodyDetail = () => {
                                                         }
                                                         {
                                                             houseReview.reviewPointHouse && (
-                                                                <div class="rating-container" style={{ width: '130%' }}>
+                                                                <div class="rating-container" style={{ width: '100%' }}>
                                                                     <div class="rating-label">Nhận phòng: </div>
                                                                     <span
                                                                         className='review-point'>{houseReview.reviewPointHouse.checkInPoint}</span>
@@ -1193,7 +1193,7 @@ const BodyDetail = () => {
                                                         }
                                                         {
                                                             houseReview.reviewPointHouse && (
-                                                                <div class="rating-container" style={{ width: '130%' }}>
+                                                                <div class="rating-container" style={{ width: '100%' }}>
                                                                     <div class="rating-label" >Giá trị: </div>
                                                                     <span
                                                                         className='review-point'>{houseReview.reviewPointHouse.valuePoint}</span>

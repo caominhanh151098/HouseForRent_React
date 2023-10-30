@@ -21,8 +21,8 @@
     align-items: center;
 }
 
-.book-body {
-    height: 1900px;
+.book-body {    
+    height: 1000px;
     margin-right: 15%;
     margin-left: 15%;
     display: flex;

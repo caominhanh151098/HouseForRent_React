@@ -68,7 +68,7 @@ const Identity = () => {
                 const similarityPercentage = (1 - match._distance) * 100;
                 console.log(`Sự tương tự: ${similarityPercentage.toFixed(2)}%`);
 
-                if (match.distance <= 0.3) {
+                if (match.distance <= 0.45) {
                     setResult(`Sự tương tự: ${match.toString()}`);
                     console.log('nhận diện được khuôn mặt', `${match.toString()}`);
 

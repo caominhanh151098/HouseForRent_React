@@ -1507,7 +1507,7 @@ const Body = () => {
                                             </MapContainer>
                                         </div>
                                     </div>
-                                    <div className='container-pagination'>
+                                    <div className='container-pagination' style={{top:'100%'}}>
                                         <Pagination
                                             currentPage={currentPage}
                                             totalPages={totalPages}
