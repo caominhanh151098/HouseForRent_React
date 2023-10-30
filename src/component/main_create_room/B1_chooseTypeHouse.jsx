@@ -2,7 +2,7 @@ import React from 'react'
 import { useState ,useEffect} from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import CreateRoom from '../../service/create_room_usestate';
-import { roomTypeList } from '../../Services/typeRoomList';
+import { typeRoomList } from '../../Services/typeRoomList';
 import Navbar_create_room from '../layout_create_room/Navbar_create_room';
 import "./create_room.css"
 function B1_chooseType  () {
@@ -27,7 +27,7 @@ function B1_chooseType  () {
         </div>
         <div className=' d-flex col-7 flex-wrap'>
          {
-          roomTypeList.map((item)=>(
+          typeRoomList.map((item)=>(
             <div key={item.id} className={`card mb-3  me-3 ms-3 ${item.id==type?'dark':''}`} style={{width: '10rem'}}>
             <div className="card-body row" onClick={()=>{handleChooseType(item.id)}}>
                 <img style={{width:'50px',height:'40px'}} src={item.icon} ></img>

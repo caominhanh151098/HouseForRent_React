@@ -258,3 +258,11 @@ body {
 /* .ftOGKY{
   margin: 0px !important;
 } */
+
+.fc-daygrid-day-frame {
+  border: 1px solid rgb(221, 221, 221);
+}
+.fc-scrollgrid-sync-inner{
+  border: 1px solid rgb(221, 221, 221);
+  text-align: center;
+}
