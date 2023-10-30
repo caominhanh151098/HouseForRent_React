@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import MyAxios from '../../../Services/MyAxios';
 import NavbarHosting from '../../layout_hosting/NavbarHosting';
+import FooterFormUser from './../../../Components/User/FooterFormUser';
 function RevenueHost() {
 
     const [house, setHouse] = useState(-1)
@@ -205,7 +206,7 @@ function RevenueHost() {
     return (
         <>
             <NavbarHosting type={"revenueHost"}></NavbarHosting>
-            <div className='col-9 container-revenue ' style={{marginBottom:"200px"}}>
+            <div className='col-9 container-revenue ' style={{marginBottom:"50px"}}>
                 <div className='fs-2 mb-5'>Lịch sử giao dịch</div>
                 <div className=' d-flex justify-content-between pb-3 mb-3 border-bottom'>
                     <div className='fs-5'>Các khoản thanh toán đã hoàn tất</div>
@@ -262,7 +263,7 @@ function RevenueHost() {
                 </div>
                 <div className='d-flex justify-content-between mb-3'>
                     <div className='fs-4'> Tổng doanh thu : {total.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ')} </div>
-                    <div><button>xuất file CSV</button></div>
+                    
                 </div>
                 {
                     listRevenue.length == 0 ?
@@ -302,7 +303,8 @@ function RevenueHost() {
                 }
 
             </div>
-           
+          
+            <FooterFormUser/>
         </>
     )
 } export default RevenueHost

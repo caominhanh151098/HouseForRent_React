@@ -8,6 +8,7 @@ import axios from 'axios';
 import dayjs from 'dayjs';
 import { set } from 'lodash';
 import "./Calendar.css"
+import FooterFormUser from '../User/FooterFormUser';
 
 
 const today = new Date();
@@ -756,9 +757,10 @@ export default function MultiCalendar() {
                     }
                 </div>
             </div>
-            <div style={{marginBottom:"200px"}}>
-                footer
+            <div style={{marginBottom:"50px"}}>
+                .
             </div>
+            <FooterFormUser/>
         </>
 
     );

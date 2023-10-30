@@ -214,7 +214,7 @@ function BookedToday() {
 
     }
     return (
-        <>
+        <div className='local-boostrap'>
             <NavbarHosting type="bookedToday" ></NavbarHosting>
             <div className='col-10 ' style={{ marginLeft: '100px' ,marginBottom:'100px'}}>
                 <div className='fs-3 mt-5 mb-5'>Chào mừng chủ nhà </div>
@@ -249,7 +249,8 @@ function BookedToday() {
                                         <>    <tr>
                                             <td>{item.user.lastName}</td>
                                             <td>{item.user.phone}</td>
-                                            <td>{item.house.hotelName}</td>
+                                            <td style={{ width:'200px' }}>{item.house.hotelName}</td>
+                                           
                                             <td style={{ textAlign: 'center' }}>{(dayjs(item.checkInDate)).format('YYYY-MM-DD')}</td>
                                             <td style={{ textAlign: 'center' }}>{(dayjs(item.checkOutDate)).format('YYYY-MM-DD')}</td>
                                             <td style={{ textAlign: 'center' }}>{item.totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ')} </td>
@@ -276,7 +277,7 @@ function BookedToday() {
                                             <>    <tr>
                                                 <td>{item.user.lastName}</td>
                                                 <td>{item.user.phone}</td>
-                                                <td>{item.house.hotelName}</td>
+                                                <td style={{ width:'200px' }}>{item.house.hotelName}</td>
                                                 <td style={{ textAlign: 'center' }}>{(dayjs(item.checkInDate)).format('YYYY-MM-DD')}</td>
                                                 <td style={{ textAlign: 'center' }}>{(dayjs(item.checkOutDate)).format('YYYY-MM-DD')}</td>
                                                 <td style={{ textAlign: 'center' }}>{item.totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ')} </td>
@@ -302,7 +303,8 @@ function BookedToday() {
                                                 <>    <tr>
                                                     <td>{item.user.lastName}</td>
                                                     <td>{item.user.phone}</td>
-                                                    <td>{item.house.hotelName}</td>
+                                                <td style={{ width:'200px' }}>{item.house.hotelName}</td>
+                                            
                                                     <td style={{ textAlign: 'center' }}>{(dayjs(item.checkInDate)).format('YYYY-MM-DD')}</td>
                                                     <td style={{ textAlign: 'center' }}>{(dayjs(item.checkOutDate)).format('YYYY-MM-DD')}</td>
                                                     <td style={{ textAlign: 'center' }}>{item.totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ')} </td>
@@ -323,7 +325,8 @@ function BookedToday() {
                                                     <>    <tr>
                                                         <td>{item.user.lastName}</td>
                                                         <td>{item.user.phone}</td>
-                                                        <td>{item.house.hotelName}</td>
+                                                <td style={{ width:'200px' }}>{item.house.hotelName}</td>
+                                                        
                                                         <td style={{ textAlign: 'center' }}>{(dayjs(item.checkInDate)).format('YYYY-MM-DD')}</td>
                                                         <td style={{ textAlign: 'center' }}>{(dayjs(item.checkOutDate)).format('YYYY-MM-DD')}</td>
                                                         <td style={{ textAlign: 'center' }}>{item.totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ')} </td>
@@ -345,7 +348,8 @@ function BookedToday() {
                                                         <>    <tr>
                                                             <td>{item.user.lastName}</td>
                                                             <td>{item.user.phone}</td>
-                                                            <td>{item.house.hotelName}</td>
+                                                <td style={{ width:'200px' }}>{item.house.hotelName}</td>
+                                                          
                                                             <td style={{ textAlign: 'center' }}>{(dayjs(item.checkInDate)).format('YYYY-MM-DD')}</td>
                                                             <td style={{ textAlign: 'center' }}>{(dayjs(item.checkOutDate)).format('YYYY-MM-DD')}</td>
                                                             <td style={{ textAlign: 'center' }}>{item.totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ')} </td>
@@ -404,7 +408,7 @@ function BookedToday() {
                 </div>
             </div>
             <FooterFormUser></FooterFormUser>
-        </>
+        </div>
     )
 }
 export default BookedToday

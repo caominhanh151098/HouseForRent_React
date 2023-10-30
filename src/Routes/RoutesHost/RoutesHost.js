@@ -35,9 +35,11 @@ import MultiCalendar from '../../Components/calendar/MultiCalendar';
 // import MultiCalendar from './../../Components/calendar/MultiCalendar';
 import '../../component/layout_hosting/bstrap/css/bootstrap2.css';
 import Error from '../../Components/AirBnb/Error/Error';
+
+
 const RoutesHost = () => {
   return (
-    <div className='local-bootstrap'>
+    <div >
       <Routes>
         <Route path='/host/firstCreateRoom' element={<First_create_room />} />
         <Route path='/host/create/b1/shareAdd' element={<B1_share_add />} />
