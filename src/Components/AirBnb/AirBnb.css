@@ -535,6 +535,7 @@ header {
 .convenient {
     display: flex;
     flex-wrap: wrap;
+    max-width: 700px !important;
 }
 
 .button-convenient {
@@ -1818,7 +1819,7 @@ span:nth-last-child(3) {
 
 .show-result-count-by-city {
     position: absolute;
-    top: 25%;
+    top: 19%;
     margin-left: 52px;
     display: flex;
 }

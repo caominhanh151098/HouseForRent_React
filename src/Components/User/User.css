@@ -377,9 +377,10 @@
 } */
 
 .img-display-on-verify-identity {
-  width: 320px;
-  height: 210px;
-  object-fit: cover;
+  width: 270px;
+    height: 210px;
+    /* object-fit: cover; */
+    border-radius: 12px;
 }
 
 .btn-back-and-restar-check-similar-img {

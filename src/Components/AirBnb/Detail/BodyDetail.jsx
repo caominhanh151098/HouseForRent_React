@@ -85,8 +85,8 @@ const BodyDetail = () => {
         if (isNextDateDisabled) {
             toast.error('Đây là ngày chỉ dành cho trả phòng');
 
-            setSelectedDates([null, null]); 
-            setHasSelectedDepartureDate(false); 
+            setSelectedDates([null, null]);
+            setHasSelectedDepartureDate(false);
             return;
         }
         const closestDate = shouldDisableDates
@@ -96,14 +96,14 @@ const BodyDetail = () => {
         const maxDay = closestDate ? dayjs(closestDate) : null;
         setMaxDay(maxDay)
         console.log('Ngày gần nhất sau ngày được chọn:', closestDate);
-        if(selectedDates[0] !== null && selectedDates[1] != null){
+        if (selectedDates[0] !== null && selectedDates[1] != null) {
             setSelectedDates([null, null])
-        }else if(selectedDates[0] == null){
-            setSelectedDates([newDates[0] || newDates[1],null])
-        }else{
+        } else if (selectedDates[0] == null) {
+            setSelectedDates([newDates[0] || newDates[1], null])
+        } else {
             setSelectedDates([selectedDates[0],
-                newDates[0].format('YYYY-MM-DD') === selectedDates[0].format('YYYY-MM-DD') ?
-            newDates[1] : newDates[0]])
+            newDates[0].format('YYYY-MM-DD') === selectedDates[0].format('YYYY-MM-DD') ?
+                newDates[1] : newDates[0]])
         }
         if (newDates[1]) {
             setCheckAvailableRoom(false)
@@ -121,7 +121,7 @@ const BodyDetail = () => {
     const numberOfNights = selectedDates[1] && selectedDates[0] ? selectedDates[1].diff(selectedDates[0], 'day') : null;
 
     const handleResetDates = () => {
-        if (!chooseGoDay){
+        if (!chooseGoDay) {
             toast.error('Vui lòng chọn ngày đi trước');
             return;
         }
@@ -130,7 +130,7 @@ const BodyDetail = () => {
             return;
         }
         setIsChooseGoDay(false);
-        setSelectedDates([null, null]); 
+        setSelectedDates([null, null]);
         setMaxDay(null);
     };
 
@@ -541,7 +541,7 @@ const BodyDetail = () => {
 
     const formatCurrency = (item) => {
         const formater = new Intl.NumberFormat('vi-VN', {
-            style:'currency',
+            style: 'currency',
             currency: 'VND'
         })
         return formater.format(item).replace('₫', 'VNĐ')
@@ -983,7 +983,7 @@ const BodyDetail = () => {
                                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                                         <DemoContainer components={['DateRangeCalendar']}>
                                             <DateRangeCalendar
-                                            ref={ref}
+                                                ref={ref}
                                                 value={selectedDates}
                                                 onChange={handleDateChange}
                                                 minDate={selectedDates[0] ? selectedDates[0] : dayjs().add(1, 'day')}
@@ -1125,7 +1125,7 @@ const BodyDetail = () => {
                                                         </h2>
                                                         {
                                                             houseReview.reviewPointHouse && (
-                                                                <div class="rating-container" style={{ width: '130%' }}>
+                                                                <div class="rating-container" style={{ width: '100%' }}>
                                                                     <div class="rating-label" >
                                                                         <span>Mức độ sạch sẽ: </span>
                                                                     </div>
@@ -1139,7 +1139,7 @@ const BodyDetail = () => {
                                                         }
                                                         {
                                                             houseReview.reviewPointHouse && (
-                                                                <div class="rating-container" style={{ width: '130%' }}>
+                                                                <div class="rating-container" style={{ width: '100%' }}>
                                                                     <div class="rating-label" >
                                                                         <span>Độ chính xác :</span>
                                                                     </div>
@@ -1153,7 +1153,7 @@ const BodyDetail = () => {
                                                         }
                                                         {
                                                             houseReview.reviewPointHouse && (
-                                                                <div class="rating-container" style={{ width: '130%' }}>
+                                                                <div class="rating-container" style={{ width: '100%' }}>
                                                                     <div
                                                                         class="rating-label" >Giao tiếp: </div>
                                                                     <span
@@ -1167,7 +1167,7 @@ const BodyDetail = () => {
                                                         }
                                                         {
                                                             houseReview.reviewPointHouse && (
-                                                                <div class="rating-container" style={{ width: '130%' }}>
+                                                                <div class="rating-container" style={{ width: '100%' }}>
                                                                     <div class="rating-label" >Vị trí: </div>
                                                                     <span
                                                                         className='review-point'>{houseReview.reviewPointHouse.locationPoint}</span>
@@ -1180,7 +1180,7 @@ const BodyDetail = () => {
                                                         }
                                                         {
                                                             houseReview.reviewPointHouse && (
-                                                                <div class="rating-container" style={{ width: '130%' }}>
+                                                                <div class="rating-container" style={{ width: '100%' }}>
                                                                     <div class="rating-label">Nhận phòng: </div>
                                                                     <span
                                                                         className='review-point'>{houseReview.reviewPointHouse.checkInPoint}</span>
@@ -1193,7 +1193,7 @@ const BodyDetail = () => {
                                                         }
                                                         {
                                                             houseReview.reviewPointHouse && (
-                                                                <div class="rating-container" style={{ width: '130%' }}>
+                                                                <div class="rating-container" style={{ width: '100%' }}>
                                                                     <div class="rating-label" >Giá trị: </div>
                                                                     <span
                                                                         className='review-point'>{houseReview.reviewPointHouse.valuePoint}</span>
@@ -1291,14 +1291,16 @@ const BodyDetail = () => {
                                         house.user && (
                                             <div>
                                                 <div>
-                                                    <img style={{ margin: '17px 0px' }}
-                                                        className='avatar' src={house.user.avatar} alt="" />
+                                                    <Link to={'/user/show'}>
+                                                        <img style={{ margin: '17px 0px' }} 
+                                                            className='avatar' src={house.user.avatar} alt="" />
+                                                    </Link>
                                                     <svg style={{ padding: '90px 60px' }}
                                                         className='avatar2' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 14" aria-hidden="true" role="presentation" focusable="false"><linearGradient id="a" x1="8.5%" x2="92.18%" y1="17.16%" y2="17.16%"><stop offset="0" stopColor="#e61e4d"></stop><stop offset=".5" stopColor="#e31c5f"></stop><stop offset="1" stopColor="#d70466"></stop></linearGradient><path fill="#fff" d="M9.93 0c.88 0 1.6.67 1.66 1.52l.01.15v2.15c0 .54-.26 1.05-.7 1.36l-.13.08-3.73 2.17a3.4 3.4 0 1 1-2.48 0L.83 5.26A1.67 1.67 0 0 1 0 3.96L0 3.82V1.67C0 .79.67.07 1.52 0L1.67 0z"></path><path fill="url(#a)" d="M5.8 8.2a2.4 2.4 0 0 0-.16 4.8h.32a2.4 2.4 0 0 0-.16-4.8zM9.93 1H1.67a.67.67 0 0 0-.66.57l-.01.1v2.15c0 .2.1.39.25.52l.08.05L5.46 6.8c.1.06.2.09.29.1h.1l.1-.02.1-.03.09-.05 4.13-2.4c.17-.1.3-.29.32-.48l.01-.1V1.67a.67.67 0 0 0-.57-.66z"></path></svg>
                                                 </div>
                                                 <div className='infor-host'>
                                                     <h3>Chủ nhà</h3>
-                                                    <p>ágsgdsg</p>
+                                                    <p>{house && house.title && getHost(house?.title)}</p>
                                                 </div>
                                             </div>
                                         )
@@ -1308,7 +1310,7 @@ const BodyDetail = () => {
                                             <div className='title-host-detail'>
                                                 <div className='icon-host-detail'>
                                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" role="presentation" focusable="false" style={{ display: 'block', height: '16px', width: '16px' }}><path fillRule="evenodd" d="m15.1 1.58-4.13 8.88-9.86 1.27a1 1 0 0 0-.54 1.74l7.3 6.57-1.97 9.85a1 1 0 0 0 1.48 1.06l8.62-5 8.63 5a1 1 0 0 0 1.48-1.06l-1.97-9.85 7.3-6.57a1 1 0 0 0-.55-1.73l-9.86-1.28-4.12-8.88a1 1 0 0 0-1.82 0z"></path></svg>
-                                                    <p>BAO NHIÊU??? đánh giá</p>
+                                                    <p>{house && house.numReview} đánh giá</p>
                                                 </div>
                                                 <div className='icon-host-detail'>
                                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" role="presentation" focusable="false" style={{ display: 'block', height: '16px', width: '16px' }}><path d="m16 .8.56.37C20.4 3.73 24.2 5 28 5h1v12.5C29 25.57 23.21 31 16 31S3 25.57 3 17.5V5h1c3.8 0 7.6-1.27 11.45-3.83L16 .8zm7 9.08-9.5 9.5-4.5-4.5L6.88 17l6.62 6.62L25.12 12 23 9.88z"></path></svg>
@@ -1459,7 +1461,7 @@ const BodyDetail = () => {
                         <div style={{ marginLeft: '20px' }}>
                             {
                                 housePrice && (
-                                    <h1 style={{lineHeight:'0.7'}}>{formatCurrency(housePrice.price)} <span style={{ fontWeight: '200', fontSize: '20px' }}> / đêm</span></h1>
+                                    <h1 style={{ lineHeight: '0.7' }}>{formatCurrency(housePrice.price)} <span style={{ fontWeight: '200', fontSize: '20px' }}> / đêm</span></h1>
                                 )
                             }
                             <p>Tổng trước thuế</p>
@@ -1562,15 +1564,30 @@ const BodyDetail = () => {
                             </div>
                         </div>
                     </div>
-                    <div style={{marginLeft:'3%', marginRight:'-2%'}}>
+                    <div style={{ marginLeft: '3%', marginRight: '-2%' }}>
                         {
                             selectedDates[0] && selectedDates[1] ? (
-                                <Link to={`/book/${houseID}/${countOld}/${countYoung}/${countBaby}/${countPets}/${selectedDates[0].format('YYYY-MM-DD')}/${selectedDates[1].format('YYYY-MM-DD')}`}
-                                    onClick={handleClick}>
-                                    <GradientButton >Đặt phòng</GradientButton>
-                                </Link>
+                                house?.status == "ACCEPTED" ?
+                                    (
+                                        <Link to={`/book/${houseID}/${countOld}/${countYoung}/${countBaby}/${countPets}/${selectedDates[0].format('YYYY-MM-DD')}/${selectedDates[1].format('YYYY-MM-DD')}`}
+                                            onClick={handleClick}>
+                                            <GradientButton >Đặt phòng</GradientButton>
+                                        </Link>
+                                    ) : (
+                                        <>
+                                            <div style={{ display: "flex", justifyContent: "center", color: "red" }}>
+                                                <span>
+                                                    <svg style={{ padding: "4px" }} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" aria-label="Lỗi" role="img" focusable="false" className="icon-error-message">
+                                                        <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zm0 10.2a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm.8-6.6H7.2v5.2h1.6z" />
+                                                    </svg>
+                                                </span>
+                                                <div style={{ color: "red", padding: "4px 0px" }}>Tắt tính năng</div>
+                                            </div>
+                                            <GradientButton onClick={handleCheckAvailableRoom}>Thay đổi ngày</GradientButton>
+                                        </>
+                                    )
                             ) : (
-                                <GradientButton onClick={handleCheckAvailableRoom}>Kiểm tra tình trạng còn phòng</GradientButton>
+                                    <GradientButton onClick={handleCheckAvailableRoom}>Kiểm tra tình trạng còn phòng</GradientButton>
                             )
                         }
                         {

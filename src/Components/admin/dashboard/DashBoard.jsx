@@ -708,7 +708,7 @@ function DashBoard() {
                                     </tr>
 
                                 ))}
-                                <tr>
+                                {/* <tr>
 
                                     <td>
                                         <div className='d-flex align-items-center'>
@@ -727,7 +727,7 @@ function DashBoard() {
                                     <td className="align-middle " style={{ color: "lightgreen", fontFamily: "monospace", fontWeight: "bolder", fontSize: "23px" }}>
                                         100.000.000Đ
                                     </td>
-                                </tr>
+                                </tr> */}
 
 
                             </tbody>

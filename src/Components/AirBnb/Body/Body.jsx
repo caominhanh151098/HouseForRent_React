@@ -1208,7 +1208,6 @@ const Body = () => {
                                                             </div>
                                                         ))
                                                     }
-                                                    <button>Hiển thị thêm</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -1228,7 +1227,7 @@ const Body = () => {
                                                         checked={isCheckedBookNow}
                                                         onChange={handleToggleBookNow}
                                                     />
-                                                    <label htmlFor="switchToggle" className="switch-label"></label>
+                                                    <label style={{left:'131px'}} htmlFor="switchToggle" className="switch-label"></label>
                                                 </div>
                                             </div>
                                             <div style={{ display: 'flex' }}>
@@ -1279,7 +1278,7 @@ const Body = () => {
                                                     checked={isCheckedStayWithHost}
                                                     onChange={handleToggleStayWithHost}
                                                 />
-                                                <label htmlFor="switchToggle3" className="switch-stay"></label>
+                                                <label style={{left:'598px'}} htmlFor="switchToggle3" className="switch-stay"></label>
                                             </div>
                                         </div>
                                     </div>
@@ -1508,7 +1507,7 @@ const Body = () => {
                                             </MapContainer>
                                         </div>
                                     </div>
-                                    <div className='container-pagination'>
+                                    <div className='container-pagination' style={{top:'100%'}}>
                                         <Pagination
                                             currentPage={currentPage}
                                             totalPages={totalPages}
