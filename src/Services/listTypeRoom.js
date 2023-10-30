@@ -1,5 +1,4 @@
-
-export  const typeRoomList=[
+export const typeRoomList=[
     {name:'nhà ',
       icon:'https://res.cloudinary.com/didieklbo/image/upload/f_auto,q_auto/v1/CategoryHouse/ylyyg6cbxtwciu1a7fyx' ,
       id:'1'},
