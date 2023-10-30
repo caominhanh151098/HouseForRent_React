@@ -1567,12 +1567,27 @@ const BodyDetail = () => {
                     <div style={{ marginLeft: '3%', marginRight: '-2%' }}>
                         {
                             selectedDates[0] && selectedDates[1] ? (
-                                <Link to={`/book/${houseID}/${countOld}/${countYoung}/${countBaby}/${countPets}/${selectedDates[0].format('YYYY-MM-DD')}/${selectedDates[1].format('YYYY-MM-DD')}`}
-                                    onClick={handleClick}>
-                                    <GradientButton >Đặt phòng</GradientButton>
-                                </Link>
+                                house?.status == "ACCEPTED" ?
+                                    (
+                                        <Link to={`/book/${houseID}/${countOld}/${countYoung}/${countBaby}/${countPets}/${selectedDates[0].format('YYYY-MM-DD')}/${selectedDates[1].format('YYYY-MM-DD')}`}
+                                            onClick={handleClick}>
+                                            <GradientButton >Đặt phòng</GradientButton>
+                                        </Link>
+                                    ) : (
+                                        <>
+                                            <div style={{ display: "flex", justifyContent: "center", color: "red" }}>
+                                                <span>
+                                                    <svg style={{ padding: "4px" }} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" aria-label="Lỗi" role="img" focusable="false" className="icon-error-message">
+                                                        <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zm0 10.2a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm.8-6.6H7.2v5.2h1.6z" />
+                                                    </svg>
+                                                </span>
+                                                <div style={{ color: "red", padding: "4px 0px" }}>Tắt tính năng</div>
+                                            </div>
+                                            <GradientButton onClick={handleCheckAvailableRoom}>Thay đổi ngày</GradientButton>
+                                        </>
+                                    )
                             ) : (
-                                <GradientButton onClick={handleCheckAvailableRoom}>Kiểm tra tình trạng còn phòng</GradientButton>
+                                    <GradientButton onClick={handleCheckAvailableRoom}>Kiểm tra tình trạng còn phòng</GradientButton>
                             )
                         }
                         {
