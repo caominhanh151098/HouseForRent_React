@@ -283,7 +283,7 @@ function TicketList() {
                 {houses?.map((house, index) => (
                     <div className="col">
 
-                        <div style={{ width: "350px", height: "740px" }} className="card">
+                        <div style={{ width: "350px", height: "700px" }} className="card">
                             <div id={`carouselExampleCaptions${index}`} className="carousel slide" data-bs-ride="carousel">
                                 <div className="carousel-indicators">
                                     {house?.images?.map((image, i) =>
