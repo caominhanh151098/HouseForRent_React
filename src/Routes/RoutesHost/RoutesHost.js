@@ -1,45 +1,43 @@
 import React from 'react'
-import Navbar_create_room from './../../component/layout_create_room/Navbar_create_room';
-import First_create_room from './../../component/main_create_room/First_create_room';
-import B1_share_add from './../../component/main_create_room/B1_share_add';
-import B1_chooseType from './../../component/main_create_room/B1_chooseTypeHouse';
 import { Routes, Route } from 'react-router-dom'
-import B1_ChooseTypeRoom from './../../component/main_create_room/B1_ChooseTypeRoom';
-import B1_address from './../../component/main_create_room/B1_address';
-import B1_infor from './../../component/main_create_room/B1_infor';
-import B1_bathroom from './../../component/main_create_room/B1_bathroom';
-import Second from './../../component/main_create_room/Second';
-import B2_comfortable from './../../component/main_create_room/B2_comfortable';
-import B2_uploadImage from './../../component/main_create_room/B2_uploadImage';
-import B2_title from './../../component/main_create_room/B2_title';
-import B2_description from './../../component/main_create_room/B2_description';
-import Third from './../../component/main_create_room/Third';
-import B3_bookNow from './../../component/main_create_room/B3_bookNow';
-import B3_price from './../../component/main_create_room/B3_price';
-import B3_discount from './../../component/main_create_room/B3_discount';
-import Finish from './../../component/main_create_room/Finish';
-import HomeList from './../../component/hosting/main/HomeList';
-import HouseOfHostDetail from './../../component/hosting/main/HouseOfHostDetail';
-import EditRoom from './../../component/hosting/main/EditRoom';
-import EditRule from './../../component/hosting/main/EditRule';
-import EditComfortable from './../../component/hosting/main/EditComfortable';
-import NavbarHosting from './../../component/layout_hosting/NavbarHosting';
-import BookedToday from './../../component/hosting/main/BookedToday';
-import AllReservation from './../../component/hosting/main/AllReservation';
-// import ShowCalendar from './../../component/hosting/main/ShowCalendar.jsx';
-import RevenueHost from './../../component/hosting/main/RevenueHost';
-import Reviews from './../../component/hosting/main/Reviews';
 import '../../../node_modules/bootstrap/dist/js/bootstrap.min.js'
 import '../../../node_modules/@fortawesome/fontawesome-free/css/all.min.css';
 import MultiCalendar from '../../Components/calendar/MultiCalendar';
 // import MultiCalendar from './../../Components/calendar/MultiCalendar';
-import '../../component/layout_hosting/bstrap/css/bootstrap2.css';
-import Error from '../../Components/AirBnb/Error/Error';
+import '../../Components/Host/LayoutHosting/bstrap/css/bootstrap2.css';
+// import Error from '../../Components/AirBnb/Error/Error';
+// import NavbarHosting from './../../Components/Host/LayoutHosting/NavbarHosting';
+import HomeList from './../../Components/Host/Hosting/Main/HomeList';
+import HouseOfHostDetail from './../../Components/Host/Hosting/Main/HouseOfHostDetail';
+import EditRoom from './../../Components/Host/Hosting/Main/EditRoom';
+import EditRule from './../../Components/Host/Hosting/Main/EditRule';
+import EditComfortable from './../../Components/Host/Hosting/Main/EditComfortable';
+import BookedToday from './../../Components/Host/Hosting/Main/BookedToday';
+import AllReservation from './../../Components/Host/Hosting/Main/AllReservation';
+import RevenueHost from './../../Components/Host/Hosting/Main/RevenueHost';
+import Reviews from './../../Components/Host/Hosting/Main/Reviews';
+import First_create_room from './../../Components/Host/MainCreateRoom/First_create_room';
+import B1_share_add from './../../Components/Host/MainCreateRoom/B1_share_add';
+import B1_chooseType from './../../Components/Host/MainCreateRoom/B1_chooseTypeHouse';
+import B1_ChooseTypeRoom from './../../Components/Host/MainCreateRoom/B1_ChooseTypeRoom';
+import B1_address from './../../Components/Host/MainCreateRoom/B1_address';
+import B1_infor from './../../Components/Host/MainCreateRoom/B1_infor';
+import B1_bathroom from './../../Components/Host/MainCreateRoom/B1_bathroom';
+import Second from './../../Components/Host/MainCreateRoom/Second';
+import B2_comfortable from './../../Components/Host/MainCreateRoom/B2_comfortable';
+import B2_uploadImage from './../../Components/Host/MainCreateRoom/B2_uploadImage';
+import B2_title from './../../Components/Host/MainCreateRoom/B2_title';
+import B2_description from './../../Components/Host/MainCreateRoom/B2_description';
+import Third from './../../Components/Host/MainCreateRoom/Third';
+import B3_bookNow from './../../Components/Host/MainCreateRoom/B3_bookNow';
+import B3_price from './../../Components/Host/MainCreateRoom/B3_price';
+import B3_discount from './../../Components/Host/MainCreateRoom/B3_discount';
+import Finish from './../../Components/Host/MainCreateRoom/Finish';
 
 
 const RoutesHost = () => {
   return (
-    <div >
+    <div className='local-bootstrap'>
       <Routes>
         <Route path='/host/firstCreateRoom' element={<First_create_room />} />
         <Route path='/host/create/b1/shareAdd' element={<B1_share_add />} />

@@ -3,12 +3,12 @@ import FullCalendar from '@fullcalendar/react'
 import interactionPlugin from '@fullcalendar/interaction'
 import multiMonthPlugin from '@fullcalendar/multimonth';
 import { eachDayOfInterval } from 'date-fns';
-import NavbarHosting from './../../component/layout_hosting/NavbarHosting';
 import axios from 'axios';
 import dayjs from 'dayjs';
 import { set } from 'lodash';
 import "./Calendar.css"
 import FooterFormUser from '../User/FooterFormUser';
+import NavbarHosting from './../Host/LayoutHosting/NavbarHosting';
 
 
 const today = new Date();

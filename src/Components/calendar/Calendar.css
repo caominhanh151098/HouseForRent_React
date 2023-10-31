@@ -1,5 +1,5 @@
-@import '../../../node_modules/bootstrap/dist/css/bootstrap.min.css';
-/* @import '../../component/layout_hosting/bstrap/css/bootstrap2.css'; */
+/* @import '../../../node_modules/bootstrap/dist/css/bootstrap.min.css'; */
+@import '../../Components/Host/LayoutHosting/bstrap/css/bootstrap2.css';
 .rmdp-calendar {
     width: 500px;
 }
