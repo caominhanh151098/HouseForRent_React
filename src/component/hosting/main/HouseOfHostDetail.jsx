@@ -5,7 +5,7 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { toast } from "react-toastify";
 import NavbarHosting from '../../layout_hosting/NavbarHosting';
-import fileServive from './../../../Services/fileService';
+import FileServive from './../../../Services/FileService';
 function HouseOfHostDetail() {
     const typeRoomList = ["ENTIRE_PLACE", "ROOM", "SHARED_ROOM"]
     const [reder, setRender] = useState(false);
@@ -194,7 +194,7 @@ function HouseOfHostDetail() {
 
             if (element.id != listImage.length - 1 && element.file != null) {
 
-                let uploadResult = await fileServive.uploadAvatar(element.file);
+                let uploadResult = await FileServive.uploadAvatar(element.file);
                 if (element.id == listImage.length - 2) { setUploading(false) }
                 if (uploadResult?.data.url) {
                     list = ([...list, uploadResult?.data.url]
