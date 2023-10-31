@@ -3,8 +3,8 @@ import { useState ,useEffect} from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import "./create_room.css"
 import { typeRoomList } from './../../../Services/listTypeRoom';
-import CreateRoom from './../../../Services/CreateRoomUseState';
 import Navbar_create_room from './../LayoutCreateRoom/Navbar_create_room';
+import CreateRoom from './../../../Services/CreateRoom';
 
 function B1_chooseType  () {
     const [type,setType]=useState(CreateRoom?.getCreateRoom()?.categoryHotel||'')

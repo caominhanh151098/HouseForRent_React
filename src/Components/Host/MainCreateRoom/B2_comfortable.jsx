@@ -2,9 +2,9 @@ import React, { useEffect } from 'react'
 import { Link, useNavigate } from "react-router-dom";
 
 import { useState } from 'react';
-import CreateRoom from './../../../Services/CreateRoomUseState';
 import Navbar_create_room from './../LayoutCreateRoom/Navbar_create_room';
 import { comfortableShowList } from './../../../Services/listComfortable';
+import CreateRoom from './../../../Services/CreateRoom';
 
  function B2_comfortable  () {
     const [comfortable,setComfortable]=useState(CreateRoom?.getCreateRoom()?.comfortableDetailList||[])

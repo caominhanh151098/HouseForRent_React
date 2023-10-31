@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React from 'react'
 import { Link, useNavigate } from "react-router-dom";
-import CreateRoom from './../../../Services/CreateRoomUseState';
+import CreateRoom from './../../../Services/CreateRoom';
 
 function Finish() {
   const handleLog = () => {

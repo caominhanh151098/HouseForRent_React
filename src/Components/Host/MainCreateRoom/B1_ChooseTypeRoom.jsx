@@ -1,8 +1,8 @@
 import React from 'react'
 import { Link, useNavigate } from "react-router-dom";
 import { useState ,useEffect } from 'react';
-import CreateRoom from './../../../Services/CreateRoomUseState';
 import Navbar_create_room from './../LayoutCreateRoom/Navbar_create_room';
+import CreateRoom from './../../../Services/CreateRoom';
 
  function B1_ChooseTypeRoom  ()  {
   
