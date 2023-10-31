@@ -1,7 +1,7 @@
 import axios from "axios"
 // import sha1 from '../../node_modules/sha1/sha1'
 
-class FileService {
+class UploadService {
     static uploadAvatar(avatarFile) {
         const formData = new FormData();
         formData.append("file", avatarFile);
@@ -10,4 +10,4 @@ class FileService {
     }
 }
 
-export default FileService;
+export default UploadService;
