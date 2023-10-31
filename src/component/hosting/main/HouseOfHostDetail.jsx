@@ -5,7 +5,8 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { toast } from "react-toastify";
 import NavbarHosting from '../../layout_hosting/NavbarHosting';
-import FileService from './../../../Services/fileService';
+import FileService from './../../../Services/FileService';
+
 function HouseOfHostDetail() {
     const typeRoomList = ["ENTIRE_PLACE", "ROOM", "SHARED_ROOM"]
     const [reder, setRender] = useState(false);

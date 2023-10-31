@@ -3,7 +3,7 @@ import { Await, Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import Navbar_create_room from "../layout_create_room/Navbar_create_room";
 import CreateRoom from './../../service/create_room_usestate';
-import FileService from './../../Services/fileService';
+import FileService from "../../Services/FileService";
 
 function B2_uploadImage() {
     const list = CreateRoom.getCreateRoom().imageList?.map((item, index) => (
