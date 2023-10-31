@@ -3,9 +3,9 @@ import { Await, Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import Navbar_create_room from "../layout_create_room/Navbar_create_room";
 import CreateRoom from './../../service/create_room_usestate';
-import FileServive from "../../Services/FileService";
 // import 'bootstrap/dist/css/bootstrap.min.css';
 // import 'bootstrap/dist/js/bootstrap.min.js';
+import fileServive from './../../Services/fileService';
 
 function B2_uploadImage() {
     const list = CreateRoom.getCreateRoom().imageList?.map((item, index) => (
@@ -83,7 +83,7 @@ function B2_uploadImage() {
 
             if (element.id != selectAvatar.length - 1 && element.file != null) {
 
-                let uploadResult = await FileServive.uploadAvatar(element.file);
+                let uploadResult = await fileServive.uploadAvatar(element.file);
                 if(element.id==selectAvatar.length-2){setUploading(false)}
                 if (uploadResult?.data.url) {
                     list = ([...list, uploadResult?.data.url]
