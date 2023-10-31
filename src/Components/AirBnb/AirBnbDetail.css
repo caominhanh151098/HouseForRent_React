@@ -1,8 +1,11 @@
-.body-detail {
-    width: 60%;
-    /* height: 111px; */
-    margin: 0 auto;
+@media (min-width:1279px) {
+    .body-detail {
+        width: 60%;
+        /* height: 111px; */
+        margin: 0 auto;
+    }
 }
+
 
 .svg-title {
     height: 25px;

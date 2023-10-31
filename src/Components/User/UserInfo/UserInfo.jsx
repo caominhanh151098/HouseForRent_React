@@ -30,12 +30,14 @@ const UserInfo = () => {
     const [allInformationUser, setAllInformationUser] = useState();
     useEffect(() => {
         const getUser = async () => {
-            console.log(userInfo.id);
-            const resp = await axios.get(API_GET_ALL_INFORMATION_USER + userInfo.id);
-            console.log(resp.data);
-            if (resp.status === 200) {
-                setAllInformationUser(resp.data)
-            } else {
+            try {
+                const resp = await axios.get(API_GET_ALL_INFORMATION_USER + userInfo.id);
+                if (resp.status === 200) {
+                    setAllInformationUser(resp.data)
+                } else {
+                    console.log('Lỗi');
+                }
+            } catch (err) {
                 console.log('Lỗi');
             }
         }
@@ -60,11 +62,15 @@ const UserInfo = () => {
     useEffect(() => {
         const id = userInfo && userInfo.id
         const getReviewFromGuest = async () => {
-            const resp = await axios.get(API_GET_REVIEWS_FROM_GUEST + id);
-            if (resp.status === 200) {
-                setReviewFromGuest(resp.data.content)
-            } else {
-                console.log('Lỗi revies guest');
+            try {
+                const resp = await axios.get(API_GET_REVIEWS_FROM_GUEST + id);
+                if (resp.status === 200) {
+                    setReviewFromGuest(resp.data.content)
+                } else {
+                    console.log('Lỗi revies guest');
+                }
+            } catch (err) {
+                console.log('Lỗi');
             }
         }
         getReviewFromGuest()
@@ -74,11 +80,15 @@ const UserInfo = () => {
     useEffect(() => {
         const id = userInfo && userInfo.id
         const getReviewFromGuest = async () => {
-            const resp = await axios.get(API_GET_REVIEWS_FROM_HOST + id);
-            if (resp.status === 200) {
-                setReviewFromHost(resp.data.content)
-            } else {
-                console.log('Lỗi revies host');
+            try {
+                const resp = await axios.get(API_GET_REVIEWS_FROM_HOST + id);
+                if (resp.status === 200) {
+                    setReviewFromHost(resp.data.content)
+                } else {
+                    console.log('Lỗi revies host');
+                }
+            } catch (err) {
+                console.log('Lỗi');
             }
         }
         getReviewFromGuest()

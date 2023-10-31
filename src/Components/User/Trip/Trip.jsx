@@ -1,7 +1,7 @@
 import React from 'react'
 import HeaderFormUser from '../HeaderFormUser'
 import "../User.css"
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { useEffect } from 'react'
 import axios from 'axios'
@@ -26,9 +26,41 @@ const Trip = () => {
     const token = localStorage.getItem('jwt')
     const [loadingReservation, setLoadingReservation] = useState(false);
 
+    const navigate = useNavigate();
+
     useEffect(() => {
         const getReversation = async () => {
-            setLoadingReservation(true);
+            try {
+                setLoadingReservation(true);
+                const response = await axios.get(API_GET_HISTORY_RESERVATION, {
+                    headers: {
+                        'Content-Type': 'Application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+                if (response.status === 200) {
+                    const sortedReservations = [...response.data].sort((a, b) => {
+                        const dateA = new Date(a.checkInDate[0], a.checkInDate[1] - 1, a.checkInDate[2]);
+                        const dateB = new Date(b.checkInDate[0], b.checkInDate[1] - 1, b.checkInDate[2]);
+                        return dateB - dateA;
+                    });
+                    setReversation(sortedReservations)
+                    setLoadingReservation(false);
+                    setTempReservation(sortedReservations)
+                } else {
+                    console.log('lỗi');
+                    setLoadingReservation(false);
+                }
+            } catch (err) {
+                console.log('Lỗi lấy thông tin giao dịch');
+                navigate('/')
+            }
+        }
+        getReversation();
+    }, [])
+
+    const getReversation = async () => {
+        try {
             const response = await axios.get(API_GET_HISTORY_RESERVATION, {
                 headers: {
                     'Content-Type': 'Application/json',
@@ -36,47 +68,23 @@ const Trip = () => {
                 }
             })
             if (response.status === 200) {
-                const sortedReservations = [...response.data].sort((a, b) => {
-                    const dateA = new Date(a.checkInDate[0], a.checkInDate[1] - 1, a.checkInDate[2]);
-                    const dateB = new Date(b.checkInDate[0], b.checkInDate[1] - 1, b.checkInDate[2]);
-                    return dateB - dateA;
-                });
-                setReversation(sortedReservations)
-                setLoadingReservation(false);
-                setTempReservation(sortedReservations)
+                if (response.data) {
+                    const sortedReservations = [...response.data].sort((a, b) => {
+                        const dateA = new Date(a.checkInDate[0], a.checkInDate[1] - 1, a.checkInDate[2]);
+                        const dateB = new Date(b.checkInDate[0], b.checkInDate[1] - 1, b.checkInDate[2]);
+                        return dateB - dateA;
+                    });
+                    setReversation(sortedReservations)
+                } else {
+                    console.log('Dữ liệu trả về không hợp lệ');
+                }
             } else {
                 console.log('lỗi');
-                setLoadingReservation(false);
             }
-        }
-        getReversation();
-    }, [])
-
-    const getReversation = async () => {
-        const response = await axios.get(API_GET_HISTORY_RESERVATION, {
-            headers: {
-                'Content-Type': 'Application/json',
-                'Authorization': `Bearer ${token}`
-            }
-        })
-        if (response.status === 200) {
-            if (response.data) {
-                const sortedReservations = [...response.data].sort((a, b) => {
-                    const dateA = new Date(a.checkInDate[0], a.checkInDate[1] - 1, a.checkInDate[2]);
-                    const dateB = new Date(b.checkInDate[0], b.checkInDate[1] - 1, b.checkInDate[2]);
-                    return dateB - dateA;
-                });
-                setReversation(sortedReservations)
-            } else {
-                console.log('Dữ liệu trả về không hợp lệ');
-            }
-        } else {
-            console.log('lỗi');
+        } catch (err) {
+            navigate('/')
         }
     }
-
-    console.log("reservation", reservation);
-    console.log("tempReservation", tempReservation);
 
     const [value, setValue] = React.useState('one');
 
@@ -111,30 +119,33 @@ const Trip = () => {
     const [loadingCancel, setLoadingCancel] = useState(false)
 
     const handleCancelReservation = async (id) => {
-        setLoadingCancel(true);
-        setTimeout(async () => {
-            const response = await axios.patch(API_CANCEL_RESERVATION + id, {
-                Headers: {
-                    'Content-Type': 'Application/json',
-                    'Authorization': `Bearer ${token}`
+        try {
+            setLoadingCancel(true);
+            setTimeout(async () => {
+                const response = await axios.patch(API_CANCEL_RESERVATION + id, {
+                    Headers: {
+                        'Content-Type': 'Application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+                if (response.status === 200) {
+                    await getReversation();
+                    if (isOverLayCancelReservation) {
+                        setIsOverLayCancelReservation(false);
+                    }
+                    toast.success('Đã huỷ thành công', {
+                        className: 'custom-toast-success'
+                    });
+                    setLoadingCancel(false)
+                } else {
+                    console.log('Lỗi');
+                    setLoadingCancel(false)
                 }
-            })
-            if (response.status === 200) {
-                await getReversation();
-                if (isOverLayCancelReservation) {
-                    setIsOverLayCancelReservation(false);
-                }
-                toast.success('Đã huỷ thành công', {
-                    className: 'custom-toast-success'
-                });
                 setLoadingCancel(false)
-            } else {
-                console.log('Lỗi');
-                setLoadingCancel(false)
-            }
-            setLoadingCancel(false)
-        }, 700)
-
+            }, 700)
+        } catch (err) {
+            console.log('Không thể huỷ');
+        }
     }
 
     const [houseSelected, setHouseSelected] = useState();
@@ -253,8 +264,8 @@ const Trip = () => {
                                     aria-label="secondary tabs example"
                                 >
                                     <Tab value="one" label="Thông tin nhà" style={{ marginRight: "33%", padding: "0px 98px" }} />
-                                    <Tab value="two" style={{ marginRight: "26%"}}  label={`Ngày đặt ${sortOrder === 'ASC' ? '↓' : '↑'}`} />
-                                    <Tab value="three"  label={`Trạng thái ${filteredStatus === 'AWAITING_APPROVAL' ? ': Đang chờ duyệt' : filteredStatus === 'WAIT_FOR_CHECKIN' ? ': Đang chờ check-in' : filteredStatus === 'CANCEL' ? ': Đã huỷ' : filteredStatus === 'WAITING_FOR_TRANSACTION' ? ': Đang chờ giao dịch' : filteredStatus === 'all' ? '' : ''}`} />
+                                    <Tab value="two" style={{ marginRight: "26%" }} label={`Ngày đặt ${sortOrder === 'ASC' ? '↓' : '↑'}`} />
+                                    <Tab value="three" label={`Trạng thái ${filteredStatus === 'AWAITING_APPROVAL' ? ': Đang chờ duyệt' : filteredStatus === 'WAIT_FOR_CHECKIN' ? ': Đang chờ check-in' : filteredStatus === 'CANCEL' ? ': Đã huỷ' : filteredStatus === 'WAITING_FOR_TRANSACTION' ? ': Đang chờ giao dịch' : filteredStatus === 'all' ? '' : ''}`} />
                                 </Tabs>
                                 {value === 'two' && (
                                     <div className='condition-sort-date-reservation'>
