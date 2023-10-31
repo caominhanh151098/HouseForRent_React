@@ -1,8 +1,9 @@
 import React from 'react'
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from 'react';
-import CreateRoom from '../../service/create_room_usestate';
 import Navbar_create_room from '../layout_create_room/Navbar_create_room';
+import CreateRoom from './../../Services/CreateRoomUsestate';
+
 function B3_bookNow ()  {
   const [bookNow, setBookNow]=useState(CreateRoom?.getCreateRoom()?.bookNow||false)
   

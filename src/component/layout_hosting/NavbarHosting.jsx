@@ -1,6 +1,5 @@
 import React from 'react'
 import { Link, useNavigate } from "react-router-dom";
-import CreateRoom from '../../service/create_room_usestate';
 import HomeList from './../hosting/main/HomeList';
 
 import 'bootstrap/dist/js/bootstrap.min.js';
