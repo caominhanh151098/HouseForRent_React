@@ -43,7 +43,6 @@ const Body = () => {
     const categories = UseFetchCategory();
     const categoriesIds = categories.map(cate => cate.id);
     const listFilter = UseFetchListFilter();
-    console.log("listFilter", listFilter);
     const { houseList, loading } = UseFetchHouse();
     const [currentIndex, setCurrentIndex] = useState(0);
     const [showFilterForm, setShowFilterForm] = useState(false);
@@ -57,9 +56,9 @@ const Body = () => {
     const [isCheckedPetAllow, setIsCheckedPetAllow] = useState(false);
     const [isCheckedShowTotal, setIsCheckedShowTotal] = useState(false);
     const [isCheckedStayWithHost, setIsCheckedStayWithHost] = useState(false);
-    const [rangeValue, setRangeValue] = useState([13, 456]);
-    const [minRange, setMinrange] = useState(13)
-    const [maxRange, setMaxrange] = useState(456)
+    const [rangeValue, setRangeValue] = useState([0, 1_000_000]);
+    const [minRange, setMinrange] = useState(null)
+    const [maxRange, setMaxrange] = useState(null)
     const [countLocation, setCountLocation] = useState(houseList ? houseList.length : 0);
     const [houseFilter, setHouseFilter] = useState([])
     const [loadingFilterHouse, setLoadingFilterHouse] = useState(false)
@@ -77,13 +76,7 @@ const Body = () => {
 
     const { houseSearchByCity, setHouseSearchByCity, loadingSearchByCity } = useHouse();
 
-    useEffect(() => {
-        console.log("houseSearchByCity", houseSearchByCity);
-    }, [houseSearchByCity])
 
-    useEffect(() => {
-        console.log("loadingSearchByCity", loadingSearchByCity);
-    }, [loadingSearchByCity])
 
 
     useEffect(() => {
@@ -150,10 +143,6 @@ const Body = () => {
 
     }
 
-    useEffect(() => {
-        setMinrange(rangeValue[0]);
-        setMaxrange(rangeValue[1]);
-    }, [rangeValue, minRange, maxRange]);
 
     const handleSliderChange = (value) => {
         setRangeValue(value);
@@ -169,55 +158,37 @@ const Body = () => {
 
     //     return () => clearTimeout(timer);
     // }, [minRange, maxRange])
+    const minPrice = 0;
+    const maxPrice = 0;
+    const minGuests = 0;
+    const minRooms = 0;
 
-    const [minPrice, setMinPrice] = useState(0);
-    const [maxPrice, setMaxPrice] = useState(10);
-    const [minGuests, setMinGuests] = useState(0);
-    const [minRooms, setMinRooms] = useState(0);
     const [minBeds, setMinBeds] = useState(0);
     const [minBathrooms, setMinBathrooms] = useState(0);
     const [comfortableIds, setComfortableIds] = useState([]);
     const [categoryIds, setCategoryIds] = useState(0);
     const [filteredHouses, setFilteredHouses] = useState([]);
 
-    useEffect(() => {
-        if (comfortableIds.length === 0) {
-            setComfortableIds(categoriesIds);
-        }
-    }, [comfortableIds, categoriesIds])
-    console.log("comfortableIds", comfortableIds);
+
 
 
     const [tempHouseFilter, setTempHouseFilter] = useState([])
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                let url = `http://localhost:8080/api/house/filter?minPrice=${minRange}&maxPrice=${maxRange}&minGuests=${minGuests}&minRooms=${minRooms}&minBeds=${minBeds}&minBathrooms=${minBathrooms}`;
-                if (comfortableIds) {
-                    url += `&comfortableIds=${comfortableIds.join(',')}`;
-                }
-                const response = await fetch(url);
-                const data = await response.json();
-                if (tempHouseFilter.length === 0) {
-                    setTempHouseFilter(data);
-                }
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        };
-        fetchData();
-    }, [comfortableIds])
-    useEffect(() => {
-        console.log("tempHouseFilter", tempHouseFilter);
-    }, [tempHouseFilter])
+
+
 
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                let url = `http://localhost:8080/api/house/filter?minPrice=${minRange}&maxPrice=${maxRange}&minGuests=${minGuests}&minRooms=${minRooms}&minBeds=${minBeds}&minBathrooms=${minBathrooms}`;
-                if (comfortableIds) {
+                let url = `http://localhost:8080/api/house/filter?minGuests=${minGuests}&minRooms=${minRooms}&minBeds=${minBeds}&minBathrooms=${minBathrooms}`;
+                if (comfortableIds.length > 0) {
                     url += `&comfortableIds=${comfortableIds.join(',')}`;
+                }
+                if (minRange) {
+                    url += `&minPrice=${minRange}`
+                }
+                if (minRange) {
+                    url += `&maxPrice=${maxRange}`
                 }
                 if (categoryIds) {
                     url += `&categoryIds=${categoryIds}`;
@@ -226,6 +197,10 @@ const Body = () => {
 
                 const response = await fetch(url);
                 const data = await response.json();
+                console.log(data, 'filter');
+                if (tempHouseFilter.length === 0) {
+                    setTempHouseFilter(data);
+                }
                 setFilteredHouses(data);
             } catch (error) {
                 console.error('Error:', error);
@@ -233,8 +208,8 @@ const Body = () => {
         };
 
         fetchData();
-    }, [comfortableIds, minPrice, maxPrice, rangeValue, minGuests, minRooms, minBeds, minBathrooms, categoryIds])
-    console.log("filteredHouses", filteredHouses);
+    }, [comfortableIds, rangeValue, minBeds, minBathrooms, categoryIds])
+
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -386,52 +361,30 @@ const Body = () => {
         }, 500)
     }
 
-    useEffect(() => {
-        console.log("houseFilter", houseFilter);
-    }, [houseFilter])
+
 
 
 
 
     const handleToggleShowTotal = () => {
         setIsCheckedShowTotal(!isCheckedShowTotal);
-        if (!isCheckedShowTotal) {
-            console.log('Show Total bật');
-        } else {
-            console.log('Show Total tắt');
-        }
+
     }
     const handleToggleBookNow = () => {
         setIsCheckedBookNow(!isCheckedBookNow);
-        if (!isCheckedBookNow) {
-            console.log('BookNow bật');
-        } else {
-            console.log('BookNow tắt');
-        }
+
     };
     const handleToggleBookAuto = () => {
         setIsCheckedBookAuto(!isCheckedBookAuto);
-        if (!isCheckedBookAuto) {
-            console.log('BookAuto bật');
-        } else {
-            console.log('BookAuto tắt');
-        }
+
     };
     const handleTogglePetAllow = () => {
         setIsCheckedPetAllow(!isCheckedPetAllow);
-        if (!isCheckedPetAllow) {
-            console.log('PetAllow bật');
-        } else {
-            console.log('PetAllow tắt');
-        }
+
     };
     const handleToggleStayWithHost = () => {
         setIsCheckedStayWithHost(!isCheckedStayWithHost);
-        if (!isCheckedStayWithHost) {
-            console.log('Stay With Home bật');
-        } else {
-            console.log('Stay With Home tắt');
-        }
+
     }
 
 
@@ -444,9 +397,7 @@ const Body = () => {
             setCurrentIndexInt(nextIndexInt);
         }
     };
-    useEffect(() => {
-        console.log("minBed", minBeds);
-    }, [minBeds])
+
 
     const updateFilters = (filterType, value) => {
         switch (filterType) {
@@ -533,7 +484,7 @@ const Body = () => {
     const [showSpinner, setShowSpinner] = useState(false)
     const [hasClickedButtonSpinner, setHasClickedButtonSpinner] = useState(false);
     const [mapZoomed, setMapZoomed] = useState(false);
-    console.log('houseList', houseList);
+
 
     const customIconCurrent = new L.Icon({
         iconUrl: markerIcon,
@@ -577,9 +528,7 @@ const Body = () => {
         }
     }, [houseList]);
 
-    useEffect(() => {
-        console.log("roomLocations", roomLocations);
-    }, [roomLocations])
+
 
     useEffect(() => {
         // console.log('house', houseList)
@@ -606,9 +555,7 @@ const Body = () => {
         }
     }, [houseSearchByCity]);
 
-    useEffect(() => {
-        console.log("roomLocationsByCity", roomLocationsByCity);
-    }, [roomLocationsByCity])
+
     // console.log("roomLocations", roomLocations);
 
     const mapRef = useRef();
@@ -669,10 +616,7 @@ const Body = () => {
 
     }
 
-    useEffect(() => {
-        console.log("houseFilterByComfortable", houseFilterByComfortable);
-        // Thực hiện các tác vụ tiếp theo sau khi houseFilterByComfortable đã được cập nhật
-    }, [houseFilterByComfortable]);
+
 
     const handleSelectedComfotable = (id) => {
         setComfortableSelected(id)
@@ -763,7 +707,7 @@ const Body = () => {
     const displayedLocations = roomLocationsByCity && roomLocationsByCity.slice(startIdx, endIdx);
 
     const totalPages = Math.ceil(houseSearchByCity && houseSearchByCity.length / housesPerPage);
-    console.log("totalPages", totalPages);
+
 
     const handleNextPage = () => {
         if (currentPage < totalPages) {
@@ -895,7 +839,7 @@ const Body = () => {
                 setText('');
             }
         } catch (err) {
-            console.log('Lỗi khi thêm', err);
+            console.error('Lỗi khi thêm', err);
         }
     }
 
@@ -916,10 +860,8 @@ const Body = () => {
                 })
                 setHouseLiked(resp.data);
             } catch (err) {
-                console.log('Lỗi khi lấy danh sách yêu thích:', err);
+                console.error('Lỗi khi lấy danh sách yêu thích:', err);
             }
-        } else {
-            console.log('Token không tồn tại');
         }
     }
 
@@ -947,7 +889,7 @@ const Body = () => {
                 });
             }
         } catch (err) {
-            console.log(err);
+            console.error(err);
         }
     }
 
@@ -972,7 +914,7 @@ const Body = () => {
                     console.error(`Lỗi khi xóa nhà yêu thích - mã lỗi: ${response.status}`);
                 }
             } catch (err) {
-                console.log('Lỗi khi xoá');
+                console.error('Lỗi khi xoá');
             }
         }
     }
@@ -1016,7 +958,7 @@ const Body = () => {
 
     const formatCurrency = (item) => {
         const formater = new Intl.NumberFormat('vi-VN', {
-            style:'currency',
+            style: 'currency',
             currency: 'VND'
         })
         return formater.format(item).replace('₫', 'VNĐ')
@@ -1024,7 +966,7 @@ const Body = () => {
 
     const formatCurrencyOnMap = (item) => {
         const formater = new Intl.NumberFormat('vi-VN', {
-            style:'currency',
+            style: 'currency',
             currency: 'VND'
         })
         return formater.format(item).replace('₫', '')
@@ -1080,8 +1022,8 @@ const Body = () => {
                                             <div className="price-range">
                                                 <Slider
                                                     range
-                                                    min={0}
-                                                    max={456}
+                                                    min={minRange}
+                                                    max={maxRange}
                                                     step={1}
                                                     value={rangeValue}
                                                     onChange={handleSliderChange}
@@ -1227,7 +1169,7 @@ const Body = () => {
                                                         checked={isCheckedBookNow}
                                                         onChange={handleToggleBookNow}
                                                     />
-                                                    <label style={{left:'131px'}} htmlFor="switchToggle" className="switch-label"></label>
+                                                    <label style={{ left: '131px' }} htmlFor="switchToggle" className="switch-label"></label>
                                                 </div>
                                             </div>
                                             <div style={{ display: 'flex' }}>
@@ -1278,7 +1220,7 @@ const Body = () => {
                                                     checked={isCheckedStayWithHost}
                                                     onChange={handleToggleStayWithHost}
                                                 />
-                                                <label style={{left:'598px'}} htmlFor="switchToggle3" className="switch-stay"></label>
+                                                <label style={{ left: '598px' }} htmlFor="switchToggle3" className="switch-stay"></label>
                                             </div>
                                         </div>
                                     </div>
@@ -1420,13 +1362,13 @@ const Body = () => {
                                                                 <HouseSlider house={house} />
                                                                 {
                                                                     isHouseLiked ? (
-                                                                        <div className='outer-div' style={{right:'-210px'}}
+                                                                        <div className='outer-div' style={{ right: '-210px' }}
                                                                             onMouseEnter={() => toggleHover(index)} onMouseLeave={() => toggleHover(null)}>
                                                                             <i onClick={() => { handleRemoveFavorite(house.id) }}
                                                                                 class="fa-solid fa-heart" style={{ color: '#f21202' }}></i>
                                                                         </div>
                                                                     ) : (
-                                                                        <div className='outer-div' style={{right:'-210px'}}
+                                                                        <div className='outer-div' style={{ right: '-210px' }}
                                                                             onMouseEnter={() => toggleHover(index)} onMouseLeave={() => toggleHover(null)}>
                                                                             {hoveredIndex === index ? (
                                                                                 <IonIcon onClick={() => {
@@ -1507,7 +1449,7 @@ const Body = () => {
                                             </MapContainer>
                                         </div>
                                     </div>
-                                    <div className='container-pagination' style={{top:'100%'}}>
+                                    <div className='container-pagination' style={{ top: '100%' }}>
                                         <Pagination
                                             currentPage={currentPage}
                                             totalPages={totalPages}

@@ -14,7 +14,6 @@ import { Link } from 'react-router-dom';
 const VirtualizeSwipeableViews = virtualize(AutoPlaySwipeableViews);
 
 function HouseSlider({ house }) {
-    const { houseList, loading } = UseFetchHouse();
     const theme = useTheme();
     const maxSteps = house ? house?.images.length ? house?.images.length > 7 ? 7 : house?.images.length : house?.images.length : house?.images.length;
     const [activeStep, setActiveStep] = useState(0);
@@ -24,7 +23,7 @@ function HouseSlider({ house }) {
     const huy = activeStep;
     const handleNext = () => {
         setActiveStep((prevActiveStep) => (prevActiveStep + 1) % maxSteps);
-        
+
     };
 
     const handleBack = () => {
@@ -49,26 +48,26 @@ function HouseSlider({ house }) {
                 enableMouseEvents
                 slideRenderer={({ index }) => (
                     <div key={index} className="custom-image-container">
-                         <Link to={`/house/${house.id}`}>
-                        <img className='img'
-                         onMouseEnter={() => setButtonOpacity(1)} 
-                         onMouseLeave={() => setButtonOpacity(0)} 
-                            src={house.images[huy].srcImg}
-                            alt={`Image ${index + 1}`}
-                            style={{
-                                width: '100%',
-                                height: '250px',
-                                objectFit: 'cover',
-                            }}
-                        />
+                        <Link to={`/house/${house.id}`}>
+                            <img className='img'
+                                onMouseEnter={() => setButtonOpacity(1)}
+                                onMouseLeave={() => setButtonOpacity(0)}
+                                src={house.images[huy].srcImg}
+                                alt={`Image ${index + 1}`}
+                                style={{
+                                    width: '100%',
+                                    height: '250px',
+                                    objectFit: 'cover',
+                                }}
+                            />
                         </Link>
                     </div>
                 )}
             />
             <MobileStepper
-             style={{opacity: buttonOpacity}}
-             onMouseOut={() => setButtonOpacity(1)}
-             onMouseLeave={handleMouseLeave} 
+                style={{ opacity: buttonOpacity }}
+                onMouseOut={() => setButtonOpacity(1)}
+                onMouseLeave={handleMouseLeave}
                 steps={maxSteps}
                 position="static"
                 activeStep={activeStep}
@@ -78,9 +77,9 @@ function HouseSlider({ house }) {
                         size="small"
                         onClick={handleNext}
                         // disabled={activeStep === maxSteps - 1}
-                        style={{opacity: buttonOpacity}}
+                        style={{ opacity: buttonOpacity }}
                         onMouseOut={() => setButtonOpacity(1)}
-                        onMouseLeave={handleMouseLeave} 
+                        onMouseLeave={handleMouseLeave}
                     >
 
                         {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
@@ -88,13 +87,13 @@ function HouseSlider({ house }) {
                 }
                 backButton={
                     <Button className="stepper-button"
-                    onMouseOut={() => setButtonOpacity(1)}
-                    onMouseLeave={handleMouseLeave} 
-                    style={{opacity: buttonOpacity}}
-                        size="small" onClick={handleBack} 
-                        // disabled={activeStep === 0}>
-                        >
-                            
+                        onMouseOut={() => setButtonOpacity(1)}
+                        onMouseLeave={handleMouseLeave}
+                        style={{ opacity: buttonOpacity }}
+                        size="small" onClick={handleBack}
+                    // disabled={activeStep === 0}>
+                    >
+
                         {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
 
                     </Button>

@@ -9,6 +9,7 @@ const UseFetchHouse = () => {
             try {
                 let houseRes = await HouseService.getHouseList();
                 setHouseList(houseRes.data.content)
+                console.log('ren')
             } catch (error) {
                 console.log('Error fetching house list:', error);
             } finally {
@@ -17,7 +18,7 @@ const UseFetchHouse = () => {
         }
         getHouseLists();
     }, [])
-    return {houseList, loading};
+    return { houseList, loading };
 }
 
 export default UseFetchHouse
