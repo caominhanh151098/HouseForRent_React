@@ -29,33 +29,22 @@ import RefundPolicyTable from '../../Components/admin/policy/RefundPolicyTable';
 
 
 function RoutesAdmin() {
-
-
   return (
     <div className='local-bootstrap'>
-      <Routes>
-        <Route
-          path='/admin/*'
-          element={
-            <Layout>
-              <Routes>
-                <Route path='/' element={<DashBoard />} />
-                <Route path='/tickets' element={<TicketList />} />
-                <Route path='/houses' element={<House />} />
-                <Route path='/houseBan' element={<HouseBan />} />
-                <Route path='/users' element={<UserList />} />
-                <Route path='/banList' element={<UserBan />} />
-                <Route path='/reports' element={<Reports />} />
-                <Route path='/refund' element={<Refund />} />
-                <Route path='/refundPolicy' element={<RefundPolicyTable />} />
-                <Route path='/createRefund' element={<RefundCreate />} />
-              
-              </Routes>
-            </Layout>
-          }
-        />
-       
-      </Routes>
+      <Layout>
+        <Routes>
+          <Route path='/' element={<DashBoard />} />
+          <Route path='/tickets' element={<TicketList />} />
+          <Route path='/houses' element={<House />} />
+          <Route path='/houseBan' element={<HouseBan />} />
+          <Route path='/users' element={<UserList />} />
+          <Route path='/banList' element={<UserBan />} />
+          <Route path='/reports' element={<Reports />} />
+          <Route path='/refund' element={<Refund />} />
+          <Route path='/refundPolicy' element={<RefundPolicyTable />} />
+          <Route path='/createRefund' element={<RefundCreate />} />
+        </Routes>
+      </Layout>
     </div>
   );
 }

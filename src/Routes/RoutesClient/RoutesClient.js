@@ -13,6 +13,7 @@ import WishListDetails from '../../Components/User/WishList/WishListDetails';
 import Error from '../../Components/AirBnb/Error/Error';
 import PrivateRoute from '../../Middlewares/PrivateRoute';
 import UserInfo from '../../Components/User/UserInfo/UserInfo';
+import RoutesError from './../RoutesError/RoutesError';
 const RoutesClient = () => {
   return (
     <Routes>
@@ -33,6 +34,7 @@ const RoutesClient = () => {
       <Route path='/book/:houseID/:CountOld/:CountYoung/:CountBaby/:CountPet/:GoDay/:BackDay/:paymentID/:tnxRef' element={<BookHouse />} />
       <Route path='/error/:houseID/:CountOld/:CountYoung/:CountBaby/:CountPet/:GoDay/:BackDay' element={<ErrorBookBody />} />
       {/* <Route path='*' element={<Error />} /> */}
+      <Route path='/*' Component={RoutesError} />
     </Routes>
   );
 }

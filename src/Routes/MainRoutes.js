@@ -11,10 +11,9 @@ const MainRoutes = () => {
   return (
     <>
       <Routes>
-        <Route path='/' Component={RoutesClient} />
-        <Route path='/host' Component={RoutesHost} />
-        <Route path='/admin' Component={RoutesAdmin} />
-        <Route path='/*' Component={RoutesError} />
+        <Route path='/*' Component={RoutesClient} />
+        <Route path='/host/*' Component={RoutesHost} />
+        <Route path='/admin/*' Component={RoutesAdmin} />
       </Routes>
       {/* <RoutesError/> */}
 

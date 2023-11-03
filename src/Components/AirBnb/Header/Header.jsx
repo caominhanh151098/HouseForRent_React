@@ -891,7 +891,7 @@ const Header = () => {
   const imgRef = useRef(null);
 
   const handleClick = () => {
-    window.location.href = 'http://localhost:3000/';
+    window.location.href = 'https://house-for-rent-psi.vercel.app/';
   };
 
   return (

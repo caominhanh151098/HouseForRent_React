@@ -39,33 +39,33 @@ const RoutesHost = () => {
   return (
     <div className='local-bootstrap'>
       <Routes>
-        <Route path='/host/firstCreateRoom' element={<First_create_room />} />
-        <Route path='/host/create/b1/shareAdd' element={<B1_share_add />} />
-        <Route path='/host/create/b1/chooseType' element={<B1_chooseType />} />
-        <Route path='/host/create/b1/chooseTypeRoom' element={<B1_ChooseTypeRoom />} />
-        <Route path='/host/create/b1/address' element={<B1_address />} />
-        <Route path='/host/create/b1/infor' element={<B1_infor />} />
-        <Route path='/host/create/b1/bathroom' element={<B1_bathroom />} />
-        <Route path='/host/create/second' element={<Second />} />
-        <Route path='/host/create/b2/comfortable' element={<B2_comfortable />} />
-        <Route path='/host/create/b2/uploadImage' element={<B2_uploadImage />} />
-        <Route path='/host/create/b2/title' element={<B2_title />} />
-        <Route path='/host/create/b2/description' element={<B2_description />} />
-        <Route path='/host/create/third' element={<Third />} />
-        <Route path='/host/create/b3/booknow' element={<B3_bookNow />} />
-        <Route path='/host/create/b3/price' element={<B3_price />} />
-        <Route path='/host/create/b3/discount' element={<B3_discount />} />
-        <Route path='/host/create/b3/finish' element={<Finish />} />
-        <Route path='/host/homeList' element={<HomeList />} />
-        <Route path='/host/houseOfHostDetail/:houseID' element={<HouseOfHostDetail />} />
-        <Route path='/host/editRoom/:houseID' element={<EditRoom />} />
-        <Route path='/host/editRule/:houseID' element={<EditRule />} />
-        <Route path='/host/editComfortable/:houseID' element={<EditComfortable />} />
-        <Route path='/host/bookedToday' element={<BookedToday />} />
-        <Route path='/host/AllReservation' element={<AllReservation />} />
-        <Route path='/host/calendar' element={<MultiCalendar />} />
-        <Route path='/host/revenueHost' element={<RevenueHost />} />
-        <Route path='/host/reviews' element={<Reviews />} />
+        <Route path='/firstCreateRoom' element={<First_create_room />} />
+        <Route path='/create/b1/shareAdd' element={<B1_share_add />} />
+        <Route path='/create/b1/chooseType' element={<B1_chooseType />} />
+        <Route path='/create/b1/chooseTypeRoom' element={<B1_ChooseTypeRoom />} />
+        <Route path='/create/b1/address' element={<B1_address />} />
+        <Route path='/create/b1/infor' element={<B1_infor />} />
+        <Route path='/create/b1/bathroom' element={<B1_bathroom />} />
+        <Route path='/create/second' element={<Second />} />
+        <Route path='/create/b2/comfortable' element={<B2_comfortable />} />
+        <Route path='/create/b2/uploadImage' element={<B2_uploadImage />} />
+        <Route path='/create/b2/title' element={<B2_title />} />
+        <Route path='/create/b2/description' element={<B2_description />} />
+        <Route path='/create/third' element={<Third />} />
+        <Route path='/create/b3/booknow' element={<B3_bookNow />} />
+        <Route path='/create/b3/price' element={<B3_price />} />
+        <Route path='/create/b3/discount' element={<B3_discount />} />
+        <Route path='/create/b3/finish' element={<Finish />} />
+        <Route path='/homeList' element={<HomeList />} />
+        <Route path='/houseOfHostDetail/:houseID' element={<HouseOfHostDetail />} />
+        <Route path='/editRoom/:houseID' element={<EditRoom />} />
+        <Route path='/editRule/:houseID' element={<EditRule />} />
+        <Route path='/editComfortable/:houseID' element={<EditComfortable />} />
+        <Route path='/bookedToday' element={<BookedToday />} />
+        <Route path='/AllReservation' element={<AllReservation />} />
+        <Route path='/calendar' element={<MultiCalendar />} />
+        <Route path='/revenueHost' element={<RevenueHost />} />
+        <Route path='/reviews' element={<Reviews />} />
       </Routes>
     </div>
 
