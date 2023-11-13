@@ -5,10 +5,11 @@ import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import FooterFormUser from './../../../User/FooterFormUser';
 import NavbarHosting from './../../LayoutHosting/NavbarHosting';
+import { API_HOST } from '../../../../Services/common';
 function RevenueHost() {
 
     const [house, setHouse] = useState(-1)
-    const [total,setTotal] =useState(0)
+    const [total, setTotal] = useState(0)
     const [start, setStart] = useState({ month: '01', year: '2023' })
     const [end, setEnd] = useState({ month: '10', year: '2023' })
     const [listHouse, setListHouse] = useState([])
@@ -16,7 +17,7 @@ function RevenueHost() {
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPage, setTotalPage] = useState();
     const onPageChange = (pageChange) => {
-        
+
 
         if (pageChange < 0 || pageChange > totalPage - 1 || pageChange === currentPage) {
             return;
@@ -26,13 +27,13 @@ function RevenueHost() {
 
     };
     useEffect(() => {
-        let total=0
+        let total = 0
         listRevenue.forEach(element => {
-            total+=element.totalPrice*97/100
+            total += element.totalPrice * 97 / 100
         });
         setTotal(total)
     }, [listRevenue])
-   
+
 
     const onPageStart = () => {
         setCurrentPage(0);
@@ -170,22 +171,22 @@ function RevenueHost() {
     const getLastDayOfMonth = (year, month) => {
         const nextMonth = new Date(+year, +month);
         const lastDay = new Date(nextMonth - 1);
-        console.log(nextMonth);
 
         let x = year + '-' + month + '-' + lastDay.getDate();
-        console.log(x);
         return x;
     }
     useEffect(() => {
         async function getData() {
 
 
-            let res = await axios.get(`http://localhost:8080/api/host/house/getHouseRevenueHost`,
-            {headers: {
-                'Authorization': `Bearer ${localStorage.getItem("jwt")}`
-            }});
+            let res = await axios.get(API_HOST + `house/getHouseRevenueHost`,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+                    }
+                });
             setListHouse(res.data)
-           
+
         }
         getData();
     }, [])
@@ -193,19 +194,21 @@ function RevenueHost() {
         let startdate = start.year + '-' + start.month + '-01'
         let enddate = getLastDayOfMonth(end.year, end.month)
         async function getData() {
-            let res = await axios.get(`http://localhost:8080/api/host/reservation/getReservationFinish/${house}/${startdate}/${enddate}?page=${currentPage}`,
-            {headers: {
-                'Authorization': `Bearer ${localStorage.getItem("jwt")}`
-            }});
+            let res = await axios.get(API_HOST + `reservation/getReservationFinish/${house}/${startdate}/${enddate}?page=${currentPage}`,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+                    }
+                });
             setRevenue(res.data.content)
             setTotalPage(res.data.totalPages)
         }
         getData();
-    }, [start, end,house,currentPage])
+    }, [start, end, house, currentPage])
     return (
         <>
             <NavbarHosting type={"revenueHost"}></NavbarHosting>
-            <div className='col-9 container-revenue ' style={{marginBottom:"50px"}}>
+            <div className='col-9 container-revenue ' style={{ marginBottom: "50px" }}>
                 <div className='fs-2 mb-5'>Lịch sử giao dịch</div>
                 <div className=' d-flex justify-content-between pb-3 mb-3 border-bottom'>
                     <div className='fs-5'>Các khoản thanh toán đã hoàn tất</div>
@@ -262,7 +265,7 @@ function RevenueHost() {
                 </div>
                 <div className='d-flex justify-content-between mb-3'>
                     <div className='fs-4'> Tổng doanh thu : {total.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ')} </div>
-                    
+
                 </div>
                 {
                     listRevenue.length == 0 ?
@@ -270,40 +273,40 @@ function RevenueHost() {
                             hiện không có giao dịch nào .
                         </div> :
                         <>
-                        <div>
+                            <div>
 
-                        
-                            <table className='col-12 table table-striped' style={{ border: 'solid 1px gray', width: '100%' }}>
-                                <thead>
-                                <td  className='col-2'style={{width:'10%'}}>Khách hàng</td>
-                                    <td className='col-2' style={{width:'25%'}} >Phòng / nhà</td>
-                                    <td className='col-2' style={{width:'10%'}}>Ngày hoàn thành</td>
-                                    <td className='col-2' style={{width:'10%'}}>tổng giá</td>
-                                </thead>
-                                <tbody>
 
-                              
-                                {
-                                    listRevenue.map((item) => (
-                                        <tr key={item.id}>
-                                            <td>{item.user.lastName}</td>
-                                            <td>{item.house.hotelName}</td>
-                                            <td>{(dayjs(item.completeDate)).format('YYYY-MM-DD')}</td>
-                                            <td>{(item.totalPrice*97/100).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ')} </td>
-                                        </tr>
+                                <table className='col-12 table table-striped' style={{ border: 'solid 1px gray', width: '100%' }}>
+                                    <thead>
+                                        <td className='col-2' style={{ width: '10%' }}>Khách hàng</td>
+                                        <td className='col-2' style={{ width: '25%' }} >Phòng / nhà</td>
+                                        <td className='col-2' style={{ width: '10%' }}>Ngày hoàn thành</td>
+                                        <td className='col-2' style={{ width: '10%' }}>tổng giá</td>
+                                    </thead>
+                                    <tbody>
 
-                                    ))
-                                }
-                                  </tbody>
-                            </table>
-                            <ul className="pagination justify-content-center">{renderPagination()}</ul>
+
+                                        {
+                                            listRevenue.map((item) => (
+                                                <tr key={item.id}>
+                                                    <td>{item.user.lastName}</td>
+                                                    <td>{item.house.hotelName}</td>
+                                                    <td>{(dayjs(item.completeDate)).format('YYYY-MM-DD')}</td>
+                                                    <td>{(item.totalPrice * 97 / 100).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ')} </td>
+                                                </tr>
+
+                                            ))
+                                        }
+                                    </tbody>
+                                </table>
+                                <ul className="pagination justify-content-center">{renderPagination()}</ul>
                             </div>
                         </>
                 }
 
             </div>
-          
-            <FooterFormUser/>
+
+            <FooterFormUser />
         </>
     )
 } export default RevenueHost

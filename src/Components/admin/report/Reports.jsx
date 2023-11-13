@@ -28,13 +28,10 @@ import useFetchProfitsReportThisMonth from "../../../Hooks/admin/report/profit/u
 import useFetchProfitsHouseReportThisMonth from "../../../Hooks/admin/report/profit/useFetchProfitsHouseReportThisMonth";
 import useFetchProfitsHouseReportLastMonth from "../../../Hooks/admin/report/profit/useFetchProfitsHouseReportLastMonth";
 import useFetchProfitsReportLastMonth from "../../../Hooks/admin/report/profit/useFetchProfitsReportLastMonth";
-import ReportsProfit from "./ReportsProfit";
 import useFetchUsersThisMonth from "../../../Hooks/admin/report/user/useFetchUsersThisMonth";
 import useFetchUsersLastMonth from "../../../Hooks/admin/report/user/useFetchUsersLastMonth";
 import useFetchHousesReportThisMonth from "../../../Hooks/admin/report/house/useFetchHousesReportThisMonth";
 import useFetchHousesReportLastMonth from "../../../Hooks/admin/report/house/useFetchHousesReportLastMonth";
-import DropdownMenu from "react-bootstrap/esm/DropdownMenu";
-import axios from "axios";
 import useFetchProfitsReportWithDate from "../../../Hooks/admin/report/profit/useFetchProfitsReportWithDate";
 import useFetchProfitsHouseReportWithDate from "../../../Hooks/admin/report/profit/useFetchProfitsHouseReportWithDate";
 import moment from "moment/moment";
@@ -84,9 +81,6 @@ function a11yProps(index) {
 
 
 const Reports = () => {
-
-
-
     const profitThisMonth = useFetchProfitsReportThisMonth();
     const reportHouseThisMonth = useFetchProfitsHouseReportThisMonth();
     const newReportHouseThisMonth = reportHouseThisMonth.filter((item) => item !== undefined)
@@ -573,7 +567,7 @@ const Reports = () => {
                                 <div className="row align-items-sm-center mb-4">
                                     <div className="col-sm mb-3 mb-sm-0">
                                         <div className="d-flex align-items-center">
-                                            <span className="h4">{new Intl.NumberFormat('vn-VN', {style: 'currency', currency: 'VND'}).format(parseFloat(totalPriceProfit)) || 0} </span>
+                                            <span className="h4">{new Intl.NumberFormat('vn-VN', { style: 'currency', currency: 'VND' }).format(parseFloat(totalPriceProfit)) || 0} </span>
                                         </div>
                                     </div>
 
@@ -625,7 +619,7 @@ const Reports = () => {
                                                             <TableCell align="right">{item.user.firstName || ""}</TableCell>
                                                             <TableCell align="right">{item.user.phone || ""}</TableCell>
                                                             <TableCell align="right">{item.user.email || ""}</TableCell>
-                                                            <TableCell align="right">{new Intl.NumberFormat('vi-VN', { style :'currency', currency: 'VND'}).format(parseFloat(item.totalPrice)) || ""}</TableCell>
+                                                            <TableCell align="right">{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(parseFloat(item.totalPrice)) || ""}</TableCell>
                                                         </TableRow>
                                                     ))}
                                                 </TableBody>

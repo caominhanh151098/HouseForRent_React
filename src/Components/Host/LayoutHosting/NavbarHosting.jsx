@@ -25,10 +25,10 @@ function NavbarHosting(props) {
           />
         </Link>
         <div className='d-flex justify-content-between col-5 ' style={{ marginLeft: '100px' }}>
-          <Link className={`item btn-nb fw-bold ${choose == "bookedToday" ? "choosed" : ""} `} to={'/host/BookedToday'}><div className='item' onClick={() => setChoose("bookedToday")}> Hôm nay</div> </Link>
-          <Link className={`item btn-nb fw-bold ${choose == "message" ? "choosed" : ""} `}><div  onClick={() => setChoose("message")} className='item'>Hộp thư đến</div></Link>
-          <Link className={`item btn-nb fw-bold ${choose == "calendar" ? "choosed" : ""} `} to={'/host/calendar'}><div  className='item' onClick={() => setChoose("calendar")}> Lịch</div> </Link>
-          <Link className={`item btn-nb fw-bold ${choose == "revenueHost" ? "choosed" : ""} `} to={'/host/revenueHost'}><div  className='item' onClick={() => setChoose("revenueHost")}>Lịch sử giao dich</div> </Link>
+          <Link className={`item btn-nb fw-bold ${choose === "bookedToday" ? "choosed" : ""} `} to={'/host/BookedToday'}><div className='item' onClick={() => setChoose("bookedToday")}> Hôm nay</div> </Link>
+          <Link className={`item btn-nb fw-bold ${choose === "message" ? "choosed" : ""} `}><div  onClick={() => setChoose("message")} className='item'>Hộp thư đến</div></Link>
+          <Link className={`item btn-nb fw-bold ${choose === "calendar" ? "choosed" : ""} `} to={'/host/calendar'}><div  className='item' onClick={() => setChoose("calendar")}> Lịch</div> </Link>
+          <Link className={`item btn-nb fw-bold ${choose === "revenueHost" ? "choosed" : ""} `} to={'/host/revenueHost'}><div  className='item' onClick={() => setChoose("revenueHost")}>Lịch sử giao dich</div> </Link>
           <div className="dropdown">
             <button className="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
               Menu
@@ -40,11 +40,11 @@ function NavbarHosting(props) {
           </div>
         </div>
         <div style={{ marginLeft: "200px" }}>
-        <div class="dropdown  " >
-  <button class="btn btn-secondary dropdown-toggle  white" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+        <div className="dropdown  " >
+  <button className="btn btn-secondary dropdown-toggle  white" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
   <img style={{ width: '45px', height: '45px', borderRadius: '50%' }} src="https://media.istockphoto.com/id/1016744004/vector/profile-placeholder-image-gray-silhouette-no-photo.jpg?s=612x612&w=0&k=20&c=mB6A9idhtEtsFXphs1WVwW_iPBt37S2kJp6VpPhFeoA=" alt="" />
   </button>
-  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+  <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1">
     <li><Link className="dropdown-item" >Hồ sơ</Link></li>
     <li><Link className="dropdown-item" to={"/account-settings"}>Tài khoản</Link></li>
     <li><Link className="dropdown-item" to={"/"}>Chuyển sang chế độ du lịch</Link></li>

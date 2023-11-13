@@ -2,13 +2,14 @@ import axios from "axios";
 import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
+import { API_ADMIN } from "../../../../Services/common";
 
 const useFetchHousesReportWithDate = (startDate, endDate) => {
     const [houses, setHouses] = useState([]);
 
     useEffect(() => {
         async function getData() {
-            const responses = await axios.get(`http://localhost:8080/api/admin/houses/report?date1=${startDate}&date2=${endDate}`);
+            const responses = await axios.get(API_ADMIN + `houses/report?date1=${startDate}&date2=${endDate}`);
             const dateCountMap = new Map();
 
             responses?.data?.forEach(item => {

@@ -92,7 +92,6 @@ const Header = () => {
       ...data,
       phone: phoneNumber
     }
-    console.log(data);
     setUser(data);
     toggleFormFinishRegister();
   }
@@ -100,12 +99,12 @@ const Header = () => {
   const handleVerifyEmail = () => {
     sendSignInLinkToEmail(auth, user?.email, {
       // this is the URL that we will redirect back to after clicking on the link in mailbox
-      url: 'http://localhost:3000/verify/success',
+      url: 'https://house-for-rent-psi.vercel.app/verify/success',
       handleCodeInApp: true,
     }).then(() => {
       console.log("Đã gửi mail để verify");
     }).catch(err => {
-      console.log("LỖI! không gửi được " + user?.email);
+      console.error("LỖI! không gửi được " + user?.email);
     })
     toggleFormSuccess();
   }
@@ -114,10 +113,6 @@ const Header = () => {
 
   const userInfo = JSON.parse(localStorage.getItem('userInfo'))
   const [render, setRender] = useState(false);
-
-  useEffect(() => {
-    console.log("welcoming", userInfo);
-  }, [userInfo])
 
   useEffect(() => {
     async function verifyEmail() {
@@ -150,7 +145,6 @@ const Header = () => {
         setSuggestions(suggestionsList);
       }
       setIsSelectLocation(false);
-      console.log(suggestions);
     } else {
       setSuggestions([]);
     }
@@ -166,7 +160,6 @@ const Header = () => {
       });
 
       const locations = Array.from(new Set(response.data.map(result => result.display_name.split(',')[0])));
-      console.log(locations);
       return locations;
 
     } catch (error) {
@@ -265,22 +258,18 @@ const Header = () => {
       if (inputValue) {
         axios.get(API_GET_HOUSE_BY_CITY + inputValue)
           .then(resp => {
-            console.log(resp.data);
             setHouseSearchByCity(resp.data);
           })
           .catch(error => {
             console.error('Error fetching houses by city', error);
           })
       } else {
-        console.log("Chưa chọn thành phố");
+        console.error("Chưa chọn thành phố");
       }
       setLoadingSearchByCity(false)
     }, 1300)
     setShowFormHeader(prev => !prev)
   }
-  // useEffect(() => {
-  //   console.log("houseSearchByCity", houseSearchByCity);
-  // }, [houseSearchByCity])
 
   const handleLogOut = () => {
     localStorage.removeItem('jwt');
@@ -407,7 +396,6 @@ const Header = () => {
           setIsOverlayLoginSuccess(true);
         }
       }).catch((err) => {
-        console.log("111111111",err)
         setErrorOTP(true);
         setLoadingSingup(false);
       })
@@ -420,15 +408,13 @@ const Header = () => {
     onCaptchVerify();
     const appVerifier = window.applicationVerifier
     const phone = "+" + selectedCountry?.phone + phoneNumber;
-    console.log(phone);
     signInWithPhoneNumber(auth, phone, appVerifier)
       .then((confirmationResult) => {
         window.confirmationResult = confirmationResult;
-        console.log(confirmationResult);
         toggleContinueWithPhone();
         setLoadingSingup(false);
       }).catch((error) => {
-        console.log(error);
+        console.error(error);
         setLoadingSingup(false);
       });
   }
@@ -449,19 +435,6 @@ const Header = () => {
   const handleChange = (event, value) => {
     setSelectedCountry(value);
   };
-
-
-  if (userInfo) {
-    console.log("Giá trị userInfo được tìm thấy: " + userInfo);
-  } else {
-    console.log("Không có giá trị userInfo trong Local Storage.");
-  }
-
-  if (jwtValue) {
-    console.log("Giá trị jwt được tìm thấy: " + jwtValue);
-  } else {
-    console.log("Không có giá trị jwt trong Local Storage.");
-  }
 
   const countries = [
     { code: 'AD', label: 'Andorra', phone: '376' },
@@ -912,14 +885,14 @@ const Header = () => {
       />
       <header>
         <div className={`overlay ${showFormHeader ? 'active' : ''}`} onClick={() => setShowFormHeader(false)}></div>
-        
-          <img
-            className="img-header"  ref={imgRef} 
-            onClick={handleClick} 
-            src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Airbnb_Logo_B%C3%A9lo.svg/2560px-Airbnb_Logo_B%C3%A9lo.svg.png"
-            alt=""
-          />
-       
+
+        <img
+          className="img-header" ref={imgRef}
+          onClick={handleClick}
+          src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Airbnb_Logo_B%C3%A9lo.svg/2560px-Airbnb_Logo_B%C3%A9lo.svg.png"
+          alt=""
+        />
+
 
         <div className="search-box">
           <div className="button-group">
@@ -943,7 +916,7 @@ const Header = () => {
                   <button className="choices">Trải nghiệm</button>
                   <button className="choices">Trải nghiệm trực tuyến</button>
                   <button className="close-form-header"
-                    onClick={() => setShowFormHeader(false)}><i class="fa-solid fa-xmark"></i></button>
+                    onClick={() => setShowFormHeader(false)}><i className="fa-solid fa-xmark"></i></button>
                 </div>
                 <div className="body-choices">
                   <button onClick={handleSelectLocation}
@@ -981,7 +954,7 @@ const Header = () => {
                     <span style={{ position: 'absolute', left: '24px', top: '32px' }}>Thêm khách</span>
                   </button>
                   <button onClick={handleSearchButtonClick}
-                    className="choices-details5"><i class="fa-solid fa-magnifying-glass"></i> Tìm kiếm</button>
+                    className="choices-details5"><i className="fa-solid fa-magnifying-glass"></i> Tìm kiếm</button>
                 </div>
                 {
                   isSelectLocation && (
@@ -1122,11 +1095,11 @@ const Header = () => {
                 <div className="dropdown-menu-choice">Tin nhắn</div>
                 <Link className="link-user-login"
                   to={'/trip'}>
-                <div className="dropdown-menu-choice">Chuyến đi</div>
+                  <div className="dropdown-menu-choice">Chuyến đi</div>
                 </Link>
                 <Link className="link-user-login"
                   to={'/wish-lists'}>
-                <div className="dropdown-menu-choice">Danh sách yêu thích</div>
+                  <div className="dropdown-menu-choice">Danh sách yêu thích</div>
                 </Link>
                 <hr />
                 {
@@ -1180,7 +1153,7 @@ const Header = () => {
               <div id="recaptcha-container" />
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <i style={{ marginRight: '25%' }}
-                  onClick={toggleLoginForm} class="fa-solid fa-xmark close-description" ></i>
+                  onClick={toggleLoginForm} className="fa-solid fa-xmark close-description" ></i>
                 <h2>Đăng nhập hoặc đăng ký</h2>
               </div>
               <hr />
@@ -1245,7 +1218,7 @@ const Header = () => {
               {
                 loadingSingup ? (
                   <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    <div class="loadingio-spinner-ellipsis-bpnxs5xwm1u"><div class="ldio-8ew4rgpfv3q">
+                    <div className="loadingio-spinner-ellipsis-bpnxs5xwm1u"><div className="ldio-8ew4rgpfv3q">
                       <div></div><div></div><div></div><div></div><div></div>
                     </div></div>
                   </div>
@@ -1286,7 +1259,7 @@ const Header = () => {
             <div className={`appearing-div ${isOverLayContinueWithPhone ? 'active' : ''}`}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <i style={{ marginRight: '20%' }}
-                  onClick={toggleContinueWithPhone} class="fa-solid fa-chevron-left close-description" ></i>
+                  onClick={toggleContinueWithPhone} className="fa-solid fa-chevron-left close-description" ></i>
                 <h2>Xác nhận số điện thoại của bạn</h2>
               </div>
               <hr />
@@ -1302,7 +1275,7 @@ const Header = () => {
                 <h3 className="another-choice-continue-with-otp">Lựa chọn khác</h3>
                 {
                   loadingSingup ? (
-                    <div class="loadingio-spinner-ellipsis-bpnxs5xwm1u"><div class="ldio-8ew4rgpfv3q">
+                    <div className="loadingio-spinner-ellipsis-bpnxs5xwm1u"><div className="ldio-8ew4rgpfv3q">
                       <div></div><div></div><div></div><div></div><div></div>
                     </div></div>
                   ) : (
@@ -1322,7 +1295,7 @@ const Header = () => {
             <div className={`appearing-div ${isOverLayRegisterForm ? 'active' : ''}`} style={{ width: "600px" }}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <i style={{ marginRight: '31%' }}
-                  onClick={toggleRegisterForm} class="fa-solid fa-xmark close-description" ></i>
+                  onClick={toggleRegisterForm} className="fa-solid fa-xmark close-description" ></i>
                 <h3>Hoàn tất đăng ký</h3>
               </div>
               <hr />
@@ -1470,7 +1443,7 @@ const Header = () => {
                 <h1>Airbnb là nơi mà tất cả mọi người đều có thể cảm thấy là một cộng đồng dành cho họ.</h1>
                 <div style={{ margin: "24px 0px", color: "gray" }}>Để đảm bảo điều này, chúng tôi đề nghị bạn cam kết như sau:</div>
                 <div style={{ margin: "24px 0px", color: "gray" }}>Tôi đồng ý sẽ đối xử với tất cả mọi người trong cộng đồng Airbnb một cách tôn trọng và không phán xét hay thành kiến, bất kể chủng tộc, tôn giáo, nguồn gốc quốc gia, dân tộc, màu da, tình trạng khuyết tật, giới tính, bản dạng giới, khuynh hướng tình dục hoặc tuổi tác.</div>
-                <div>Tìm hiểu thêm <i class="fa-solid fa-chevron-right"></i></div>
+                <div>Tìm hiểu thêm <i className="fa-solid fa-chevron-right"></i></div>
                 <div style={{ display: "flex", justifyContent: 'center', flexDirection: "column", width: "111.5%", marginLeft: "-2%", marginTop: "32px" }}>
                   <GradientButton onClick={handleAcceptRegistrationTermsAndCreateUser}>Đồng ý và tiếp tục</GradientButton>
                   <button className="button-form" onClick={toggleFormFinishRegister}>Từ chối</button>
@@ -1484,7 +1457,7 @@ const Header = () => {
             <div className={`appearing-div ${isOverLayVerifyEmail ? 'active' : ''}`} style={{ width: "600px" }}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <i style={{ marginRight: '25%' }}
-                  onClick={toggleVerifyEmailForm} class="fa-solid fa-xmark close-description" ></i>
+                  onClick={toggleVerifyEmailForm} className="fa-solid fa-xmark close-description" ></i>
                 <h2>Xác nhận tài khoản</h2>
               </div>
               <hr />
@@ -1492,9 +1465,9 @@ const Header = () => {
                 <h2>Giúp chúng tôi xác minh danh tính của bạn</h2>
                 <div>Để tiếp tục, bạn cần xác nhận tài khoản của mình thông qua một trong các tùy chọn sau.</div>
                 <button className="button-verify-email" onClick={handleVerifyEmail}>
-                  <i class="fa-regular fa-envelope icon-veriry-email" ></i>
+                  <i className="fa-regular fa-envelope icon-veriry-email" ></i>
                   <h3>Email</h3>
-                  <i class="fa-solid fa-chevron-right icon-veriry-email"></i>
+                  <i className="fa-solid fa-chevron-right icon-veriry-email"></i>
                 </button>
               </div>
               <hr />
@@ -1507,7 +1480,7 @@ const Header = () => {
             <div className={`appearing-div ${isOverFormSuccess ? 'active' : ''}`} style={{ width: "600px" }}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <i style={{ marginRight: '26%' }}
-                  onClick={toggleFormSuccess} class="fa-solid fa-xmark close-description" ></i>
+                  onClick={toggleFormSuccess} className="fa-solid fa-xmark close-description" ></i>
                 <h2>Đăng ký tài khoản</h2>
               </div>
               <hr />
@@ -1534,7 +1507,7 @@ const Header = () => {
             <div className={`appearing-div ${isOverlayLoginSuccess ? 'active' : ''}`} style={{ width: '666px' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 {/* <i style={{ marginRight: '21%' }}
-                  onClick={toggleLoginSuccess} class="fa-solid fa-chevron-left close-description" ></i> */}
+                  onClick={toggleLoginSuccess} className="fa-solid fa-chevron-left close-description" ></i> */}
                 <h1>Đăng nhập thành công</h1>
               </div>
               <hr />

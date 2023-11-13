@@ -180,7 +180,7 @@ const Body = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                let url = `http://localhost:8080/api/house/filter?minGuests=${minGuests}&minRooms=${minRooms}&minBeds=${minBeds}&minBathrooms=${minBathrooms}`;
+                let url = `https://quarter-rois.cghue.com/api/house/filter?minGuests=${minGuests}&minRooms=${minRooms}&minBeds=${minBeds}&minBathrooms=${minBathrooms}`;
                 if (comfortableIds.length > 0) {
                     url += `&comfortableIds=${comfortableIds.join(',')}`;
                 }
@@ -197,7 +197,6 @@ const Body = () => {
 
                 const response = await fetch(url);
                 const data = await response.json();
-                console.log(data, 'filter');
                 if (tempHouseFilter.length === 0) {
                     setTempHouseFilter(data);
                 }
@@ -497,15 +496,13 @@ const Body = () => {
 
         return divIcon({
             className: ' test',
-            html: `<div class='custom-div-icon-leaflet'> 
+            html: `<div className='custom-div-icon-leaflet'> 
         ${formatPrice} 
       </div>`,
         });
     };
 
     useEffect(() => {
-        // console.log('house', houseList)
-
         if (houseList && houseList.length > 0) {
 
             const locations = houseList && houseList?.map(item => {
@@ -531,8 +528,6 @@ const Body = () => {
 
 
     useEffect(() => {
-        // console.log('house', houseList)
-
         if (houseSearchByCity && houseSearchByCity.length > 0) {
 
             const locations = houseSearchByCity && houseSearchByCity?.map(item => {
@@ -554,10 +549,6 @@ const Body = () => {
             setRoomLocationsByCity(locations);
         }
     }, [houseSearchByCity]);
-
-
-    // console.log("roomLocations", roomLocations);
-
     const mapRef = useRef();
 
 
@@ -600,7 +591,6 @@ const Body = () => {
             navigator.geolocation.getCurrentPosition((position) => {
                 const { latitude, longitude } = position.coords;
                 setUserLocation([latitude, longitude]);
-                // console.log(userLocation);
             });
         } else {
             alert('Trình duyệt không hỗ trợ xác định vị trí.');
@@ -945,7 +935,7 @@ const Body = () => {
                     }
                 }
             } catch (err) {
-                console.log('Lỗi khi thêm');
+                console.error('Lỗi khi thêm');
             }
         }
     }
@@ -978,7 +968,7 @@ const Body = () => {
                 <div className="category-container">
                     <div className={`overlay ${showFilterForm ? 'active' : ''}`} onClick={() => setShowFilterForm(false)}></div>
                     <div className="category-container">
-                        <button className="arrow left-arrow" onClick={handleLeftArrowClick}><i class="fa-solid fa-circle-chevron-left"></i></button>
+                        <button className="arrow left-arrow" onClick={handleLeftArrowClick}><i className="fa-solid fa-circle-chevron-left"></i></button>
                         <div className="category" style={updateCategoryPosition()} >
                             {categories.map((item, index) => (
                                 <div key={index}
@@ -994,12 +984,12 @@ const Body = () => {
                                 </div>
                             ))}
                         </div>
-                        <button className="arrow right-arrow" onClick={handleRightArrowClick}><i class="fa-solid fa-circle-chevron-right"></i></button>
+                        <button className="arrow right-arrow" onClick={handleRightArrowClick}><i className="fa-solid fa-circle-chevron-right"></i></button>
                     </div>
-                    <div class="filter-button" id="filterButton">
-                        <button class={`filter-icon ${filteredResultCount > 0 ? 'btn-filter-condition' : ''}`}
+                    <div className="filter-button" id="filterButton">
+                        <button className={`filter-icon ${filteredResultCount > 0 ? 'btn-filter-condition' : ''}`}
                             onClick={handleShowFilterForm}>
-                            <i class="fa-solid fa-filter"></i> Bộ lọc</button>
+                            <i className="fa-solid fa-filter"></i> Bộ lọc</button>
                         {
                             filteredResultCount > 0 && (
                                 <div className='count-filter-results'>{filteredResultCount}</div>
@@ -1012,7 +1002,7 @@ const Body = () => {
                                 <div className="filter-form">
                                     <div>
                                         <h2 style={{ marginTop: '-13px' }}>Bộ lọc</h2>
-                                        <button onClick={() => setShowFilterForm(false)} className='closeFilter'><i class="fa-solid fa-xmark"></i></button>
+                                        <button onClick={() => setShowFilterForm(false)} className='closeFilter'><i className="fa-solid fa-xmark"></i></button>
                                     </div>
                                     <hr className='hr' />
                                     <div className='scroll-filter'>
@@ -1106,21 +1096,21 @@ const Body = () => {
                                                         setCategoryIds(1);
                                                     }}
                                                 >
-                                                    <i class="fa-solid fa-house-chimney"></i> <br /> Nhà
+                                                    <i className="fa-solid fa-house-chimney"></i> <br /> Nhà
                                                 </button>
                                                 <button className={`typeofhouse ${selectedHouseType === 'apartment' ? 'selected-type-of-house' : ''}`}
                                                     onClick={() => {
                                                         setSelectedHouseType('apartment')
                                                         setCategoryIds(2);
                                                     }}>
-                                                    <i class="fa-solid fa-building"></i> <br />Căn hộ
+                                                    <i className="fa-solid fa-building"></i> <br />Căn hộ
                                                 </button>
                                                 <button className={`typeofhouse ${selectedHouseType === 'hotel' ? 'selected-type-of-house' : ''}`}
                                                     onClick={() => {
                                                         setSelectedHouseType('hotel')
                                                         setCategoryIds(3);
                                                     }}>
-                                                    <i class="fa-solid fa-hotel"></i> <br />Nhà khách
+                                                    <i className="fa-solid fa-hotel"></i> <br />Nhà khách
                                                 </button>
                                             </div>
                                         </div>
@@ -1267,10 +1257,10 @@ const Body = () => {
                         </div>
                     </button>
                 </div>
-                <div class="spinner" style={{ display: showSpinner ? 'block' : 'none' }}>
-                    <div class="bounce1"></div>
-                    <div class="bounce2"></div>
-                    <div class="bounce3"></div>
+                <div className="spinner" style={{ display: showSpinner ? 'block' : 'none' }}>
+                    <div className="bounce1"></div>
+                    <div className="bounce2"></div>
+                    <div className="bounce3"></div>
                 </div>
 
                 <button className='show-map' onClick={handleShowMap}>
@@ -1280,7 +1270,7 @@ const Body = () => {
                     showBtnCurrentLocation && (
                         <button className='btn-show-current-location'
                             onClick={handleShowCurrentLocation}>
-                            <i class="fa-solid fa-location-crosshairs"></i>
+                            <i className="fa-solid fa-location-crosshairs"></i>
                         </button>
                     )
                 }
@@ -1336,7 +1326,7 @@ const Body = () => {
                 ) :
                     loadingSearchByCity ?
                         (
-                            <div class="cssload-preloader">
+                            <div className="cssload-preloader">
                                 <span>L</span>
                                 <span>o</span>
                                 <span>a</span>
@@ -1365,7 +1355,7 @@ const Body = () => {
                                                                         <div className='outer-div' style={{ right: '-210px' }}
                                                                             onMouseEnter={() => toggleHover(index)} onMouseLeave={() => toggleHover(null)}>
                                                                             <i onClick={() => { handleRemoveFavorite(house.id) }}
-                                                                                class="fa-solid fa-heart" style={{ color: '#f21202' }}></i>
+                                                                                className="fa-solid fa-heart" style={{ color: '#f21202' }}></i>
                                                                         </div>
                                                                     ) : (
                                                                         <div className='outer-div' style={{ right: '-210px' }}
@@ -1389,7 +1379,7 @@ const Body = () => {
                                                         <div style={{ marginTop: '13px' }} className="listing-header">
                                                             <h3 className="hotel-name">{house?.location?.address}</h3>
                                                             {/* <span className="review">
-                                                    <i class="fa-solid fa-star"></i>&nbsp;{house?.review}</span> */}
+                                                    <i className="fa-solid fa-star"></i>&nbsp;{house?.review}</span> */}
                                                         </div>
                                                         <span>{formattedToday} - {formattedFutureDate}</span>
                                                         <p style={{ marginTop: '10px' }}><span style={{ fontWeight: 'bold' }}>{formatCurrency(house.price)} </span>/ đêm</p>
@@ -1490,7 +1480,7 @@ const Body = () => {
                                                                         <div className='outer-div'
                                                                             onMouseEnter={() => toggleHover(index)} onMouseLeave={() => toggleHover(null)}>
                                                                             <i onClick={() => { handleRemoveFavorite(house.id) }}
-                                                                                class="fa-solid fa-heart" style={{ color: '#f21202' }}></i>
+                                                                                className="fa-solid fa-heart" style={{ color: '#f21202' }}></i>
                                                                         </div>
                                                                     ) : (
                                                                         <div className='outer-div'
@@ -1514,7 +1504,7 @@ const Body = () => {
                                                         <div style={{ marginTop: '13px' }} className="listing-header">
                                                             <h3 className="hotel-name">{house?.location?.address}</h3>
                                                             {/* <span className="review">
-                                                        <i class="fa-solid fa-star"></i>&nbsp;{house?.review}</span> */}
+                                                        <i className="fa-solid fa-star"></i>&nbsp;{house?.review}</span> */}
                                                         </div>
                                                         <span>{formattedToday} - {formattedFutureDate}</span>
                                                         <p style={{ marginTop: '10px' }}><span style={{ fontWeight: 'bold' }}>{formatCurrency(house.price)} </span>/ đêm</p>
@@ -1542,7 +1532,7 @@ const Body = () => {
                                                                                 <div className='outer-div'
                                                                                     onMouseEnter={() => toggleHover(index)} onMouseLeave={() => toggleHover(null)}>
                                                                                     <i onClick={() => { handleRemoveFavorite(house.id) }}
-                                                                                        class="fa-solid fa-heart" style={{ color: '#f21202' }}></i>
+                                                                                        className="fa-solid fa-heart" style={{ color: '#f21202' }}></i>
                                                                                 </div>
                                                                             ) : (
                                                                                 <div className='outer-div'
@@ -1562,13 +1552,13 @@ const Body = () => {
                                                                         {/* <i style={{color: "revert"}} className="fa-brands fa-gratipay icon-conmemya"></i> */}
                                                                     </div>
                                                                 </div>
-                                                                {/* <i style={{color: "revert"}} class="fa-brands fa-gratipay icon-conmemya"></i> */}
+                                                                {/* <i style={{color: "revert"}} className="fa-brands fa-gratipay icon-conmemya"></i> */}
                                                             </div>
                                                             <div>
                                                                 <div style={{ marginTop: '13px' }} className="listing-header">
                                                                     <h3 className="hotel-name">{house?.location?.address}</h3>
                                                                     {/* <span className="review">
-                                                                <i class="fa-solid fa-star"></i>&nbsp;{house?.review}</span> */}
+                                                                <i className="fa-solid fa-star"></i>&nbsp;{house?.review}</span> */}
                                                                 </div>
                                                                 <span>{formattedToday} - {formattedFutureDate}</span>
                                                                 <p style={{ marginTop: '10px' }}><span style={{ fontWeight: 'bold' }}>{formatCurrency(house.price)} </span>/ đêm</p>
@@ -1586,7 +1576,7 @@ const Body = () => {
                         <div className={`appearing-div ${isOverLayOpenFormWishList ? 'active' : ''}`}>
                             <div style={{ display: 'flex', alignItems: 'center' }}>
                                 <i style={{ marginRight: '20%' }}
-                                    onClick={toggleOpenFormWishList} class="fa-solid fa-chevron-left close-description" ></i>
+                                    onClick={toggleOpenFormWishList} className="fa-solid fa-chevron-left close-description" ></i>
                                 <h2>Thêm vào Danh sách yêu thích</h2>
                             </div>
                             <hr style={{ marginBottom: '4%' }} />
@@ -1621,7 +1611,7 @@ const Body = () => {
                         <div className={`appearing-div ${isOverLayOpenFormCreatNewWishList ? 'active' : ''}`} style={{ width: '555px' }}>
                             <div style={{ display: 'flex', alignItems: 'center' }}>
                                 <i style={{ marginRight: '24%' }}
-                                    onClick={toggleOpenFormCreatNewWishList} class="fa-solid fa-chevron-left close-description" ></i>
+                                    onClick={toggleOpenFormCreatNewWishList} className="fa-solid fa-chevron-left close-description" ></i>
                                 <h2>Tạo Danh sách yêu thích</h2>
                             </div>
                             <hr />

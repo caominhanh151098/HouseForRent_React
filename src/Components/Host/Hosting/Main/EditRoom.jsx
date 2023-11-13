@@ -8,6 +8,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import NavbarHosting from './../../LayoutHosting/NavbarHosting';
+import { API_HOST } from '../../../../Services/common';
 
 const style = {
     position: 'absolute',
@@ -15,7 +16,7 @@ const style = {
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: '100%',
-    
+
     bgcolor: 'background.paper',
     border: '1px solid white',
     boxShadow: 24,
@@ -34,7 +35,7 @@ function EditRoom() {
 
     const [openBed, setOnpenBed] = React.useState(false);
     const handleOpenBed = () => setOnpenBed(true);
-    const handleCloseBed = () =>{
+    const handleCloseBed = () => {
         setBed([{ type: "SINGLE", quantity: 0 },
         { type: "KING", quantity: 0 },
         { type: "QUEEN", quantity: 0 },
@@ -42,7 +43,7 @@ function EditRoom() {
         { type: "SOFA", quantity: 0 },
         { type: "COUCH", quantity: 0 }]);
         setOnpenBed(false);
-    } 
+    }
 
     const [RoomEdit, setRoomEdit] = useState()
     const { houseID } = useParams();
@@ -59,13 +60,15 @@ function EditRoom() {
     { type: "COUCH", quantity: 0 }])
     useEffect(() => {
         async function getData() {
-            let res = await axios.get(`http://localhost:8080/api/host/house/houseOfHostDetail/${houseID}`,{ headers: {
-                'Authorization': `Bearer ${localStorage.getItem("jwt")}`
-            }});
+            let res = await axios.get(API_HOST + `house/houseOfHostDetail/${houseID}`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+                }
+            });
             sethouseOfHostDetail(res.data)
         }
         getData();
-    }, [open, openImage,openBed])
+    }, [open, openImage, openBed])
     const handlesetUpdateRoom = (index) => {
         let newList = []
         let check = false
@@ -95,16 +98,16 @@ function EditRoom() {
         });
         return check
     }
-    const handleLog = () => {
-        console.log(updateRoom);
-    }
+
     const handleUpdateQuantity = () => {
 
         async function getData2() {
 
-            let res2 = await axios.get(`http://localhost:8080/api/host/house/edit/quantityRoomBedBath/${houseID}/${newQuantityRoom}/${newQuantityOfBathrooms}`,{ headers: {
-                'Authorization': `Bearer ${localStorage.getItem("jwt")}`
-            }});
+            let res2 = await axios.get(API_HOST + `house/edit/quantityRoomBedBath/${houseID}/${newQuantityRoom}/${newQuantityOfBathrooms}`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+                }
+            });
 
         }
         getData2();
@@ -113,10 +116,12 @@ function EditRoom() {
 
         async function getData2() {
 
-            let res2 = await axios.post(`http://localhost:8080/api/host/house/edit/chooseImage/${RoomEdit}`, imageChoosed, 
-            { headers: {
-                'Authorization': `Bearer ${localStorage.getItem("jwt")}`
-            }});
+            let res2 = await axios.post(API_HOST + `house/edit/chooseImage/${RoomEdit}`, imageChoosed,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+                    }
+                });
 
         }
         getData2();
@@ -133,12 +138,11 @@ function EditRoom() {
         } else {
             setImageChoosed([...imageChoosed, imageId])
         }
-        console.log(imageChoosed);
     }
 
     const handleSetBed = (item) => {
         let list = []
-        let Bed=[]
+        let Bed = []
         let checkInclue = (x, y) => {
             let check = false
             y.forEach(element => {
@@ -159,15 +163,17 @@ function EditRoom() {
         });
         setBed(list)
     }
-    
-    const handleUpdateBed=()=>{
-        
+
+    const handleUpdateBed = () => {
+
         async function getData2() {
-            
-            let res2 = await axios.post(`http://localhost:8080/api/host/house/edit/updateBed/${RoomEdit}`, bed, 
-            { headers: {
-                'Authorization': `Bearer ${localStorage.getItem("jwt")}`
-            }});
+
+            let res2 = await axios.post(API_HOST + `house/edit/updateBed/${RoomEdit}`, bed,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+                    }
+                });
 
         }
         getData2();
@@ -176,7 +182,7 @@ function EditRoom() {
         <>
             <NavbarHosting></NavbarHosting>
             <div className='col-9' style={{ marginLeft: '200px' }}>
-            <div className='fs-5 text-decoration-underline ms-5'><Link style={{color:'black'}} to={`/host/houseOfHostDetail/${houseID}`}> <i class="fa-solid fa-chevron-left fa-2xs"></i> Quay lại</Link></div>
+                <div className='fs-5 text-decoration-underline ms-5'><Link style={{ color: 'black' }} to={`/host/houseOfHostDetail/${houseID}`}> <i class="fa-solid fa-chevron-left fa-2xs"></i> Quay lại</Link></div>
 
                 <h3 className='mb-3'>Phòng và không gian</h3>
                 <p className='mb-5'>Thêm hoặc chỉnh sửa khu vực mà khách có thể sử dụng</p>
@@ -303,9 +309,9 @@ function EditRoom() {
                                                     </div>
                                                     <div onClick={() => {
                                                         handleOpenBed();
-       
+
                                                         setRoomEdit(item.id);
-                                                         handleSetBed(item.beds);
+                                                        handleSetBed(item.beds);
                                                     }} className='fs-5 me-5 text-decoration-underline'>
                                                         Chỉnh sửa
                                                     </div>

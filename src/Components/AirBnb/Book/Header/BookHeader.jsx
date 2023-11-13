@@ -12,7 +12,7 @@ const BookHeader = () => {
           alt=""
         />
       </Link>
-      <hr className='book-hr'/>
+      <hr className='book-hr' />
     </div>
   )
 }

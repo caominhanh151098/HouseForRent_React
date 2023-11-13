@@ -29,38 +29,37 @@ function B2_uploadImage() {
     const navigate = useNavigate();
     const handleSelectAvatar = (e, id) => {
 
-         const temporaryAvatarUrl = 'URL.createObjectURL(e.target.files[0])';
-       const temporaryAvatarUrlList=[]
-       for (let index = 0; index < e.target.files.length; index++) {
+        const temporaryAvatarUrl = 'URL.createObjectURL(e.target.files[0])';
+        const temporaryAvatarUrlList = []
+        for (let index = 0; index < e.target.files.length; index++) {
             temporaryAvatarUrlList.push({
-                file:e.target.files[index],
-                fakeUrl : URL.createObjectURL(e.target.files[index])
+                file: e.target.files[index],
+                fakeUrl: URL.createObjectURL(e.target.files[index])
             }
-                
-                )
-       }      
-        console.log(temporaryAvatarUrlList);
+
+            )
+        }
         let newSelectedAvatar = []
         let check = false
         selectAvatar.forEach(element => {
             if (id == element.id && id == selectAvatar.length - 1) {
-                temporaryAvatarUrlList.forEach((item,i) => {
+                temporaryAvatarUrlList.forEach((item, i) => {
                     newSelectedAvatar.push({
-                        id: id +i,
+                        id: id + i,
                         file: item.file,
                         fakeUrl: item.fakeUrl
                     })
                 });
-              
+
                 newSelectedAvatar.push({
                     id: id + temporaryAvatarUrlList.length,
                     file: null,
                     fakeUrl: null
                 })
             } else if (id == element.id) {
-                temporaryAvatarUrlList.forEach((item,i) => {
+                temporaryAvatarUrlList.forEach((item, i) => {
                     newSelectedAvatar.push({
-                        id: id +i,
+                        id: id + i,
                         file: item.file,
                         fakeUrl: item.fakeUrl
                     })
@@ -75,49 +74,38 @@ function B2_uploadImage() {
     }
 
     const handleUploadAvatar = async () => {
-        
+
         let list = [...uploadedAvatar]
         await selectAvatar.forEach(async (element) => {
 
             if (element.id != selectAvatar.length - 1 && element.file != null) {
 
                 let uploadResult = await UploadService.uploadAvatar(element.file);
-                if(element.id==selectAvatar.length-2){setUploading(false)}
+                if (element.id == selectAvatar.length - 2) { setUploading(false) }
                 if (uploadResult?.data.url) {
                     list = ([...list, uploadResult?.data.url]
 
                     );
                     setUploadedAvatar([...list])
-                    console.log(list);
-                   
-
-
                 }
 
                 toast.info("uploaded success", { position: "top-right", autoClose: 1 * 1000 });
-            } else if(element.id != selectAvatar.length - 1) { 
-                list=([...list,element.fakeUrl])
+            } else if (element.id != selectAvatar.length - 1) {
+                list = ([...list, element.fakeUrl])
                 setUploadedAvatar([...list])
-                if(element.id==selectAvatar.length-2){setUploading(false)}
+                if (element.id == selectAvatar.length - 2) { setUploading(false) }
             }
-             
-        });
 
-        
+        });
     }
-    const handleLog = () => {
-        console.log(uploadedAvatar);
-    }
+
     return (
         <>
-              <ToastContainer/>
+            <ToastContainer />
             <Navbar_create_room></Navbar_create_room>
             <div className="col-7" style={{ marginLeft: '300px' }}>
                 <div className="fs-3 mb-5">Bổ sung một số bức ảnh chụp chỗ ở thuộc danh mục nhà của bạn</div>
-                <div className="fs-4 mb-5">Bạn sẽ cần 5 bức ảnh để bắt đầu. Về sau, bạn vẫn có thể đăng thêm hoặc thay đổi ảnh.
-
-                   
-                </div>
+                <div className="fs-4 mb-5">Bạn sẽ cần 5 bức ảnh để bắt đầu. Về sau, bạn vẫn có thể đăng thêm hoặc thay đổi ảnh.</div>
                 <div className="d-flex flex-wrap">
                     {
 
@@ -153,24 +141,24 @@ function B2_uploadImage() {
                     quay lại
                 </Link>
                 {
-                    selectAvatar.length<6 && uploading==false && uploadedAvatar.length==0?
-                    <div><button className="btn bg-dark text-white me-5 mb-5 disabled"> Upload</button></div>:
-                    selectAvatar.length>=6 && uploading==false&&uploadedAvatar.length==0?
-                    <div><button className="btn bg-dark text-white me-5 mb-5 " onClick={()=>{setUploading(true);handleUploadAvatar()}}> Upload</button></div>:
-                    uploading==true?
-                    <div><button className="btn btn-sm btn-dark" type="button" disabled="">
-                    <span
-                        className="spinner-border spinner-border-sm"
-                        role="status"
-                        aria-hidden="true"
-                    />
-                    Uploading...
-                </button></div>:
-                    uploading==false?
-                    <div><Link className="" to={'/host/create/b2/title'}> <button onClick={() => { CreateRoom.setCreateRoom({ ...CreateRoom.getCreateRoom(), imageList: uploadedAvatar }) }} className='btn bg-dark text-white me-5 mb-5 ' >Tiếp theo</button></Link></div>
-                    :""
+                    selectAvatar.length < 6 && uploading == false && uploadedAvatar.length == 0 ?
+                        <div><button className="btn bg-dark text-white me-5 mb-5 disabled"> Upload</button></div> :
+                        selectAvatar.length >= 6 && uploading == false && uploadedAvatar.length == 0 ?
+                            <div><button className="btn bg-dark text-white me-5 mb-5 " onClick={() => { setUploading(true); handleUploadAvatar() }}> Upload</button></div> :
+                            uploading == true ?
+                                <div><button className="btn btn-sm btn-dark" type="button" disabled="">
+                                    <span
+                                        className="spinner-border spinner-border-sm"
+                                        role="status"
+                                        aria-hidden="true"
+                                    />
+                                    Uploading...
+                                </button></div> :
+                                uploading == false ?
+                                    <div><Link className="" to={'/host/create/b2/title'}> <button onClick={() => { CreateRoom.setCreateRoom({ ...CreateRoom.getCreateRoom(), imageList: uploadedAvatar }) }} className='btn bg-dark text-white me-5 mb-5 ' >Tiếp theo</button></Link></div>
+                                    : ""
                 }
-                
+
             </div>
         </>
     )

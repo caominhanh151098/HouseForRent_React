@@ -59,7 +59,7 @@ function B1_infor() {
                 <div className='d-flex justify-content-between mb-5' style={{ borderBottom: 'solid 1px' }} >
                     <div className='fs-4 '>Phòng</div>
                     <div className='d-flex col-6 '>
-                    <button style={{ width: '32px', height: '32px', borderRadius: '50%', border: 'solid 1px' }} className={`  me-4 ms-4 ${roomQuantity == 1 ? 'disabled' : ''}`} onClick={handleDescreaseRoom} >-</button>
+                        <button style={{ width: '32px', height: '32px', borderRadius: '50%', border: 'solid 1px' }} className={`  me-4 ms-4 ${roomQuantity == 1 ? 'disabled' : ''}`} onClick={handleDescreaseRoom} >-</button>
                         <p>{roomQuantity}</p>
                         <button style={{ width: '32px', height: '32px', borderRadius: '50%', border: 'solid 1px' }} className='  me-4 ms-4' onClick={handleIncreaseRoom}>+</button>
                     </div>
@@ -67,7 +67,7 @@ function B1_infor() {
                 <div className='d-flex justify-content-between mb-5' style={{ borderBottom: 'solid 1px' }} >
                     <div className='fs-4 '>Giường</div>
                     <div className='d-flex col-6 '>
-                    <button style={{ width: '32px', height: '32px', borderRadius: '50%', border: 'solid 1px' }} className={`  me-4 ms-4 ${bedQuantity == 1 ? 'disabled' : ''}`} onClick={handleDescreaseBed}>-</button>
+                        <button style={{ width: '32px', height: '32px', borderRadius: '50%', border: 'solid 1px' }} className={`  me-4 ms-4 ${bedQuantity == 1 ? 'disabled' : ''}`} onClick={handleDescreaseBed}>-</button>
                         <p>{bedQuantity}</p>
                         <button style={{ width: '32px', height: '32px', borderRadius: '50%', border: 'solid 1px' }} className='  me-4 ms-4' onClick={handleIncreaseBed}>+</button>
                     </div>
@@ -75,7 +75,7 @@ function B1_infor() {
                 <div className='d-flex justify-content-between mb-5' style={{ borderBottom: 'solid 1px' }} >
                     <div className='fs-4 '>Phòng tắm</div>
                     <div className='d-flex col-6 '>
-                    <button style={{ width: '32px', height: '32px', borderRadius: '50%', border: 'solid 1px' }} className={`  me-4 ms-4 ${bathroomQuantity == 1 ? 'disabled' : ''}`} onClick={handleDescreaseBathroom}>-</button>
+                        <button style={{ width: '32px', height: '32px', borderRadius: '50%', border: 'solid 1px' }} className={`  me-4 ms-4 ${bathroomQuantity == 1 ? 'disabled' : ''}`} onClick={handleDescreaseBathroom}>-</button>
                         <p>{bathroomQuantity}</p>
                         <button style={{ width: '32px', height: '32px', borderRadius: '50%', border: 'solid 1px' }} className='  me-4 ms-4' onClick={handleIncreaseBathroom}>+</button>
                     </div>

@@ -11,6 +11,7 @@ import { DateRangePicker } from '@mui/x-date-pickers-pro/DateRangePicker';
 import Dropdown from 'react-bootstrap/Dropdown';
 import "../Main/CssHosting/Hosting.css"
 import NavbarHosting from './../../LayoutHosting/NavbarHosting';
+import { API_HOST } from '../../../../Services/common';
 
 function AllReservation() {
     const [showList, setShowList] = useState([])
@@ -25,8 +26,6 @@ function AllReservation() {
     ]);
     const [showFilterForm, setShowFilterForm] = useState(false)
     const onPageChange = (pageChange) => {
-        console.log(pageChange);
-
         if (pageChange < 0 || pageChange > totalPage - 1 || pageChange === currentPage) {
             return;
         }
@@ -37,7 +36,7 @@ function AllReservation() {
 
     useEffect(() => {
         handleShowList(type)
-    }, [currentPage,startDate,endDate])
+    }, [currentPage, startDate, endDate])
 
     const onPageStart = () => {
         setCurrentPage(0);
@@ -153,10 +152,12 @@ function AllReservation() {
     };
     useEffect(() => {
         async function getData() {
-            let res = await axios.get(`http://localhost:8080/api/host/reservation/all/${type}/${startDate}/${endDate}?page=${currentPage}&size=5`,
-            {  headers: {
-                'Authorization': `Bearer ${localStorage.getItem("jwt")}`
-            }});
+            let res = await axios.get(API_HOST + `reservation/all/${type}/${startDate}/${endDate}?page=${currentPage}&size=5`,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+                    }
+                });
             setShowList(res.data.content)
             setTotalPage(res.data.totalPages)
             renderPagination()
@@ -165,10 +166,12 @@ function AllReservation() {
     }, [])
     const handleShowList = (type) => {
         async function getData() {
-            let res = await axios.get(`http://localhost:8080/api/host/reservation/all/${type}/${startDate}/${endDate}?page=${currentPage}&size=5`,
-            {  headers: {
-                'Authorization': `Bearer ${localStorage.getItem("jwt")}`
-            }   });
+            let res = await axios.get(API_HOST + `reservation/all/${type}/${startDate}/${endDate}?page=${currentPage}&size=5`,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+                    }
+                });
             setShowList(res.data.content)
             setTotalPage(res.data.totalPages)
             renderPagination()
@@ -177,26 +180,26 @@ function AllReservation() {
     }
     function formatDateString(inputDate) {
         if (inputDate.length !== 8) {
-          return "Ngày không hợp lệ"; // Kiểm tra xem chuỗi đầu vào có đúng độ dài không
+            return "Ngày không hợp lệ"; // Kiểm tra xem chuỗi đầu vào có đúng độ dài không
         }
-      
+
         var year = inputDate.slice(0, 4);
         var month = inputDate.slice(4, 6);
         var day = inputDate.slice(6, 8);
-      
+
         if (isNaN(year) || isNaN(month) || isNaN(day)) {
-          return "Ngày không hợp lệ"; // Kiểm tra xem các phần tử có phải là số không
+            return "Ngày không hợp lệ"; // Kiểm tra xem các phần tử có phải là số không
         }
-      
+
         return year + "-" + month + "-" + day;
-      }
-      
+    }
+
     return (
         <>
             <NavbarHosting></NavbarHosting>
             <div className='ms-5'>
                 <div className='d-flex justify-content-between mb-3'>
-                <div className='fs-5 text-decoration-underline ms-5 '><Link style={{color:'black'}} to={`/host/bookedToday`}> <i class="fa-solid fa-chevron-left fa-2xs"></i> Quay lại</Link></div>
+                    <div className='fs-5 text-decoration-underline ms-5 '><Link style={{ color: 'black' }} to={`/host/bookedToday`}> <i class="fa-solid fa-chevron-left fa-2xs"></i> Quay lại</Link></div>
                     <div className='d-flex justify-content-between me-5'>
                         <button className='btn me-3 ms-3' style={{ border: 'gray solid 1px', borderRadius: '5px' }} onClick={() => setShowFilterForm(true)}><i class="fa-solid fa-angle-down" ></i> Lọc</button>
                         <button className='btn me-3 ms-3' style={{ border: 'gray solid 1px', borderRadius: '5px' }}><i class="fa-solid fa-angle-down"></i> Xuất</button>
@@ -236,7 +239,7 @@ function AllReservation() {
                                                 <td>{item.house.hotelName}</td>
                                                 <td >{(dayjs(item.checkInDate)).format('YYYY-MM-DD')}</td>
                                                 <td >{(dayjs(item.checkOutDate
-                                                    )).format('YYYY-MM-DD')}</td>
+                                                )).format('YYYY-MM-DD')}</td>
                                                 <td style={{ textAlign: 'center' }}>{item.totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ')}</td>
                                             </tr>
                                         </>
@@ -250,10 +253,10 @@ function AllReservation() {
                 </div>
                 <ul className="pagination justify-content-center">{renderPagination()}</ul>
             </div>
-            
-           
-                <div className={`overlay ${showFilterForm ? 'active' : ''}`} >
-                    <div className={`appearing-div ${showFilterForm ? 'active' : ''}`}>
+
+
+            <div className={`overlay ${showFilterForm ? 'active' : ''}`} >
+                <div className={`appearing-div ${showFilterForm ? 'active' : ''}`}>
                     <div className="category-container d-block">
                         <div><h3>Bộ lọc</h3></div>
                         <div>Đặt phòng bắt đầu hoặc kết thúc trong phạm vi ngày như sau.</div>
@@ -270,15 +273,15 @@ function AllReservation() {
                         </LocalizationProvider>
                         </div>
                         <div className='d-flex justify-content-between'>
-                             <div className='text-decoration-underline fs-6 mt-5'onClick={()=>{setShowFilterForm(false);setStartDate("2020-01-01");setEndDate("2030-01-01")}}>Xoá bộ lọc</div>       
-                             <button className='btn btn-form mt-5' onClick={()=>{setShowFilterForm(false);setStartDate(value[0].format('YYYY-MM-DD'));setEndDate(value[1].format('YYYY-MM-DD'))}}>Áp dụng</button>
+                            <div className='text-decoration-underline fs-6 mt-5' onClick={() => { setShowFilterForm(false); setStartDate("2020-01-01"); setEndDate("2030-01-01") }}>Xoá bộ lọc</div>
+                            <button className='btn btn-form mt-5' onClick={() => { setShowFilterForm(false); setStartDate(value[0].format('YYYY-MM-DD')); setEndDate(value[1].format('YYYY-MM-DD')) }}>Áp dụng</button>
                         </div>
-                        
+
                     </div>
-                    </div>
-                    
                 </div>
-          
+
+            </div>
+
         </>
     )
 } export default AllReservation

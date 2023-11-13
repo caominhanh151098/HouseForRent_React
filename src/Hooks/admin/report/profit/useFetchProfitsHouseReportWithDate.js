@@ -2,12 +2,13 @@ import axios from "axios";
 import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
+import { API_ADMIN } from "../../../../Services/common";
 
 const useFetchProfitsHouseReportWithDate = (startDate, endDate) => {
     const [houses, setHouses] = useState([]);
     useEffect(() => {
         async function getData() {
-            const responses = await axios.get(`http://localhost:8080/api/admin/profits/houses?date1=${startDate}&date2=${endDate}`);
+            const responses = await axios.get(API_ADMIN + `profits/houses?date1=${startDate}&date2=${endDate}`);
             const data = responses.data;
             const result = data.reduce((accumulator, item) => {
                 const houseId = item.house.id;

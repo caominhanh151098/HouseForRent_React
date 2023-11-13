@@ -6,6 +6,7 @@ import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import emailjs from '@emailjs/browser';
 import { Button, Dropdown, DropdownButton, Form, InputGroup, Modal, Table } from "react-bootstrap";
+import { API_ADMIN } from "../../../Services/common";
 
 
 const SERVICE_ID = "service_jvlas79";
@@ -23,7 +24,7 @@ const UserBan = () => {
 
     useEffect(() => {
         async function getData() {
-            const response = await axios.get(`http://localhost:8080/api/admin/users/user_ban?search=${search}&page=${page - 1}&size=${size}&sort=${nameField},${type}`);
+            const response = await axios.get(API_ADMIN + `users/user_ban?search=${search}&page=${page - 1}&size=${size}&sort=${nameField},${type}`);
             setUsers(response.data.content);
             setTotalPage(response.data.totalPages);
         };
@@ -57,7 +58,7 @@ const UserBan = () => {
     useEffect(() => {
         async function sendData() {
             try {
-                await axios.patch(`http://localhost:8080/api/admin/users/update/${user.id}`, user, {
+                await axios.patch(API_ADMIN + `users/update/${user.id}`, user, {
                     headers: {
                         'Content-Type': 'application/json'
                     }
@@ -122,14 +123,12 @@ const UserBan = () => {
                     </thead>
                     <tbody>
                         {users.map((user, index) => (
-                            <tr>
-                                <td className='align-middle'>{user.id}</td>
-                                <td>
-                                    <div className='d-flex align-items-center justify-content-center'>
-                                        <img style={{ width: "50px", height: "50px", borderRadius: "50%" }} src={user.avatar || us} alt='img' />
-                                        {user.firstName}
-                                    </div>
+                            <tr key={user.id}>
+                                <td className='align-middle'>{(page - 1) * 5 + index + 1}</td>
+                                <td style={{ width: '70px' }}>
+                                    <img style={{ width: "50px", height: "50px", borderRadius: "50%" }} src={user.avatar || us} alt='img' />
                                 </td>
+                                <td className='align-middle' style={{ width: '200px' }}>{user.firstName}</td>
                                 <td className='align-middle'>{user.lastName}</td>
                                 <td className='align-middle'>{user.email}</td>
                                 <td className='align-middle'>

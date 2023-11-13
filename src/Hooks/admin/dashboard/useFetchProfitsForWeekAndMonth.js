@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { API_ADMIN } from "../../../Services/common";
 
 const useFetchProfitsForWeekAndMonth = (startDate, endDate) => {
 
@@ -8,7 +9,7 @@ const useFetchProfitsForWeekAndMonth = (startDate, endDate) => {
 
 
         async function getData() {
-            const response = await axios.get(`http://localhost:8080/api/admin/profits?date1=${startDate}&date2=${endDate}`);
+            const response = await axios.get(API_ADMIN + `profits?date1=${startDate}&date2=${endDate}`);
 
             const result = new Map();
             response.data.forEach(item => {

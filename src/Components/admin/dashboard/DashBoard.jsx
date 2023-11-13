@@ -23,6 +23,7 @@ import axios from "axios";
 import Stomp from "stompjs";
 import useFetchReservationToday from "../../../Hooks/admin/dashboard/useFetchReservationToday";
 import { format } from "date-fns";
+import { API_ADMIN } from "../../../Services/common";
 
 Chart.register(...registerables);
 var CanvasJS = CanvasJSReact.CanvasJS;
@@ -446,7 +447,7 @@ function DashBoard() {
 
     useEffect(() => {
         async function getData() {
-            const response = await axios.get("http://localhost:8080/api/admin/profits/findAll");
+            const response = await axios.get(API_ADMIN + "profits/findAll");
             setReservations(response.data);
         }
         getData();
@@ -454,12 +455,11 @@ function DashBoard() {
 
     useEffect(() => {
 
-        const socket = new SockJS('http://localhost:8080/ws');
+        const socket = new SockJS('https://quarter-rois.cghue.com/ws');
         const client = Stomp.over(socket);
 
         client.connect({}, () => {
             if (client.connect()) {
-                console.log("Success");
                 client?.subscribe('/topic/dataNew', (response) => {
 
                     const newData = JSON.parse(response.body);
@@ -474,7 +474,7 @@ function DashBoard() {
             return () => {
                 if (stompClient.connected) {
                     stompClient.disconnect();
-                    console.log("Disconnected from WebSocket");
+                    console.error("Disconnected from WebSocket");
                 }
             }
         })
@@ -505,7 +505,7 @@ function DashBoard() {
     useEffect(() => {
         async function updateData() {
             try {
-                await axios.patch(`http://localhost:8080/api/admin/profits/update/${reservationTest.id}`, { status: reservationTest.status, totalPrice: reservationTest.totalPrice, completeDate: reservationTest.completeDate }, {
+                await axios.patch(API_ADMIN + `profits/update/${reservationTest.id}`, { status: reservationTest.status, totalPrice: reservationTest.totalPrice, completeDate: reservationTest.completeDate }, {
                     headers: {
                         'Content-Type': 'application/json'
                     }

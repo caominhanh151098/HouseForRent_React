@@ -6,9 +6,9 @@ import BookFooter from '../Footer/BookFooter'
 const BookHouse = () => {
   return (
     <div>
-      <BookHeader/>
-      <BookBody/>
-      <BookFooter/>
+      <BookHeader />
+      <BookBody />
+      <BookFooter />
     </div>
   )
 }

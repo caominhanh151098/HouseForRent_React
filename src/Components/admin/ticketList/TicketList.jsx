@@ -17,6 +17,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import { Dropdown, DropdownButton, Form, InputGroup } from "react-bootstrap";
 import { ToastContainer, toast } from 'react-toastify';
 import "../../../../node_modules/react-toastify/dist/ReactToastify.css";
+import { API_ADMIN } from "../../../Services/common";
 
 const SERVICE_ID = "service_jvlas79";
 const TEMPLATE_ID = "template_hsk232n";
@@ -41,7 +42,7 @@ function TicketList() {
     useEffect(() => {
         async function getData() {
 
-            const response = await axios.get("http://localhost:8080/api/admin/houses");
+            const response = await axios.get(API_ADMIN + "houses");
             if (response) {
                 const data = response.data.content;
                 data.sort((a, b) => new Date(b.createDate) - new Date(a.createDate));
@@ -113,7 +114,6 @@ function TicketList() {
             })
                 .then(async response => {
                     // item.preventDefault();
-                    console.log('Upload success:', response.data);
                     const newHouse = {
                         id: item.id,
                         status: 'ACCEPTED',
@@ -170,7 +170,7 @@ function TicketList() {
             const status = house.status;
             const pdf = house.confirmPDF;
             try {
-                await axios.patch(`http://localhost:8080/api/admin/houses/update/${id}`, { status: status, confirmPDF: pdf }, {
+                await axios.patch(API_ADMIN + `houses/update/${id}`, { status: status, confirmPDF: pdf }, {
                     headers: {
                         'Content-Type': 'application/json'
                     }
@@ -235,7 +235,7 @@ function TicketList() {
 
         if (search) {
             timeout = setTimeout(() => {
-                axios.get(`http://localhost:8080/api/admin/houses?search=${search}`, {
+                axios.get(API_ADMIN + `houses?search=${search}`, {
                     headers: {
                         'Content-Type': 'application/json'
                     }
@@ -281,7 +281,7 @@ function TicketList() {
             </div>
             {rocketLoading ? <div className="row row-cols-1 row-cols-md-3 g-4">
                 {houses?.map((house, index) => (
-                    <div className="col">
+                    <div className="col" key={house.id}>
 
                         <div style={{ width: "350px", height: "700px" }} className="card">
                             <div id={`carouselExampleCaptions${index}`} className="carousel slide" data-bs-ride="carousel">
@@ -370,7 +370,7 @@ function TicketList() {
                                             </div>
                                             <div className="img-grid">
                                                 {house?.images?.slice(1, 4).map((image) => (
-                                                    <img className="m-2 size-of-img-house" src={image.srcImg || ""} />
+                                                    <img key={image.id} className="m-2 size-of-img-house" src={image.srcImg || ""} />
                                                 ))}
                                                 <div data-bs-target={`#exampleModal${index}-${index}`} data-bs-toggle="modal" data-bs-dismiss="modal" className="img-overlay" onClick={() => handleSetListImg(house.images)}>
                                                     <img className="m-2 img-house-pointer" src={house.images[4].srcImg || ""} />
@@ -386,7 +386,7 @@ function TicketList() {
                                                 </div>
                                                 <div className="d-flex justify-content-around convenient">
                                                     {house?.comfortableList?.slice(0, 6).map((comfort) => (
-                                                        <div className="d-flex convenient-detail">
+                                                        <div key={comfort.id} className="d-flex convenient-detail">
                                                             <svg>
                                                                 <path d={comfort.icon}></path>
                                                             </svg>

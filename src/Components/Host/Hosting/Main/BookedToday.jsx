@@ -8,6 +8,7 @@ import "react-confirm-alert/src/react-confirm-alert.css";
 import dayjs from 'dayjs';
 import FooterFormUser from './../../../User/FooterFormUser';
 import NavbarHosting from './../../LayoutHosting/NavbarHosting';
+import { API_HOST } from '../../../../Services/common';
 
 function BookedToday() {
     const [type, setType] = useState("willCheckOut")
@@ -23,7 +24,7 @@ function BookedToday() {
     yesterday.setDate(today.getDate() - 1);
     useEffect(() => {
         async function getData() {
-            let res = await axios.get(`http://localhost:8080/api/host/reservation/willCheckOut`, {
+            let res = await axios.get(API_HOST + `reservation/willCheckOut`, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem("jwt")}`
                 }
@@ -34,7 +35,7 @@ function BookedToday() {
     }, [render])
     useEffect(() => {
         async function getData() {
-            let res = await axios.get(`http://localhost:8080/api/host/reservation/welcoming`,
+            let res = await axios.get(API_HOST + `reservation/welcoming`,
                 {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem("jwt")}`
@@ -46,7 +47,7 @@ function BookedToday() {
     }, [render])
     useEffect(() => {
         async function getData() {
-            let res = await axios.get(`http://localhost:8080/api/host/reservation/coming`,
+            let res = await axios.get(API_HOST + `reservation/coming`,
                 {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem("jwt")}`
@@ -58,7 +59,7 @@ function BookedToday() {
     }, [render])
     useEffect(() => {
         async function getData() {
-            let res = await axios.get(`http://localhost:8080/api/host/reservation/upcoming`,
+            let res = await axios.get(API_HOST + `reservation/upcoming`,
                 {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem("jwt")}`
@@ -70,7 +71,7 @@ function BookedToday() {
     }, [render])
     useEffect(() => {
         async function getData() {
-            let res = await axios.get(`http://localhost:8080/api/host/reservation/waitApproval`,
+            let res = await axios.get(API_HOST + `reservation/waitApproval`,
                 {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem("jwt")}`
@@ -91,7 +92,7 @@ function BookedToday() {
                     label: "Yes",
                     onClick: () => {
                         async function getData() {
-                            let res = await axios.get(`http://localhost:8080/api/host/reservation/delete/${id}`,
+                            let res = await axios.get(API_HOST + `reservation/delete/${id}`,
                                 {
                                     headers: {
                                         'Authorization': `Bearer ${localStorage.getItem("jwt")}`
@@ -122,7 +123,7 @@ function BookedToday() {
                     label: "Yes",
                     onClick: () => {
                         async function getData() {
-                            let res = await axios.get(`http://localhost:8080/api/host/reservation/accept/${id}`,
+                            let res = await axios.get(API_HOST + `reservation/accept/${id}`,
                                 {
                                     headers: {
                                         'Authorization': `Bearer ${localStorage.getItem("jwt")}`
@@ -141,7 +142,7 @@ function BookedToday() {
             ]
         });
     };
-    const   deny = (id) => {
+    const deny = (id) => {
 
         confirmAlert({
             title: "Duyệt đơn",
@@ -151,7 +152,7 @@ function BookedToday() {
                     label: "Yes",
                     onClick: () => {
                         async function getData() {
-                            let res = await axios.get(`http://localhost:8080/api/host/reservation/delete/${id}`,
+                            let res = await axios.get(API_HOST + `reservation/delete/${id}`,
                                 {
                                     headers: {
                                         'Authorization': `Bearer ${localStorage.getItem("jwt")}`
@@ -170,7 +171,7 @@ function BookedToday() {
             ]
         });
     };
-    const   finish = (id) => {
+    const finish = (id) => {
 
         confirmAlert({
             title: "hoàn thành đặt chỗ",
@@ -180,7 +181,7 @@ function BookedToday() {
                     label: "Yes",
                     onClick: () => {
                         async function getData() {
-                            let res = await axios.get(`http://localhost:8080/api/host/reservation/finishReservation/${id}`,
+                            let res = await axios.get(API_HOST + `reservation/finishReservation/${id}`,
                                 {
                                     headers: {
                                         'Authorization': `Bearer ${localStorage.getItem("jwt")}`
@@ -202,7 +203,7 @@ function BookedToday() {
     const handleshowGuestDetail = (reservationId) => {
 
         async function getData() {
-            let res = await axios.get(`http://localhost:8080/api/host/reservation/getGuestDetail/${reservationId}`,
+            let res = await axios.get(API_HOST + `reservation/getGuestDetail/${reservationId}`,
                 {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem("jwt")}`
@@ -216,7 +217,7 @@ function BookedToday() {
     return (
         <div className='local-boostrap'>
             <NavbarHosting type="bookedToday" ></NavbarHosting>
-            <div className='col-10 ' style={{ marginLeft: '100px' ,marginBottom:'100px'}}>
+            <div className='col-10 ' style={{ marginLeft: '100px', marginBottom: '100px' }}>
                 <div className='fs-3 mt-5 mb-5'>Chào mừng chủ nhà </div>
                 <div className='fs-4 mb-4'>
                     Đặt phòng /đặt chỗ của bạn
@@ -249,18 +250,18 @@ function BookedToday() {
                                         <>    <tr>
                                             <td>{item.user.lastName}</td>
                                             <td>{item.user.phone}</td>
-                                            <td style={{ width:'200px' }}>{item.house.hotelName}</td>
-                                           
+                                            <td style={{ width: '200px' }}>{item.house.hotelName}</td>
+
                                             <td style={{ textAlign: 'center' }}>{(dayjs(item.checkInDate)).format('YYYY-MM-DD')}</td>
                                             <td style={{ textAlign: 'center' }}>{(dayjs(item.checkOutDate)).format('YYYY-MM-DD')}</td>
                                             <td style={{ textAlign: 'center' }}>{item.totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ')} </td>
                                             <td>
                                                 <button data-bs-toggle="modal" data-bs-target="#staticBackdrop" className='btn-i     ' onClick={() => handleshowGuestDetail(item.id)}>Chi tiết</button>
-                                                <button class="btn-i "  onClick={() => finish(item.id)}>Hoàn thành</button>
+                                                <button class="btn-i " onClick={() => finish(item.id)}>Hoàn thành</button>
                                                 {
-                                                    new Date(item.checkOutDate) < new Date ()?
-                                                    <i class="fa-solid fa-triangle-exclamation fs-4 ms-3"></i>
-                                                    :""
+                                                    new Date(item.checkOutDate) < new Date() ?
+                                                        <i class="fa-solid fa-triangle-exclamation fs-4 ms-3"></i>
+                                                        : ""
                                                 }
                                             </td>
 
@@ -277,18 +278,18 @@ function BookedToday() {
                                             <>    <tr>
                                                 <td>{item.user.lastName}</td>
                                                 <td>{item.user.phone}</td>
-                                                <td style={{ width:'200px' }}>{item.house.hotelName}</td>
+                                                <td style={{ width: '200px' }}>{item.house.hotelName}</td>
                                                 <td style={{ textAlign: 'center' }}>{(dayjs(item.checkInDate)).format('YYYY-MM-DD')}</td>
                                                 <td style={{ textAlign: 'center' }}>{(dayjs(item.checkOutDate)).format('YYYY-MM-DD')}</td>
                                                 <td style={{ textAlign: 'center' }}>{item.totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ')} </td>
                                                 <td>
                                                     <button data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="btn-i" onClick={() => handleshowGuestDetail(item.id)}>Chi tiết</button>
-                                                    <button class="btn-i"  onClick={() => finish(item.id)}>Hoàn thành</button>
+                                                    <button class="btn-i" onClick={() => finish(item.id)}>Hoàn thành</button>
                                                     {
-                                                    new Date(item.checkOutDate) < new Date ()?
-                                                    <i class="fa-solid fa-triangle-exclamation fs-4 ms-3"></i>
-                                                    :""
-                                                }
+                                                        new Date(item.checkOutDate) < new Date() ?
+                                                            <i class="fa-solid fa-triangle-exclamation fs-4 ms-3"></i>
+                                                            : ""
+                                                    }
                                                 </td>
                                             </tr>
                                             </>
@@ -303,15 +304,15 @@ function BookedToday() {
                                                 <>    <tr>
                                                     <td>{item.user.lastName}</td>
                                                     <td>{item.user.phone}</td>
-                                                <td style={{ width:'200px' }}>{item.house.hotelName}</td>
-                                            
+                                                    <td style={{ width: '200px' }}>{item.house.hotelName}</td>
+
                                                     <td style={{ textAlign: 'center' }}>{(dayjs(item.checkInDate)).format('YYYY-MM-DD')}</td>
                                                     <td style={{ textAlign: 'center' }}>{(dayjs(item.checkOutDate)).format('YYYY-MM-DD')}</td>
                                                     <td style={{ textAlign: 'center' }}>{item.totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ')} </td>
-                                                    <td><button class="btn-i" style={{paddingRight:'8px',paddingLeft:'8px'}} onClick={() => submit(item.id)}>Huỷ</button>
-                                                    <button data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="btn-i" onClick={() => handleshowGuestDetail(item.id)}>Chi tiết</button>
+                                                    <td><button class="btn-i" style={{ paddingRight: '8px', paddingLeft: '8px' }} onClick={() => submit(item.id)}>Huỷ</button>
+                                                        <button data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="btn-i" onClick={() => handleshowGuestDetail(item.id)}>Chi tiết</button>
                                                     </td>
-                                                        
+
                                                 </tr>
                                                 </>
 
@@ -325,16 +326,16 @@ function BookedToday() {
                                                     <>    <tr>
                                                         <td>{item.user.lastName}</td>
                                                         <td>{item.user.phone}</td>
-                                                <td style={{ width:'200px' }}>{item.house.hotelName}</td>
-                                                        
+                                                        <td style={{ width: '200px' }}>{item.house.hotelName}</td>
+
                                                         <td style={{ textAlign: 'center' }}>{(dayjs(item.checkInDate)).format('YYYY-MM-DD')}</td>
                                                         <td style={{ textAlign: 'center' }}>{(dayjs(item.checkOutDate)).format('YYYY-MM-DD')}</td>
                                                         <td style={{ textAlign: 'center' }}>{item.totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ')} </td>
                                                         <td>
-                                                            <button class="btn-i" style={{paddingRight:'8px',paddingLeft:'8px'}} onClick={() => submit(item.id)}>Huỷ</button>
+                                                            <button class="btn-i" style={{ paddingRight: '8px', paddingLeft: '8px' }} onClick={() => submit(item.id)}>Huỷ</button>
                                                             <button data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="btn-i" onClick={() => handleshowGuestDetail(item.id)}>Chi tiết</button>
-                                                            </td>
-                                                       
+                                                        </td>
+
                                                     </tr>
                                                     </>
 
@@ -348,8 +349,8 @@ function BookedToday() {
                                                         <>    <tr>
                                                             <td>{item.user.lastName}</td>
                                                             <td>{item.user.phone}</td>
-                                                <td style={{ width:'200px' }}>{item.house.hotelName}</td>
-                                                          
+                                                            <td style={{ width: '200px' }}>{item.house.hotelName}</td>
+
                                                             <td style={{ textAlign: 'center' }}>{(dayjs(item.checkInDate)).format('YYYY-MM-DD')}</td>
                                                             <td style={{ textAlign: 'center' }}>{(dayjs(item.checkOutDate)).format('YYYY-MM-DD')}</td>
                                                             <td style={{ textAlign: 'center' }}>{item.totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ')} </td>

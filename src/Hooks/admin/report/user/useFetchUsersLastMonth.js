@@ -3,6 +3,7 @@ import { format } from "date-fns";
 import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
+import { API_ADMIN } from "../../../../Services/common";
 
 const useFetchUsersLastMonth = () => {
     const [users, setUsers] = useState([]);
@@ -11,7 +12,7 @@ const useFetchUsersLastMonth = () => {
     const endDate = format(new Date(date.getFullYear(), date.getMonth(), 0), "yyyy-MM-dd")
     useEffect(() => {
         async function getData() {
-            const responses = await axios.get(`http://localhost:8080/api/admin/users/report?date1=${startDate}&date2=${endDate}`);
+            const responses = await axios.get(API_ADMIN + `users/report?date1=${startDate}&date2=${endDate}`);
             const dateCountMap = new Map();
 
             responses?.data?.forEach(item => {

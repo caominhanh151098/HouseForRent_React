@@ -35,15 +35,9 @@ const Identity = () => {
         // const file = new File([blob], uploadedImageFront.name, { type: uploadedImageFront.type });
         // const blob2 = new Blob([uploadedImageBack], { type: uploadedImageFront.type });
         // const file2 = new File([blob2], uploadedImageBack.name, { type: uploadedImageBack.type });
-        // console.log(typeof(file));
 
-
-
-        // console.log(up2);
         const imageFront = document.getElementById('imageFront');
-        console.log("imageFront", imageFront);
         const imageWebcam = document.getElementById('imageWebcam');
-        console.log("imageWebcam", imageWebcam);
 
         if (imageFront && imageWebcam) {
             await faceapi.nets.tinyFaceDetector.loadFromUri('/models');
@@ -53,29 +47,21 @@ const Identity = () => {
             const detectionFront = await faceapi.detectSingleFace(imageFront, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
             const detectionWebcam = await faceapi.detectSingleFace(imageWebcam, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
 
-            console.log("detectionFront", detectionFront);
-            console.log("detectionWebcam", detectionWebcam);
             if (detectionFront && detectionWebcam) {
                 const up1 = await uploadImgToCloud(uploadedImageFront[0])
-                console.log("up1.data.url", up1.data.url);
                 const up2 = await uploadImgToCloud(uploadedImageBack[0])
-                console.log("up2.data.url", up2.data.url)
 
                 const faceMatcher = new faceapi.FaceMatcher([detectionFront.descriptor]);
                 const match = faceMatcher.findBestMatch(detectionWebcam.descriptor);
-                console.log("match", match);
 
                 const similarityPercentage = (1 - match._distance) * 100;
                 console.log(`Sự tương tự: ${similarityPercentage.toFixed(2)}%`);
 
                 if (match.distance <= 0.45) {
                     setResult(`Sự tương tự: ${match.toString()}`);
-                    console.log('nhận diện được khuôn mặt', `${match.toString()}`);
 
                     const srcImgFrontSide = up1.data.url;
-                    console.log("srcImgFrontSide", srcImgFrontSide);
                     const srcImgBackSide = up2.data.url;
-                    console.log("srcImgBackSide", srcImgBackSide);
 
                     await handleSaveChanges(srcImgFrontSide, srcImgBackSide)
 
@@ -84,7 +70,7 @@ const Identity = () => {
                     if (!updateUserInfo) {
                         updateUserInfo = {};
                     }
-                
+
                     if (!updateUserInfo.identity) {
                         updateUserInfo.identity = {};
                     }
@@ -98,13 +84,13 @@ const Identity = () => {
                     setIsOverLaySuccessCheckSimilar(true);
                 } else {
                     setResult('Không nhận diện được khuôn mặt');
-                    console.log('Không nhận diện được khuôn mặt');
+                    console.error('Không nhận diện được khuôn mặt');
                     setIsLoadingCheckImg(false);
                     setIsOverLayFailCheckSimilar(true)
                 }
             } else {
                 setResult('Không nhận diện được khuôn mặt');
-                console.log('Không nhận diện được khuôn mặt');
+                console.error('Không nhận diện được khuôn mặt');
                 setIsLoadingCheckImg(false);
                 setIsOverLayFailCheckSimilar(true)
             }
@@ -261,17 +247,6 @@ const Identity = () => {
         }
     }
 
-    useEffect(() => {
-        console.log("uploadedImageFront", uploadedImageFront);
-    }, [uploadedImageFront])
-    useEffect(() => {
-        console.log("uploadedImageBack", uploadedImageBack);
-    }, [uploadedImageBack])
-
-    useEffect(() => {
-        console.log("capturedImage", capturedImage);
-    }, [capturedImage])
-
     return (
         <>
             <HeaderFormUser />
@@ -296,7 +271,7 @@ const Identity = () => {
                                             {['Giấy phép lái xe', 'Hộ chiếu', 'Giấy tờ tuỳ thân'].map((item, index) => (
                                                 <ListItem variant="outlined" key={item} sx={{ boxShadow: 'sm' }}>
                                                     <ListItemDecorator>
-                                                        {[<i class="fa-solid fa-car"></i>, <i class="fa-solid fa-passport"></i>, <i class="fa-solid fa-user-large"></i>][index]}
+                                                        {[<i className="fa-solid fa-car"></i>, <i className="fa-solid fa-passport"></i>, <i className="fa-solid fa-user-large"></i>][index]}
                                                     </ListItemDecorator>
                                                     <Radio
                                                         overlay
@@ -323,7 +298,7 @@ const Identity = () => {
                                     </RadioGroup>
                                     <div className='div-contains-btn-continue-and-back'>
                                         <Link to={'/account-settings/personal-info'}>
-                                            <button className='btn-back-to-step-identity'><i class="fa-solid fa-angle-left"></i> Quay lại</button>
+                                            <button className='btn-back-to-step-identity'><i className="fa-solid fa-angle-left"></i> Quay lại</button>
                                         </Link>
                                         <button onClick={() => handleToggleStep('step2')}
                                             className='btn-continue-to-step-identity'>Tiếp tục</button>
@@ -343,7 +318,7 @@ const Identity = () => {
 
                                     {
                                         loadingUploadImg ? (
-                                            <div class="loadingio-spinner-spinner-tb47fg7vz6o"><div class="ldio-h59lw1on0l">
+                                            <div className="loadingio-spinner-spinner-tb47fg7vz6o"><div className="ldio-h59lw1on0l">
                                                 <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
                                             </div></div>
                                         ) :
@@ -375,7 +350,7 @@ const Identity = () => {
 
                                     {
                                         loadingUploadImg2 ? (
-                                            <div class="loadingio-spinner-spinner-tb47fg7vz6o"><div class="ldio-h59lw1on0l">
+                                            <div className="loadingio-spinner-spinner-tb47fg7vz6o"><div className="ldio-h59lw1on0l">
                                                 <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
                                             </div></div>
                                         ) :
@@ -422,7 +397,7 @@ const Identity = () => {
                             <hr style={{ marginTop: '8%' }} />
                             <div className='div-contains-btn-continue-and-back'>
                                 <button onClick={(() => handleBack())}
-                                    className='btn-back-to-step-identity'><i class="fa-solid fa-angle-left"></i> Quay lại</button>
+                                    className='btn-back-to-step-identity'><i className="fa-solid fa-angle-left"></i> Quay lại</button>
                                 <button style={{ display: 'flex', alignItems: 'center' }}
                                     onClick={() => handleToggleStep('step3')}
                                     className='btn-continue-to-step-identity'
@@ -449,7 +424,7 @@ const Identity = () => {
                             <hr style={{ marginTop: '28%' }} />
                             <div className='div-contains-btn-continue-and-back'>
                                 <button onClick={(() => handleBack())}
-                                    className='btn-back-to-step-identity'><i class="fa-solid fa-angle-left"></i> Quay lại</button>
+                                    className='btn-back-to-step-identity'><i className="fa-solid fa-angle-left"></i> Quay lại</button>
                                 <button style={{ display: 'flex', alignItems: 'center' }}
                                     onClick={() => handleToggleStep('step4')}
                                     className='btn-continue-to-step-identity'
@@ -514,14 +489,14 @@ const Identity = () => {
                                         </button>
                                         {
                                             loadingCheckImg ? (
-                                                <div class="loadingio-spinner-ellipsis-9qckgagjpyq"><div class="ldio-mqwte4ljm49">
+                                                <div className="loadingio-spinner-ellipsis-9qckgagjpyq"><div className="ldio-mqwte4ljm49">
                                                     <div></div><div></div><div></div><div></div><div></div>
                                                 </div></div>
                                             ) : (
                                                 <button onClick={
                                                     checkSimilarity
                                                 }
-                                                    className=' btn-continue-to-step-identity'><i class="fa-solid fa-camera"></i> Gửi ảnh
+                                                    className=' btn-continue-to-step-identity'><i className="fa-solid fa-camera"></i> Gửi ảnh
                                                 </button>
                                             )
                                         }
@@ -536,9 +511,9 @@ const Identity = () => {
                                 ) : (
                                     <div className='div-contains-btn-continue-and-back'>
                                         <button onClick={(() => handleBack())}
-                                            className='btn-back-to-step-identity'><i class="fa-solid fa-angle-left"></i> Quay lại</button>
+                                            className='btn-back-to-step-identity'><i className="fa-solid fa-angle-left"></i> Quay lại</button>
                                         <button onClick={() => startCountdown()} disabled={isWebcamActive === false}
-                                            className=' btn-continue-to-step-identity'><i class="fa-solid fa-camera"></i> Chụp ảnh</button>
+                                            className=' btn-continue-to-step-identity'><i className="fa-solid fa-camera"></i> Chụp ảnh</button>
 
                                     </div>
                                 )
@@ -551,7 +526,7 @@ const Identity = () => {
                     <div className={`overlay2 ${isOverLayFailCheckSimilar ? '' : 'd-none'}`} >
                         <div className={`appearing-div ${isOverLayFailCheckSimilar ? 'active' : ''}`}>
                             <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                <h2><i style={{ fontSize: '33px' }} class="fa-solid fa-circle-exclamation"></i></h2>
+                                <h2><i style={{ fontSize: '33px' }} className="fa-solid fa-circle-exclamation"></i></h2>
                             </div>
                             <hr />
                             <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
@@ -572,7 +547,7 @@ const Identity = () => {
                     <div className={`overlay2 ${isOverLaySuccessCheckSimilar ? '' : 'd-none'}`} >
                         <div className={`appearing-div ${isOverLaySuccessCheckSimilar ? 'active' : ''}`}>
                             <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                <h2><i style={{ fontSize: '33px' }} class="fa-regular fa-circle-check"></i></h2>
+                                <h2><i style={{ fontSize: '33px' }} className="fa-regular fa-circle-check"></i></h2>
                             </div>
                             <hr />
                             <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>

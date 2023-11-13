@@ -6,14 +6,14 @@ import BookHouse from '../../Components/AirBnb/Book/Main/BookHouse';
 import ErrorBookBody from '../../Components/AirBnb/Book/Body/ErrorBookBody';
 import AccountSetting from '../../Components/User/AccountSetting';
 import PersonalInfo from '../../Components/User/PersonalInfo/PersonalInfo';
-import Identity from './../../Components/User/PersonalInfo/Identity';
+import Identity from '../../Components/User/PersonalInfo/Identity';
 import Trip from '../../Components/User/Trip/Trip';
 import WishList from '../../Components/User/WishList/WishList';
 import WishListDetails from '../../Components/User/WishList/WishListDetails';
 import Error from '../../Components/AirBnb/Error/Error';
 import PrivateRoute from '../../Middlewares/PrivateRoute';
 import UserInfo from '../../Components/User/UserInfo/UserInfo';
-import RoutesError from './../RoutesError/RoutesError';
+import RoutesError from '../RoutesError/RoutesError';
 const RoutesClient = () => {
   return (
     <Routes>

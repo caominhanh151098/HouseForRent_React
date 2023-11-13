@@ -62,7 +62,6 @@ const BodyDetail = () => {
     const [housePrice, setHousePrice] = useState({});
     const [checkAvailableRoom, setCheckAvailableRoom] = useState(false)
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
-    const [noRefund, setNoRefund] = useState(false);
 
     const handleImageClick = (index) => {
         setCurrentImageIndex(index);
@@ -74,8 +73,6 @@ const BodyDetail = () => {
     const [hasSelectedDepartureDate, setHasSelectedDepartureDate] = useState(false);
     const [chooseGoDay, setIsChooseGoDay] = useState(false);
     const handleDateChange = (newDates, selectionState) => {
-
-        console.log('day chage', selectionState)
         const selectedDate = dayjs(newDates[0]);
         setIsChooseGoDay(true);
         const nextDate = dayjs(newDates[0] || newDates[1]).add(1, 'day');
@@ -95,7 +92,6 @@ const BodyDetail = () => {
 
         const maxDay = closestDate ? dayjs(closestDate) : null;
         setMaxDay(maxDay)
-        console.log('Ngày gần nhất sau ngày được chọn:', closestDate);
         if (selectedDates[0] !== null && selectedDates[1] != null) {
             setSelectedDates([null, null])
         } else if (selectedDates[0] == null) {
@@ -115,9 +111,7 @@ const BodyDetail = () => {
             setHasSelectedDepartureDate(false);
         }
     };
-    useEffect(() => {
-        console.log("maxDay kiee tra", maxDay);
-    }, [maxDay])
+
     const numberOfNights = selectedDates[1] && selectedDates[0] ? selectedDates[1].diff(selectedDates[0], 'day') : null;
 
     const handleResetDates = () => {
@@ -139,11 +133,9 @@ const BodyDetail = () => {
             let res = await fetch(API_HOUSE_DETAIL_URL + `${houseID}`);
             let housedtl = await res.json()
             setHouse(housedtl)
-            setNoRefund(housedtl.cancellationPolicyDetailList[0].noRefunds ? true : false)
         }
         getHouseDetail();
     }, [])
-    console.log("house", house);
 
     useEffect(() => {
         async function getComfortableDetail() {
@@ -153,7 +145,6 @@ const BodyDetail = () => {
         }
         getComfortableDetail();
     }, [])
-    console.log("houseComfortable", houseComfortable);
 
     // const totalComfortables = house?.miniListComfortable?.length;
 
@@ -167,16 +158,10 @@ const BodyDetail = () => {
         document.querySelector('.MuiDateRangeCalendar-root div').style.display = 'none';
         // document.querySelector('.check-room-available-book-detail .MuiDateRangeCalendar-root div').style.display = 'none'
     }, [])
-    console.log('houseReview', houseReview);
-
 
     const sixLastestReviews = houseReview?.reviews?.length >= 6 ? houseReview?.reviews.slice(0, 6)
         .sort((a, b) => new Date(b.reviewDate) - new Date(a.reviewDate)) :
         houseReview?.reviews?.sort((a, b) => new Date(b.reviewDate) - new Date(a.reviewDate));
-    console.log("sixLastestReviews", sixLastestReviews);
-
-
-
 
     useEffect(() => {
         async function getReviewsHouse() {
@@ -188,7 +173,6 @@ const BodyDetail = () => {
     }, [])
 
     const lastestReviews = houseReviews ? houseReviews?.content?.sort((a, b) => new Date(b.reviewDate) - new Date(a.reviewDate)) : null;
-    console.log("lastestReviews", lastestReviews);
 
     const toggleOverlayImages = () => {
         setIsOverLayImages(!isOverLayImages);
@@ -316,7 +300,7 @@ const BodyDetail = () => {
                 borderBottomRightRadius: '50%',
             }),
             ...(isHighlighting && {
-                // Thêm class range-highlight nếu nằm trong khoảng đang chọn
+                // Thêm className range-highlight nếu nằm trong khoảng đang chọn
                 '& .range-highlight': {
                     backgroundColor: 'red',
                     opacity: 0.5,
@@ -363,9 +347,7 @@ const BodyDetail = () => {
     };
 
     const { bookingInfo, setBookingInfo } = useContext(BookingContext);
-    useEffect(() => {
-        console.log(selectedDates, 'select')
-    }, [selectedDates])
+
     const handleClick = () => {
         const newBookingInfo = {
             numReview: house?.numReview,
@@ -386,7 +368,6 @@ const BodyDetail = () => {
         }
         getHousePrice();
     }, [])
-    console.log("giá:", housePrice);
 
     const handleCheckAvailableRoom = () => {
         setCheckAvailableRoom(!checkAvailableRoom)
@@ -414,9 +395,6 @@ const BodyDetail = () => {
             });
         });
     }
-
-    console.log("max heigth sau cùng là", maxHeight);
-
 
     const [count, setCount] = useState(0)
     let size = house ? house?.rooms ? house?.rooms.length : 0 : 0;
@@ -475,9 +453,6 @@ const BodyDetail = () => {
 
     const totalComfortable = houseComfortable.reduce((acc, type) => acc + type.comfortableDetailList.length, 0) || null;
 
-    console.log(`Tổng số comfortable là: ${totalComfortable}`);
-
-
     const [reservedDates, setReservedDates] = useState([]);
     const [blockedDates, setBlockedDates] = useState([]);
 
@@ -506,14 +481,6 @@ const BodyDetail = () => {
             });
     }, [houseID]);
 
-    useEffect(() => {
-        console.log("reservedDates", reservedDates);
-    }, [[reservedDates]])
-    useEffect(() => {
-        console.log("blockedDates", blockedDates);
-    }, [[blockedDates]])
-
-
     // const shouldDisableDate = (date) => {
     //     const formattedDate = date.format('YYYY - MM - DD');
 
@@ -523,7 +490,6 @@ const BodyDetail = () => {
     const shouldDisableDates = [...reservedDates.map(reservation => reservation.checkInDate), ...blockedDates];
 
     // Kiểm tra mảng đã tạo
-    console.log("shouldDisableDates", shouldDisableDates);
     const ref = useRef();
     const shouldDisableDate = (date) => {
         const formattedDate = date.format('YYYY-MM-DD');
@@ -536,8 +502,6 @@ const BodyDetail = () => {
 
         return isReserved || isBlocked;
     };
-
-    console.log("shouldDisableDate", shouldDisableDate);
 
     const formatCurrency = (item) => {
         const formater = new Intl.NumberFormat('vi-VN', {
@@ -571,16 +535,16 @@ const BodyDetail = () => {
                     </div>
                     <div className='review'>
                         <div>
-                            <p><i class="fa-solid fa-star"></i> {house.reviewPoint} ·
+                            <p><i className="fa-solid fa-star"></i> {house.reviewPoint} ·
                                 <span className='text' style={{ textDecoration: 'underline' }}>{house.numReview} đánh giá</span>
-                                <span className='text'><i class="fa-solid fa-medal"></i> Chủ nhà siêu cấp</span>
+                                <span className='text'><i className="fa-solid fa-medal"></i> Chủ nhà siêu cấp</span>
                                 <span className='text' style={{ textDecoration: 'underline' }}>{house.location?.address}</span>
                             </p>
                         </div>
                         <div>
                             <p>
-                                <span className='text'><i class="fa-solid fa-arrow-up-from-bracket"></i> <span style={{ textDecoration: 'underline' }} > Chia sẻ</span></span>
-                                <span className='text'> <i class="fa-regular fa-heart"></i> <span style={{ textDecoration: 'underline' }} > Lưu</span></span>
+                                <span className='text'><i className="fa-solid fa-arrow-up-from-bracket"></i> <span style={{ textDecoration: 'underline' }} > Chia sẻ</span></span>
+                                <span className='text'> <i className="fa-regular fa-heart"></i> <span style={{ textDecoration: 'underline' }} > Lưu</span></span>
                             </p>
                         </div>
                     </div>
@@ -606,7 +570,7 @@ const BodyDetail = () => {
                                                 <div style={{ width: '100%', height: '100%' }}
                                                     className={`appearing-div ${isOverLayImages ? 'active' : ''}`}>
                                                     <div>
-                                                        <i onClick={toggleOverlayImages} class="fa-solid fa-xmark close-description" ></i>
+                                                        <i onClick={toggleOverlayImages} className="fa-solid fa-xmark close-description" ></i>
                                                     </div>
                                                     <div className='container-description-details'>
                                                         <div className='div-show-all-images'>
@@ -673,7 +637,7 @@ const BodyDetail = () => {
                                                 <div style={{ width: '100%', height: '100%', maxHeight: '100%' }}
                                                     className={`appearing-div ${isOverLayImagesSlider ? 'active' : ''}`}>
                                                     <div>
-                                                        <i onClick={toggleOverlayImagesSlider} class="fa-solid fa-xmark close-description" ></i>
+                                                        <i onClick={toggleOverlayImagesSlider} className="fa-solid fa-xmark close-description" ></i>
                                                     </div>
                                                     <div className='container-description-details'>
                                                         <div>
@@ -756,7 +720,7 @@ const BodyDetail = () => {
                                         )
                                     }
                                     <button className='btn-show-description' onClick={toggleOverlay}>
-                                        <p>Hiển thị thêm  <span><i class="fa-solid fa-angle-right"></i></span></p>
+                                        <p>Hiển thị thêm  <span><i className="fa-solid fa-angle-right"></i></span></p>
                                     </button>
 
                                 </div>
@@ -764,7 +728,7 @@ const BodyDetail = () => {
                                     <div className={`overlay2 ${isOverlayVisible ? '' : 'd-none'}`} >
                                         <div className={`appearing-div ${isOverlayVisible ? 'active' : ''}`}>
                                             <div>
-                                                <i onClick={toggleOverlay} class="fa-solid fa-xmark close-description" ></i>
+                                                <i onClick={toggleOverlay} className="fa-solid fa-xmark close-description" ></i>
                                             </div>
                                             <div className='container-description-details'>
                                                 {
@@ -927,7 +891,7 @@ const BodyDetail = () => {
                                         <div className={`overlay2 ${isOverlayComfortable ? '' : 'd-none'}`} >
                                             <div className={`appearing-div ${isOverlayComfortable ? 'active' : ''}`}>
                                                 <div>
-                                                    <i onClick={toggleOverlayComfortable} class="fa-solid fa-xmark close-description" ></i>
+                                                    <i onClick={toggleOverlayComfortable} className="fa-solid fa-xmark close-description" ></i>
                                                 </div>
                                                 <div>
                                                     {
@@ -942,7 +906,7 @@ const BodyDetail = () => {
                                                                                 {
                                                                                     item.comfortableDetailList?.map((item) => (
                                                                                         <>
-                                                                                            <div className='comfortable'>
+                                                                                            <div key={index} className='comfortable'>
                                                                                                 <svg
                                                                                                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" role="presentation" focusable="false" style={{ height: '26px', width: '25px', fill: 'currentcolor' }}
                                                                                                     className='svg-title comfortable-icon'>
@@ -998,87 +962,87 @@ const BodyDetail = () => {
                             <hr className='hr' style={{ width: '140%' }}></hr>
                             <div style={{ width: '1200px' }}>
                                 <div className='title'>
-                                    <h3><i class="fa-solid fa-star"></i> {house.reviewPoint} ·
+                                    <h3><i className="fa-solid fa-star"></i> {house.reviewPoint} ·
                                         <span className='text' style={{ textDecoration: 'underline' }}>{house.numReview} đánh giá</span>
                                     </h3>
                                     <div className='container-review'>
                                         {
                                             houseReview.reviewPointHouse && (
-                                                <div class="rating-container">
-                                                    <div class="rating-label" >
+                                                <div className="rating-container">
+                                                    <div className="rating-label" >
                                                         <span>Mức độ sạch sẽ: </span>
                                                     </div>
                                                     <span className='review-point'>{houseReview.reviewPointHouse.cleanlinessPoint}</span>
-                                                    <div class="rating-bar" style={{ display: 'flex' }}>
-                                                        <div class="filled-bar" style={{ width: `${(houseReview.reviewPointHouse.cleanlinessPoint / 5) * 100}%` }}></div>
-                                                        <div class="empty-bar"></div>
+                                                    <div className="rating-bar" style={{ display: 'flex' }}>
+                                                        <div className="filled-bar" style={{ width: `${(houseReview.reviewPointHouse.cleanlinessPoint / 5) * 100}%` }}></div>
+                                                        <div className="empty-bar"></div>
                                                     </div>
                                                 </div>
                                             )
                                         }
                                         {
                                             houseReview.reviewPointHouse && (
-                                                <div class="rating-container">
-                                                    <div class="rating-label" >
+                                                <div className="rating-container">
+                                                    <div className="rating-label" >
                                                         <span>Độ chính xác :</span>
                                                     </div>
                                                     <span className='review-point'>{houseReview.reviewPointHouse.accuracyPoint}</span>
-                                                    <div class="rating-bar" style={{ display: 'flex' }}>
-                                                        <div class="filled-bar" style={{ width: `${(houseReview.reviewPointHouse.accuracyPoint / 5) * 100}%` }}></div>
-                                                        <div class="empty-bar"></div>
+                                                    <div className="rating-bar" style={{ display: 'flex' }}>
+                                                        <div className="filled-bar" style={{ width: `${(houseReview.reviewPointHouse.accuracyPoint / 5) * 100}%` }}></div>
+                                                        <div className="empty-bar"></div>
                                                     </div>
                                                 </div>
                                             )
                                         }
                                         {
                                             houseReview.reviewPointHouse && (
-                                                <div class="rating-container">
+                                                <div className="rating-container">
                                                     <div
-                                                        class="rating-label" >Giao tiếp: </div>
+                                                        className="rating-label" >Giao tiếp: </div>
                                                     <span
                                                         className='review-point'>{houseReview.reviewPointHouse.communicationPoint}</span>
-                                                    <div class="rating-bar" style={{ display: 'flex' }}>
-                                                        <div class="filled-bar" style={{ width: `${(houseReview.reviewPointHouse.communicationPoint / 5) * 100}%` }}></div>
-                                                        <div class="empty-bar"></div>
+                                                    <div className="rating-bar" style={{ display: 'flex' }}>
+                                                        <div className="filled-bar" style={{ width: `${(houseReview.reviewPointHouse.communicationPoint / 5) * 100}%` }}></div>
+                                                        <div className="empty-bar"></div>
                                                     </div>
                                                 </div>
                                             )
                                         }
                                         {
                                             houseReview.reviewPointHouse && (
-                                                <div class="rating-container">
-                                                    <div class="rating-label" >Vị trí: </div>
+                                                <div className="rating-container">
+                                                    <div className="rating-label" >Vị trí: </div>
                                                     <span
                                                         className='review-point'>{houseReview.reviewPointHouse.locationPoint}</span>
-                                                    <div class="rating-bar" style={{ display: 'flex' }}>
-                                                        <div class="filled-bar" style={{ width: `${(houseReview.reviewPointHouse.locationPoint / 5) * 100}%` }}></div>
-                                                        <div class="empty-bar"></div>
+                                                    <div className="rating-bar" style={{ display: 'flex' }}>
+                                                        <div className="filled-bar" style={{ width: `${(houseReview.reviewPointHouse.locationPoint / 5) * 100}%` }}></div>
+                                                        <div className="empty-bar"></div>
                                                     </div>
                                                 </div>
                                             )
                                         }
                                         {
                                             houseReview.reviewPointHouse && (
-                                                <div class="rating-container">
-                                                    <div class="rating-label">Nhận phòng: </div>
+                                                <div className="rating-container">
+                                                    <div className="rating-label">Nhận phòng: </div>
                                                     <span
                                                         className='review-point'>{houseReview.reviewPointHouse.checkInPoint}</span>
-                                                    <div class="rating-bar" style={{ display: 'flex' }}>
-                                                        <div class="filled-bar" style={{ width: `${(houseReview.reviewPointHouse.checkInPoint / 5) * 100}%` }}></div>
-                                                        <div class="empty-bar"></div>
+                                                    <div className="rating-bar" style={{ display: 'flex' }}>
+                                                        <div className="filled-bar" style={{ width: `${(houseReview.reviewPointHouse.checkInPoint / 5) * 100}%` }}></div>
+                                                        <div className="empty-bar"></div>
                                                     </div>
                                                 </div>
                                             )
                                         }
                                         {
                                             houseReview.reviewPointHouse && (
-                                                <div class="rating-container">
-                                                    <div class="rating-label" >Giá trị: </div>
+                                                <div className="rating-container">
+                                                    <div className="rating-label" >Giá trị: </div>
                                                     <span
                                                         className='review-point'>{houseReview.reviewPointHouse.valuePoint}</span>
-                                                    <div class="rating-bar" style={{ display: 'flex' }}>
-                                                        <div class="filled-bar" style={{ width: `${(houseReview.reviewPointHouse.valuePoint / 5) * 100}%` }}></div>
-                                                        <div class="empty-bar"></div>
+                                                    <div className="rating-bar" style={{ display: 'flex' }}>
+                                                        <div className="filled-bar" style={{ width: `${(houseReview.reviewPointHouse.valuePoint / 5) * 100}%` }}></div>
+                                                        <div className="empty-bar"></div>
                                                     </div>
                                                 </div>
                                             )
@@ -1116,90 +1080,90 @@ const BodyDetail = () => {
                                             <div style={{ width: '60%', height: '700px' }}
                                                 className={`appearing-div ${isOverlayReviews ? 'active' : ''}`}>
                                                 <div>
-                                                    <i onClick={toggleOverlayReviews} class="fa-solid fa-xmark close-description" ></i>
+                                                    <i onClick={toggleOverlayReviews} className="fa-solid fa-xmark close-description" ></i>
                                                 </div>
                                                 <div className='active-reviews-container'>
                                                     <div className='active-reviews-main'>
-                                                        <h2><i class="fa-solid fa-star"></i> {house.reviewPoint} ·
+                                                        <h2><i className="fa-solid fa-star"></i> {house.reviewPoint} ·
                                                             <span> {house.numReview} đánh giá</span>
                                                         </h2>
                                                         {
                                                             houseReview.reviewPointHouse && (
-                                                                <div class="rating-container" style={{ width: '100%' }}>
-                                                                    <div class="rating-label" >
+                                                                <div className="rating-container" style={{ width: '100%' }}>
+                                                                    <div className="rating-label" >
                                                                         <span>Mức độ sạch sẽ: </span>
                                                                     </div>
                                                                     <span className='review-point'>{houseReview.reviewPointHouse.cleanlinessPoint}</span>
-                                                                    <div class="rating-bar" style={{ display: 'flex' }}>
-                                                                        <div class="filled-bar" style={{ width: `${(houseReview.reviewPointHouse.cleanlinessPoint / 5) * 100}%` }}></div>
-                                                                        <div class="empty-bar"></div>
+                                                                    <div className="rating-bar" style={{ display: 'flex' }}>
+                                                                        <div className="filled-bar" style={{ width: `${(houseReview.reviewPointHouse.cleanlinessPoint / 5) * 100}%` }}></div>
+                                                                        <div className="empty-bar"></div>
                                                                     </div>
                                                                 </div>
                                                             )
                                                         }
                                                         {
                                                             houseReview.reviewPointHouse && (
-                                                                <div class="rating-container" style={{ width: '100%' }}>
-                                                                    <div class="rating-label" >
+                                                                <div className="rating-container" style={{ width: '100%' }}>
+                                                                    <div className="rating-label" >
                                                                         <span>Độ chính xác :</span>
                                                                     </div>
                                                                     <span className='review-point'>{houseReview.reviewPointHouse.accuracyPoint}</span>
-                                                                    <div class="rating-bar" style={{ display: 'flex' }}>
-                                                                        <div class="filled-bar" style={{ width: `${(houseReview.reviewPointHouse.accuracyPoint / 5) * 100}%` }}></div>
-                                                                        <div class="empty-bar"></div>
+                                                                    <div className="rating-bar" style={{ display: 'flex' }}>
+                                                                        <div className="filled-bar" style={{ width: `${(houseReview.reviewPointHouse.accuracyPoint / 5) * 100}%` }}></div>
+                                                                        <div className="empty-bar"></div>
                                                                     </div>
                                                                 </div>
                                                             )
                                                         }
                                                         {
                                                             houseReview.reviewPointHouse && (
-                                                                <div class="rating-container" style={{ width: '100%' }}>
+                                                                <div className="rating-container" style={{ width: '100%' }}>
                                                                     <div
-                                                                        class="rating-label" >Giao tiếp: </div>
+                                                                        className="rating-label" >Giao tiếp: </div>
                                                                     <span
                                                                         className='review-point'>{houseReview.reviewPointHouse.communicationPoint}</span>
-                                                                    <div class="rating-bar" style={{ display: 'flex' }}>
-                                                                        <div class="filled-bar" style={{ width: `${(houseReview.reviewPointHouse.communicationPoint / 5) * 100}%` }}></div>
-                                                                        <div class="empty-bar"></div>
+                                                                    <div className="rating-bar" style={{ display: 'flex' }}>
+                                                                        <div className="filled-bar" style={{ width: `${(houseReview.reviewPointHouse.communicationPoint / 5) * 100}%` }}></div>
+                                                                        <div className="empty-bar"></div>
                                                                     </div>
                                                                 </div>
                                                             )
                                                         }
                                                         {
                                                             houseReview.reviewPointHouse && (
-                                                                <div class="rating-container" style={{ width: '100%' }}>
-                                                                    <div class="rating-label" >Vị trí: </div>
+                                                                <div className="rating-container" style={{ width: '100%' }}>
+                                                                    <div className="rating-label" >Vị trí: </div>
                                                                     <span
                                                                         className='review-point'>{houseReview.reviewPointHouse.locationPoint}</span>
-                                                                    <div class="rating-bar" style={{ display: 'flex' }}>
-                                                                        <div class="filled-bar" style={{ width: `${(houseReview.reviewPointHouse.locationPoint / 5) * 100}%` }}></div>
-                                                                        <div class="empty-bar"></div>
+                                                                    <div className="rating-bar" style={{ display: 'flex' }}>
+                                                                        <div className="filled-bar" style={{ width: `${(houseReview.reviewPointHouse.locationPoint / 5) * 100}%` }}></div>
+                                                                        <div className="empty-bar"></div>
                                                                     </div>
                                                                 </div>
                                                             )
                                                         }
                                                         {
                                                             houseReview.reviewPointHouse && (
-                                                                <div class="rating-container" style={{ width: '100%' }}>
-                                                                    <div class="rating-label">Nhận phòng: </div>
+                                                                <div className="rating-container" style={{ width: '100%' }}>
+                                                                    <div className="rating-label">Nhận phòng: </div>
                                                                     <span
                                                                         className='review-point'>{houseReview.reviewPointHouse.checkInPoint}</span>
-                                                                    <div class="rating-bar" style={{ display: 'flex' }}>
-                                                                        <div class="filled-bar" style={{ width: `${(houseReview.reviewPointHouse.checkInPoint / 5) * 100}%` }}></div>
-                                                                        <div class="empty-bar"></div>
+                                                                    <div className="rating-bar" style={{ display: 'flex' }}>
+                                                                        <div className="filled-bar" style={{ width: `${(houseReview.reviewPointHouse.checkInPoint / 5) * 100}%` }}></div>
+                                                                        <div className="empty-bar"></div>
                                                                     </div>
                                                                 </div>
                                                             )
                                                         }
                                                         {
                                                             houseReview.reviewPointHouse && (
-                                                                <div class="rating-container" style={{ width: '100%' }}>
-                                                                    <div class="rating-label" >Giá trị: </div>
+                                                                <div className="rating-container" style={{ width: '100%' }}>
+                                                                    <div className="rating-label" >Giá trị: </div>
                                                                     <span
                                                                         className='review-point'>{houseReview.reviewPointHouse.valuePoint}</span>
-                                                                    <div class="rating-bar" style={{ display: 'flex' }}>
-                                                                        <div class="filled-bar" style={{ width: `${(houseReview.reviewPointHouse.valuePoint / 5) * 100}%` }}></div>
-                                                                        <div class="empty-bar"></div>
+                                                                    <div className="rating-bar" style={{ display: 'flex' }}>
+                                                                        <div className="filled-bar" style={{ width: `${(houseReview.reviewPointHouse.valuePoint / 5) * 100}%` }}></div>
+                                                                        <div className="empty-bar"></div>
                                                                     </div>
                                                                 </div>
                                                             )
@@ -1207,7 +1171,7 @@ const BodyDetail = () => {
                                                     </div>
                                                     <div className='active-reviews-extra'>
                                                         <div>
-                                                            <i class="fa-solid fa-magnifying-glass icon-inp-search-review"></i>
+                                                            <i className="fa-solid fa-magnifying-glass icon-inp-search-review"></i>
                                                             <input className='input-search-reviews'
                                                                 type="text" placeholder='Tìm kiếm đánh giá'
                                                                 onChange={handleInputSearchReviews} />
@@ -1280,7 +1244,7 @@ const BodyDetail = () => {
                                         )
                                     }
                                     <button className='btn-show-description' onClick={toggleOverlay}>
-                                        <p>Hiển thị thêm  <span><i class="fa-solid fa-angle-right"></i></span></p>
+                                        <p>Hiển thị thêm  <span><i className="fa-solid fa-angle-right"></i></span></p>
                                     </button>
                                 </div>
                             </div>
@@ -1292,7 +1256,7 @@ const BodyDetail = () => {
                                             <div>
                                                 <div>
                                                     <Link to={'/user/show'}>
-                                                        <img style={{ margin: '17px 0px' }} 
+                                                        <img style={{ margin: '17px 0px' }}
                                                             className='avatar' src={house.user.avatar} alt="" />
                                                     </Link>
                                                     <svg style={{ padding: '90px 60px' }}
@@ -1317,7 +1281,7 @@ const BodyDetail = () => {
                                                     <p>Đã xác minh danh tính</p>
                                                 </div>
                                                 <div className='icon-host-detail'>
-                                                    <i style={{ marginRight: '15px' }} class="fa-solid fa-medal"></i>
+                                                    <i style={{ marginRight: '15px' }} className="fa-solid fa-medal"></i>
                                                     <p>Chủ nhà siêu cấp</p>
                                                 </div>
                                             </div>
@@ -1355,7 +1319,7 @@ const BodyDetail = () => {
                                             <button className='btn-contact-with-host'>Liên hệ với chủ nhà</button>
                                             <div style={{ display: 'flex', alignItems: 'center' }}>
                                                 <i style={{ marginRight: '15px' }}
-                                                    class="fa-solid fa-shield"></i>
+                                                    className="fa-solid fa-shield"></i>
                                                 <p style={{ opacity: '0.8', width: '65%' }}>
                                                     Để bảo vệ khoản thanh toán của bạn, tuyệt đối không chuyển tiền hoặc liên lạc bên ngoài trang web hoặc ứng dụng Airbnb.</p>
                                             </div>
@@ -1375,7 +1339,7 @@ const BodyDetail = () => {
                                             <p>Trả phòng sau</p>
                                             <p>Tối đa 12 khách</p>
                                             <button className='btn-show-description' onClick={toggleOverlay}>
-                                                <p>Hiển thị thêm  <span><i class="fa-solid fa-angle-right"></i></span></p>
+                                                <p>Hiển thị thêm  <span><i className="fa-solid fa-angle-right"></i></span></p>
                                             </button>
                                         </div>
                                         <div style={{ width: '33%' }}>
@@ -1384,7 +1348,7 @@ const BodyDetail = () => {
                                             <p>Không có máy báo khói</p>
                                             <p>Camera an ninh/thiết bị ghi</p>
                                             <button className='btn-show-description' onClick={toggleOverlay}>
-                                                <p>Hiển thị thêm  <span><i class="fa-solid fa-angle-right"></i></span></p>
+                                                <p>Hiển thị thêm  <span><i className="fa-solid fa-angle-right"></i></span></p>
                                             </button>
                                         </div>
                                         <div style={{ width: '33%' }}>
@@ -1392,22 +1356,19 @@ const BodyDetail = () => {
                                             <p>Đặt phòng/đặt chỗ này không được hoàn tiền.</p>
                                             <p>Hãy đọc toàn bộ chính sách hủy của Chủ nhà/Người tổ chức được áp dụng ngay cả khi bạn hủy vì ốm bệnh hoặc gián đoạn do dịch COVID-19.</p>
                                             <button className='btn-show-description' onClick={toggleOverlayCancellationPolicy}>
-                                                <p>Hiển thị thêm  <span><i class="fa-solid fa-angle-right"></i></span></p>
+                                                <p>Hiển thị thêm  <span><i className="fa-solid fa-angle-right"></i></span></p>
                                             </button>
                                         </div>
                                         {(
                                             <div className={`overlay2 ${isOverlayCancellationPolicy ? '' : 'd-none'}`} >
                                                 <div className={`appearing-div ${isOverlayCancellationPolicy ? 'active' : ''}`}>
                                                     <div>
-                                                        <i onClick={toggleOverlayCancellationPolicy} class="fa-solid fa-xmark close-description" ></i>
+                                                        <i onClick={toggleOverlayCancellationPolicy} className="fa-solid fa-xmark close-description" ></i>
                                                     </div>
                                                     <div>
                                                         <h1>Chính sách hủy</h1>
                                                         <div className='description'>Trước khi bạn đặt phòng/đặt chỗ, hãy đảm bảo chính sách hủy của Chủ nhà/Người tổ chức này phù hợp với bạn. Xin lưu ý rằng <span style={{ textDecoration: "underline", fontWeight: "bold", cursor: "pointer" }}> chính sách Trường hợp bất khả kháng</span>  của Airbnb không áp dụng cho các trường hợp hủy vì ốm bệnh hoặc gián đoạn đi lại do dịch COVID-19.</div>
                                                         <h3>Hủy muộn nhất vào ngày</h3>
-                                                        <table>
-                                                            <tr></tr>
-                                                        </table>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1418,13 +1379,13 @@ const BodyDetail = () => {
                             <hr className='hr' style={{ width: '140%' }}></hr>
                             <div className='menu-on-list-airbnb'>
                                 <Link className='link-to' to={`/house`}><p>AirBnb</p></Link>
-                                <i class="fa-solid fa-angle-right"></i>
+                                <i className="fa-solid fa-angle-right"></i>
                                 <Link className='link-to' to={`/house`}><p>Việt Nam</p></Link>
-                                <i class="fa-solid fa-angle-right"></i>
+                                <i className="fa-solid fa-angle-right"></i>
                                 <Link className='link-to' to={`/house`}><p>MIMAROPA</p></Link>
-                                <i class="fa-solid fa-angle-right"></i>
+                                <i className="fa-solid fa-angle-right"></i>
                                 <Link className='link-to' to={`/house`}><p>Palawan</p></Link>
-                                <i class="fa-solid fa-angle-right"></i>
+                                <i className="fa-solid fa-angle-right"></i>
                                 <Link className='link-to' to={`/house`}><p>San Vicente</p></Link>
                             </div>
                             <hr className='hr' style={{ width: '140%' }}></hr>
@@ -1470,7 +1431,7 @@ const BodyDetail = () => {
                             {
                                 house && (
                                     <p>
-                                        <i class="fa-solid fa-star"></i> {house.reviewPoint} ·
+                                        <i className="fa-solid fa-star"></i> {house.reviewPoint} ·
                                         <span className='text' style={{ textDecoration: 'underline' }}>{house.numReview} đánh giá</span>
                                     </p>
                                 )
@@ -1560,7 +1521,7 @@ const BodyDetail = () => {
                             </div>
                             <div className='fixed-down-icon' onClick={toggleCountGuestsDetails} >
                                 <i
-                                    class={`fa-solid fa-angle-${isUpOpenCountGuests ? 'up' : 'down'}`}></i>
+                                    className={`fa-solid fa-angle-${isUpOpenCountGuests ? 'up' : 'down'}`}></i>
                             </div>
                         </div>
                     </div>
@@ -1587,7 +1548,7 @@ const BodyDetail = () => {
                                         </>
                                     )
                             ) : (
-                                    <GradientButton onClick={handleCheckAvailableRoom}>Kiểm tra tình trạng còn phòng</GradientButton>
+                                <GradientButton onClick={handleCheckAvailableRoom}>Kiểm tra tình trạng còn phòng</GradientButton>
                             )
                         }
                         {

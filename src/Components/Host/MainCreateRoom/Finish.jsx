@@ -2,11 +2,9 @@ import axios from 'axios';
 import React from 'react'
 import { Link, useNavigate } from "react-router-dom";
 import CreateRoom from './../../../Services/CreateRoom';
+import { API_HOST } from '../../../Services/common';
 
 function Finish() {
-  const handleLog = () => {
-    console.log(CreateRoom.getCreateRoom());
-  }
   const handleCreateHouse = () => {
     var jwtValue = localStorage.getItem("jwt");
     const userInfo = JSON.parse(localStorage.getItem('userInfo'))
@@ -14,13 +12,13 @@ function Finish() {
     localStorage.setItem('userInfo', JSON.stringify(userInfo))
 
     async function getData() {
-      let res = axios.post('http://localhost:8080/api/host/house', CreateRoom.getCreateRoom(),
+      let res = axios.post(API_HOST + 'house', CreateRoom.getCreateRoom(),
         {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem("jwt")}`
           }
         });
-        CreateRoom.setCreateRoom({})
+      CreateRoom.setCreateRoom({})
     }
     getData();
   }

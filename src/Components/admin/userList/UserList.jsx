@@ -6,6 +6,7 @@ import { result } from "lodash";
 import Typography from '@mui/material/Typography';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
+import { API_ADMIN } from "../../../Services/common";
 
 
 const SERVICE_ID = "service_jvlas79";
@@ -16,12 +17,12 @@ function UserList() {
     const [users, setUsers] = useState([]);
     const [page, setPage] = useState(1);
     const [totalPage, setTotalPage] = useState(1);
-    const [size, setSize] = useState(3);
+    const [size, setSize] = useState(5);
     const [user, setUser] = useState({});
 
     useEffect(() => {
         async function getData() {
-            const response = await axios.get(`http://localhost:8080/api/admin/users?page=${page - 1}&size=${size}`);
+            const response = await axios.get(API_ADMIN + `users?page=${page - 1}&size=${size}`);
             setUsers(response.data.content);
             setTotalPage(response.data.totalPages);
         };
@@ -93,7 +94,7 @@ function UserList() {
     useEffect(() => {
         async function sendData() {
             try {
-                await axios.patch(`http://localhost:8080/api/admin/users/update/${user.id}`, user, {
+                await axios.patch(API_ADMIN + `users/update/${user.id}`, user, {
                     headers: {
                         'Content-Type': 'application/json'
                     }
@@ -119,22 +120,20 @@ function UserList() {
                     <thead>
                         <tr>
                             <th scope='col'>#</th>
-                            <th scope='col'>First Name</th>
+                            <th scope='col' colSpan={2}>First Name</th>
                             <th scope='col'>Last Name</th>
                             <th scope='col'>Email</th>
                             <th scope='col'>Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {users.map((user , index) => (
-                            <tr>
-                                <td className='align-middle'>{user.id}</td>
-                                <td>
-                                    <div className='d-flex align-items-center justify-content-center'>
-                                        <img style={{ width: "50px", height: "50px", borderRadius: "50%" }} src={user.avatar || us} alt='img' />
-                                        {user.firstName}
-                                    </div>
+                        {users.map((user, index) => (
+                            <tr key={user.id}>
+                                <td className='align-middle'>{(page - 1) * 5 + index + 1}</td>
+                                <td style={{ width: '70px' }}>
+                                    <img style={{ width: "50px", height: "50px", borderRadius: "50%" }} src={user.avatar || us} alt='img' />
                                 </td>
+                                <td className='align-middle' style={{ width: '200px' }}>{user.firstName}</td>
                                 <td className='align-middle'>{user.lastName}</td>
                                 <td className='align-middle'>{user.email}</td>
                                 <td className='align-middle'>

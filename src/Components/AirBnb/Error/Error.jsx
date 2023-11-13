@@ -7,17 +7,17 @@ import { Link } from 'react-router-dom'
 const Error = () => {
     useEffect(() => {
         const gifElement = document.getElementById('gif-element');
-    
+
         const restartGif = () => {
-          gifElement.src = gifElement.src;
+            gifElement.src = gifElement.src;
         };
-    
+
         gifElement.addEventListener('ended', restartGif);
-    
+
         return () => {
-          gifElement.removeEventListener('ended', restartGif);
+            gifElement.removeEventListener('ended', restartGif);
         };
-      }, []);
+    }, []);
     return (
         <>
             <HeaderFormUser />
@@ -28,19 +28,19 @@ const Error = () => {
                     <h3>Nhà</h3>
                 </Link>
                 <Link className='link-tag-error'
-                to='https://www.airbnb.com.vn/help/article/2503#article-content'>
+                    to='https://www.airbnb.com.vn/help/article/2503#article-content'>
                     <h3>Đi lại cùng Airbnb</h3>
                 </Link>
                 <Link className='link-tag-error'
-                to='https://www.airbnb.com.vn/help/article/2503#article-content'>
+                    to='https://www.airbnb.com.vn/help/article/2503#article-content'>
                     <h3>Đón tiếp khách trên Airbnb</h3>
                 </Link>
                 <Link className='link-tag-error'
-                to='https://www.airbnb.com.vn/help/article/2503#article-content'>
+                    to='https://www.airbnb.com.vn/help/article/2503#article-content'>
                     <h3>Tin cậy và an toàn</h3>
                 </Link>
                 <Link className='link-tag-error'
-                to='https://www.airbnb.com.vn/help/article/2503#article-content'>
+                    to='https://www.airbnb.com.vn/help/article/2503#article-content'>
                     <h3>Sơ đồ trang web</h3>
                 </Link>
                 <div className='img-tag-error'>

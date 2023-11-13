@@ -6,6 +6,7 @@ import { Button, Dropdown, DropdownButton, Form, InputGroup, Table } from "react
 import useFetchListHouseCancel from "../../../Hooks/admin/listHouse/useFetchListHouseCancel";
 import axios from "axios";
 import emailjs from '@emailjs/browser';
+import { API_ADMIN } from './../../../Services/common';
 
 
 const reloadPage = () => {
@@ -85,7 +86,7 @@ const HouseBan = () => {
 
     useEffect(() => {
         const sendData = async () => {
-            await axios.patch(`http://localhost:8080/api/admin/houses/set-status/${houseUnlock.id}`, houseUnlock).then((response) => {
+            await axios.patch(API_ADMIN + `houses/set-status/${houseUnlock.id}`, houseUnlock).then((response) => {
                 console.log(response);
             }).catch(error => {
                 console.log("Patch Error", error);

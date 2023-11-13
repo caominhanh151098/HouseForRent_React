@@ -1,13 +1,14 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { get } from "react-hook-form";
+import { API_ADMIN } from './../../../Services/common';
 
 function useFetchTotalUsersThisMonth() {
     const [users, setUsers] = useState([]);
     useEffect(() => {
         async function getData() {
             const date = new Date();
-            const responses = await axios.get(`http://localhost:8080/api/admin/users/createdDate?month=${date.getMonth() + 1}&year=${date.getFullYear()}`);
+            const responses = await axios.get(API_ADMIN + `users/createdDate?month=${date.getMonth() + 1}&year=${date.getFullYear()}`);
             const dateCountMap = new Map();
 
             responses?.data?.forEach(item => {

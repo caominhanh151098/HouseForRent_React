@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { API_ADMIN } from "../../../Services/common";
 
 const useFetchTotalNewHousesThisMonth = () => {
     const [houses , setHouses] = useState([]);
@@ -7,7 +8,7 @@ const useFetchTotalNewHousesThisMonth = () => {
         async function getData(){
             const date = new Date();
 
-            const responses = await axios.get(`http://localhost:8080/api/admin/houses/createdDate?month=${date.getMonth() + 1}&year=${date.getFullYear()}`);
+            const responses = await axios.get(API_ADMIN + `houses/createdDate?month=${date.getMonth() + 1}&year=${date.getFullYear()}`);
 
             const dateCountMap = new Map();
             responses?.data?.forEach(item => {

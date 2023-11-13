@@ -7,11 +7,6 @@ import CreateRoom from './../../../Services/CreateRoom';
 
 
 function B1_address() {
-  const handleLog = () => {
-    console.log(location);
-    setAddress('hà nội')
-  }
-
   const [address, setAddress] = useState(CreateRoom?.getCreateRoom()?.address || 'Huế')
   const [addressValue, setAddressValue] = useState(CreateRoom?.getCreateRoom()?.address || 'Huế')
 
@@ -21,7 +16,6 @@ function B1_address() {
     lon: '107.58483'
   })
   const handleOnChangeTxtSearch = (e) => {
-    console.log("CHANGE " + e.target.value);
     setAddressValue(e.target.value);
   }
 

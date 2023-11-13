@@ -1,12 +1,13 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { API_ADMIN } from "../../../Services/common";
 
 const useFetchProfitsForQuarterAndYear = (startDate, endDate) => {
 
     const [profits , setProfits] = useState([]);
     useEffect(() => {
         async function getData() {
-            const responses = await axios.get(`http://localhost:8080/api/admin/profits?date1=${startDate}&date2=${endDate}`);
+            const responses = await axios.get(API_ADMIN + `profits?date1=${startDate}&date2=${endDate}`);
 
             const result = new Map();
 

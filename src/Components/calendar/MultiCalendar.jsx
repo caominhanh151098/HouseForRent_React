@@ -9,6 +9,7 @@ import { set } from 'lodash';
 import "./Calendar.css"
 import FooterFormUser from '../User/FooterFormUser';
 import NavbarHosting from './../Host/LayoutHosting/NavbarHosting';
+import { API_HOST } from '../../Services/common';
 
 
 const today = new Date();
@@ -32,21 +33,21 @@ export default function MultiCalendar() {
     const [selectedDates, setSelectedDates] = useState([]);
     const [selectedDate, setSelectedDate] = useState(null);
     const [price, setPrice] = useState(0)
-    const [newPrice,setNewPrice]=useState(0)
+    const [newPrice, setNewPrice] = useState(0)
     const [weekendPrice, setWeekendPrice] = useState(0)
-    const [newWeekendPrice,SetNewWeekendPrice]=useState(0)
+    const [newWeekendPrice, SetNewWeekendPrice] = useState(0)
     const [priceEvent, setPriceEvent] = useState([])
     const [listDom, setListDom] = useState([])
     const [listHouse, setListHouse] = useState([])
     const [houseID, setHouse] = useState(0)
     const [blockStatus, setBlockStatus] = useState(true)
-    const [blockingDateRangeEvt,setBlockingDateRange]=useState([])
-    const [listBlockingResevation,setListBlockingReservation]=useState([])
+    const [blockingDateRangeEvt, setBlockingDateRange] = useState([])
+    const [listBlockingResevation, setListBlockingReservation] = useState([])
     const [calendarEvents, setCalendarEvents] = useState([]);
     const [render, setRender] = useState(false)
     const [typeShow, setTypeShow] = useState('show')
     const [serviceFee, setServiceFee] = useState(0)
-    const [dateFocus, setDateFocus] = useState(new Date(    ))
+    const [dateFocus, setDateFocus] = useState(new Date())
     const [priceOnDate, setPriceOnDate] = useState([])
     const getDatesInRange = (startDate, endDate) => {
         return eachDayOfInterval({ start: startDate, end: endDate });
@@ -66,18 +67,18 @@ export default function MultiCalendar() {
         var today = new Date(); // Lấy ngày hiện tại
         var yesterday = new Date(today);
         yesterday.setDate(today.getDate() - 1); // Giảm một ngày
-        
-      
+
+
         while (currentDate <= endDate) {
-          if (currentDate >= yesterday) {
-            dateArray.push(new Date(currentDate));
-          }
-          currentDate.setDate(currentDate.getDate() + 1);
+            if (currentDate >= yesterday) {
+                dateArray.push(new Date(currentDate));
+            }
+            currentDate.setDate(currentDate.getDate() + 1);
         }
-      
+
         return dateArray;
-      }
-      
+    }
+
     function getDateRange() {
         const currentDate = new Date();
         const startDate = new Date(currentDate.getFullYear() - 1, currentDate.getMonth(), currentDate.getDate());
@@ -90,84 +91,84 @@ export default function MultiCalendar() {
             dateList.push(new Date(currentDateIterator));
             currentDateIterator.setDate(currentDateIterator.getDate() + 1);
         }
-  
+
         return dateList;
     }
     useEffect(() => {
         async function getData() {
-            
 
-            let res = await axios.get(`http://localhost:8080/api/multiCalendars/client/getBlockingDateRange/${houseID}`,
+
+            let res = await axios.get(`https://quarter-rois.cghue.com/api/multiCalendars/client/getBlockingDateRange/${houseID}`,
                 {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem("jwt")}`
                     }
                 });
-                let listevt=[]
-                res.data?.forEach(element => {
-                    getDates(dayjs(element.checkInDate),dayjs(element.checkOutDate)).forEach(item => {
-                        listevt.push(dayjs(item))
-                    });
+            let listevt = []
+            res.data?.forEach(element => {
+                getDates(dayjs(element.checkInDate), dayjs(element.checkOutDate)).forEach(item => {
+                    listevt.push(dayjs(item))
                 });
-                setListBlockingReservation(listevt)
-                
-                let x=listevt.map((item)=>(
-                    {
-                        title: 'Đang sử dụng',
-                        color: 'blue',   // an option!
-                        textColor: 'red',
-                        display: 'background',
-                        start: dayjs(item).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
-                        allDay: true,
-                        classNames:['evt-blockReservation']
-                    }
-                ))
-                setBlockingDateRange(x)
+            });
+            setListBlockingReservation(listevt)
+
+            let x = listevt.map((item) => (
+                {
+                    title: 'Đang sử dụng',
+                    color: 'blue',   // an option!
+                    textColor: 'red',
+                    display: 'background',
+                    start: dayjs(item).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+                    allDay: true,
+                    classNames: ['evt-blockReservation']
+                }
+            ))
+            setBlockingDateRange(x)
         }
         getData();
     }, [houseID, render])
     useEffect(() => {
-        let x =weekendPrice!=0?
-        getDateRange().map((item) =>
-        item.getDay()!==0 && item.getDay()!==6?
-        (
-            {
-                title: `${price?price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ'):""}`,
-                color: 'transparent',   // an option!
-                textColor: 'black',
-                start: dayjs(item).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
-                allDay: true,
-                classNames:['evt']
-            }
-        ):
-        (
-            {
-                title: `${weekendPrice? weekendPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ'):""}`,
-                color: 'transparent',   // an option!
-                textColor: 'black',
-                start: dayjs(item).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
-                allDay: true,
-                classNames:['evt']
-            }
-        )
-        ):
-        getDateRange().map((item) =>
-        (
-            {
-                title: `${price?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ')}`,
-                color: 'transparent',   // an option!
-                textColor: 'black',
-                start: dayjs(item).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
-                allDay: true,
-                classNames:['evt']
-            }
-        )
-        )
+        let x = weekendPrice != 0 ?
+            getDateRange().map((item) =>
+                item.getDay() !== 0 && item.getDay() !== 6 ?
+                    (
+                        {
+                            title: `${price ? price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ') : ""}`,
+                            color: 'transparent',   // an option!
+                            textColor: 'black',
+                            start: dayjs(item).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+                            allDay: true,
+                            classNames: ['evt']
+                        }
+                    ) :
+                    (
+                        {
+                            title: `${weekendPrice ? weekendPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ') : ""}`,
+                            color: 'transparent',   // an option!
+                            textColor: 'black',
+                            start: dayjs(item).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+                            allDay: true,
+                            classNames: ['evt']
+                        }
+                    )
+            ) :
+            getDateRange().map((item) =>
+            (
+                {
+                    title: `${price?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ')}`,
+                    color: 'transparent',   // an option!
+                    textColor: 'black',
+                    start: dayjs(item).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+                    allDay: true,
+                    classNames: ['evt']
+                }
+            )
+            )
         setPriceOnDate(x)
-    }, [price,weekendPrice])
+    }, [price, weekendPrice])
     useEffect(() => {
         async function getData() {
-            let res = await axios.get(`http://localhost:8080/api/host/surcharge/getServiceFee`,
+            let res = await axios.get(API_HOST + `surcharge/getServiceFee`,
                 {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem("jwt")}`
@@ -182,58 +183,57 @@ export default function MultiCalendar() {
         async function getData() {
 
 
-            let res = await axios.get(`http://localhost:8080/api/host/feeHouse/getFeeHouse/${houseID}`,
+            let res = await axios.get(API_HOST + `feeHouse/getFeeHouse/${houseID}`,
                 {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem("jwt")}`
                     }
                 });
             if (valueOf("CLEANING", res.data)) {
-           
+
                 setClean(valueOf("CLEANING", res.data).price)
-            }else{
+            } else {
                 setClean(0)
             }
             if (valueOf("SHORT_STAY_CLEANING", res.data)) {
                 setshortClean(valueOf("SHORT_STAY_CLEANING", res.data).price)
-            }else{
+            } else {
                 setshortClean(0)
             }
             if (valueOf("PET", res.data)) {
                 setPet(valueOf("PET", res.data).price)
-            }else{
+            } else {
                 setPet(0)
             }
             if (valueOf("EXTRA_GUESS", res.data)) {
                 setOther(valueOf("EXTRA_GUESS", res.data).other)
                 setOtherPrice(valueOf("EXTRA_GUESS", res.data).price)
-            }else{
+            } else {
                 setOther(1)
                 setOtherPrice(0)
             }
         }
         getData();
-    }, [houseID,typeShow])
+    }, [houseID, typeShow])
     useEffect(() => {
         async function getData() {
-            let res = await axios.get(`http://localhost:8080/api/multiCalendars/client/getBlockingDate/${houseID}`,
+            let res = await axios.get(`https://quarter-rois.cghue.com/api/multiCalendars/client/getBlockingDate/${houseID}`,
                 {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem("jwt")}`
                     }
                 });
             let x = res?.data?.map((item) => (
-                
+
                 {
-                title: 'Đã chặn',
-                color: '#818181',   // an option!
-                textColor: 'blue',
-                display: 'background',
-                start: dayjs(item.blockingDate).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
-                allDay: true,
-                classNames:['evt-block']
-            }))
-            console.log(x);
+                    title: 'Đã chặn',
+                    color: '#818181',   // an option!
+                    textColor: 'blue',
+                    display: 'background',
+                    start: dayjs(item.blockingDate).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+                    allDay: true,
+                    classNames: ['evt-block']
+                }))
             setCalendarEvents(x)
         }
         getData();
@@ -243,7 +243,7 @@ export default function MultiCalendar() {
         async function getData() {
 
 
-            let res = await axios.get(`http://localhost:8080/api/host/house/getPrice/${houseID}`,
+            let res = await axios.get(API_HOST + `house/getPrice/${houseID}`,
                 {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem("jwt")}`
@@ -252,16 +252,16 @@ export default function MultiCalendar() {
             setPrice(res.data.price)
             setNewPrice(res.data.price)
             setWeekendPrice(res.data.weekendPrice)
-            SetNewWeekendPrice(res.data.weekendPrice)        
+            SetNewWeekendPrice(res.data.weekendPrice)
         }
         getData();
-    }, [houseID,typeShow])
+    }, [houseID, typeShow])
 
     useEffect(() => {
         async function getData() {
 
 
-            let res = await axios.get(`http://localhost:8080/api/host/house/getHouseRevenueHost`,
+            let res = await axios.get(API_HOST + `house/getHouseRevenueHost`,
                 {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem("jwt")}`
@@ -277,7 +277,7 @@ export default function MultiCalendar() {
         async function getData() {
 
 
-            let res = await axios.get(`http://localhost:8080/api/host/house/getHouseRevenueHost`,
+            let res = await axios.get(API_HOST + `house/getHouseRevenueHost`,
                 {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem("jwt")}`
@@ -290,15 +290,14 @@ export default function MultiCalendar() {
         getData();
     }, [])
     function isDateInList(dateToCheck, dateList) {
-        let dateCheck=dayjs(dateToCheck).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
-     // Chuyển đổi ngày cần kiểm tra sang đối tượng Date
-        const check= dateList.some(function(date) {
-          return  date.format('YYYY-MM-DDTHH:mm:ss.SSS[Z]') == dateCheck;
+        let dateCheck = dayjs(dateToCheck).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
+        // Chuyển đổi ngày cần kiểm tra sang đối tượng Date
+        const check = dateList.some(function (date) {
+            return date.format('YYYY-MM-DDTHH:mm:ss.SSS[Z]') == dateCheck;
         });
-        console.log(check);
-        return check
-      }
-      
+        return check;
+    }
+
     const handleDateClick = (arg) => {
 
         const clickedDate = arg.date;
@@ -306,24 +305,23 @@ export default function MultiCalendar() {
         var today = new Date(); // Lấy ngày hiện tại
         var yesterday = new Date(today);
         yesterday.setDate(today.getDate() - 1);
-        if(!isDateInList(clickedDate,listBlockingResevation)){
-        if (clickedDate >= yesterday) {
-            const isDateSelected = selectedDates.find(date => date.getTime() === clickedDate.getTime());
-            if (!isDateSelected) {
-                setSelectedDates([...selectedDates, clickedDate])
-                setListDom([...listDom, arg.dayEl])
-                arg.dayEl.style.backgroundColor = "#454444"
-            } else {
-                setSelectedDates(selectedDates.filter((item) => item != isDateSelected))
-                arg.dayEl.style.backgroundColor = "white"
-                setListDom(listDom.filter((item) => item != arg.dayEl))
+        if (!isDateInList(clickedDate, listBlockingResevation)) {
+            if (clickedDate >= yesterday) {
+                const isDateSelected = selectedDates.find(date => date.getTime() === clickedDate.getTime());
+                if (!isDateSelected) {
+                    setSelectedDates([...selectedDates, clickedDate])
+                    setListDom([...listDom, arg.dayEl])
+                    arg.dayEl.style.backgroundColor = "#454444"
+                } else {
+                    setSelectedDates(selectedDates.filter((item) => item != isDateSelected))
+                    arg.dayEl.style.backgroundColor = "white"
+                    setListDom(listDom.filter((item) => item != arg.dayEl))
 
+                }
             }
-        }}
+        }
         arg.view.calendar.gotoDate(new Date(clickedDate.getFullYear(), clickedDate.getMonth()))
     };
-
-    // console.log(selectedDates);
 
     // const handleSelect = (arg) => {
     //     const { start, end } = arg;
@@ -349,10 +347,9 @@ export default function MultiCalendar() {
             idHouse: houseID,
             listBlocking: newList
         }
-        console.log(data);
         if (blockStatus) {
             async function getData() {
-                let res = await axios.post(`http://localhost:8080/api/multiCalendars/client/addBlockingDate`, data,
+                let res = await axios.post(`https://quarter-rois.cghue.com/api/multiCalendars/client/addBlockingDate`, data,
                     {
                         headers: {
                             'Authorization': `Bearer ${localStorage.getItem("jwt")}`
@@ -364,7 +361,7 @@ export default function MultiCalendar() {
             getData();
         } else {
             async function getData() {
-                let res = await axios.post(`http://localhost:8080/api/multiCalendars/client/removeBlockingDate`, data,
+                let res = await axios.post(`https://quarter-rois.cghue.com/api/multiCalendars/client/removeBlockingDate`, data,
                     {
                         headers: {
                             'Authorization': `Bearer ${localStorage.getItem("jwt")}`
@@ -386,7 +383,7 @@ export default function MultiCalendar() {
 
     const handleUpdatePrice = () => {
         async function getData() {
-            let res = await axios.get(`http://localhost:8080/api/host/house/editPrice/${houseID}/${newPrice}`,
+            let res = await axios.get(API_HOST + `house/editPrice/${houseID}/${newPrice}`,
                 {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem("jwt")}`
@@ -398,7 +395,7 @@ export default function MultiCalendar() {
     }
     const handleUpdateWeekendPrice = () => {
         async function getData() {
-            let res = await axios.get(`http://localhost:8080/api/host/house/editWeekendPrice/${houseID}/${newWeekendPrice}`,
+            let res = await axios.get(API_HOST + `house/editWeekendPrice/${houseID}/${newWeekendPrice}`,
                 {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem("jwt")}`
@@ -410,7 +407,7 @@ export default function MultiCalendar() {
     }
     const handleUpdateSurcharge = (type, typePrice) => {
         async function getData() {
-            let res = await axios.get(`http://localhost:8080/api/host/feeHouse/editSurcharge/${houseID}/${type}/${typePrice}`,
+            let res = await axios.get(API_HOST + `feeHouse/editSurcharge/${houseID}/${type}/${typePrice}`,
                 {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem("jwt")}`
@@ -421,10 +418,8 @@ export default function MultiCalendar() {
         getData();
     }
     const handleUpdateOther = () => {
-
-        console.log("okkk");
         async function getData() {
-            let res = await axios.get(`http://localhost:8080/api/host/feeHouse/editOther/${houseID}/${other}/${otherPrice}`,
+            let res = await axios.get(API_HOST + `feeHouse/editOther/${houseID}/${other}/${otherPrice}`,
                 {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem("jwt")}`
@@ -435,11 +430,12 @@ export default function MultiCalendar() {
         getData();
     }
     return (
-        <>    <NavbarHosting  type={"calendar"}/>
+        <>
+            <NavbarHosting type={"calendar"} />
             <div className='d-flex'>
                 <div className='fs-5 me-5'>Chọn Phòng / Nhà :</div>
                 <div className='mb-3 col-5 mb-3'>
-                    <select defaultValue={'-1'} onChange={(e) => setHouse(e.target.value)} class="form-select" aria-label="Default select example">
+                    <select defaultValue={'-1'} onChange={(e) => setHouse(e.target.value)} className="form-select" aria-label="Default select example">
 
                         {
                             listHouse?.map((item => (
@@ -454,7 +450,7 @@ export default function MultiCalendar() {
 
 
             <div className='d-flex'>
-                <div className='col-8' style={{height:'120%'}}>
+                <div className='col-8' style={{ height: '120%' }}>
                     <FullCalendar
                         plugins={[multiMonthPlugin, interactionPlugin]}
                         initialView="multiMonthYear"
@@ -474,7 +470,7 @@ export default function MultiCalendar() {
                         dayMaxEvents={false}
                         navLinks={false}
                         dateClick={handleDateClick}
-                        events={[...calendarEvents, ...priceOnDate,...blockingDateRangeEvt]}
+                        events={[...calendarEvents, ...priceOnDate, ...blockingDateRangeEvt]}
                         initialDate={dateFocus}
                     />
                 </div>
@@ -494,7 +490,7 @@ export default function MultiCalendar() {
                                             <div onClick={() => setTypeShow("updatePrice")} className='border rounded-3 col-8 container-btn-price pt-3 mb-3 ' >
                                                 <div className='fs-5 ms-5 '>Mỗi đêm</div>
                                                 <div className='d-flex ms-5 '>
-                                                 
+
                                                     <div className='fs-3 fw-bold mt-1'>{price?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ')}</div>
                                                 </div>
 
@@ -510,7 +506,7 @@ export default function MultiCalendar() {
                                                     : <div onClick={() => setTypeShow("updateWeekendPrice")} className='border rounded-3 col-8 container-btn-price pt-3 mb-3' >
                                                         <div className=' ms-5 fs-5'>Giá tùy chỉnh cho cuối tuần</div>
                                                         <div className='d-flex ms-5 '>
-                                                            
+
                                                             <div className='fs-3 fw-bold mt-1'>{weekendPrice?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ')}</div>
                                                         </div>
                                                     </div>
@@ -532,10 +528,10 @@ export default function MultiCalendar() {
                                         <div className='pt-200'>
                                             <div className='fs-4 text-center mb-5 mt-3 me-5'>Mỗi đêm</div>
                                             <div className='d-flex mb-5' style={{ marginLeft: '20%' }}>
-                                                
+
                                                 <input onChange={(e) => setNewPrice(e.target.value)} type="number" className='col-8 fw-bold fs-1 mt-3' value={newPrice} />
                                             </div>
-                                            <div className='ms-5 fs-5'>Giá cho khách (trước thuế) {((newPrice * (serviceFee / 100)) +parseInt(newPrice))?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ') }</div>
+                                            <div className='ms-5 fs-5'>Giá cho khách (trước thuế) {((newPrice * (serviceFee / 100)) + parseInt(newPrice))?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ')}</div>
                                             <div className='mt-5 mb-4'>
                                                 <button onClick={handleUpdatePrice} className='fs-5 btn-luu'>
                                                     Lưu
@@ -554,8 +550,8 @@ export default function MultiCalendar() {
                                         <>
                                             <div className='pt-200'>
                                                 <div className='fs-4 text-center mb-5 mt-3 me-5'>Giá tùy chỉnh cho cuối tuần</div>
-                                                <div className='d-flex mb-5' style={{ marginLeft: '20%',paddingBottom:'70px' }}>
-                                                  
+                                                <div className='d-flex mb-5' style={{ marginLeft: '20%', paddingBottom: '70px' }}>
+
                                                     <input onChange={(e) => SetNewWeekendPrice(e.target.value)} type="number" className='col-8 fs-1 mt-3 fw-bold ' value={newWeekendPrice} />
                                                 </div>
                                                 <div className='mt-5 mb-4'>
@@ -575,20 +571,20 @@ export default function MultiCalendar() {
                                         typeShow == "surcharge" ?
                                             <>
                                                 <div>
-                                                    <div className='mb-3 fs-4' onClick={() => setTypeShow("show")}><i class="fa-solid fa-chevron-left fa-sm fs-3"></i></div>
+                                                    <div className='mb-3 fs-4' onClick={() => setTypeShow("show")}><i className="fa-solid fa-chevron-left fa-sm fs-3"></i></div>
                                                     <div className='fs-4 mb-3'>Phí vệ sinh :</div>
                                                     <div onClick={() => setTypeShow("CLEANING")} className='border rounded-3 col-8 container-btn-price pt-3 mb-2' >
                                                         <div className='fs-5 ms-5'>Mức phí cho mỗi kì ở</div>
                                                         <div className='d-flex ms-5 '>
-                                                           
+
                                                             <div className='fs-3 mt-1 fw-bold'>{parseInt(clean)?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ')}</div>
-                                                     
+
                                                         </div>
                                                     </div>
                                                     <div onClick={() => setTypeShow("SHORT_STAY_CLEANING")} className='border rounded-3 col-8 container-btn-price pt-3 mb-3' >
                                                         <div className='fs-5 ms-5'>Mức phí cho mỗi kì ở ngắn</div>
                                                         <div className='d-flex ms-5 '>
-                                                          
+
                                                             <div className='fs-3 mt-1 fw-bold'>{parseInt(shortClean)?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ')}</div>
                                                         </div>
                                                     </div>
@@ -596,7 +592,7 @@ export default function MultiCalendar() {
                                                     <div onClick={() => setTypeShow("PET")} className='border rounded-3 col-8 container-btn-price pt-3 mb-3' >
                                                         <div className='fs-5 ms-5'>Mức phí cho mỗi kì ở</div>
                                                         <div className='d-flex ms-5 '>
-                                                           
+
                                                             <div className='fs-3 mt-1 fw-bold'>{parseInt(pet)?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ')}</div>
                                                         </div>
                                                     </div>
@@ -604,7 +600,7 @@ export default function MultiCalendar() {
                                                     <div onClick={() => setTypeShow("EXTRA_GUESS")} className='border rounded-3 col-8 container-btn-price pt-3 mb-4' >
                                                         <div className='fs-5 ms-5'>sau {other} khách , mỗi đêm</div>
                                                         <div className='d-flex ms-5 '>
-                                                          
+
                                                             <div className='fs-3 mt-1 fw-bold'>{parseInt(otherPrice)?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VNĐ')}</div>
                                                         </div>
                                                     </div>
@@ -617,7 +613,7 @@ export default function MultiCalendar() {
                                                     <div className='pt-200'>
                                                         <div className='fs-4 text-center mb-5 mt-3 me-5'>Phí vệ sinh</div>
                                                         <div className='d-flex mb-5 pb-80' style={{ marginLeft: '20%' }}>
-                                                           
+
                                                             <input onChange={(e) => setClean(e.target.value)} type="number" className='col-8 fs-1 mt-3 fw-bold' value={parseInt(clean)} />
                                                         </div>
                                                         <div className='mt-5 mb-4'>
@@ -641,7 +637,7 @@ export default function MultiCalendar() {
                                                             <div className='fs-4 text-center mb-2 mt-3 me-5'>Phí vệ sinh cho kỳ ở ngắn</div>
                                                             <div className='fs-6 mb-5 text-center pe-5'>Mức phí cho 1 hoặc 2 đêm</div>
                                                             <div className='d-flex mb-5 pb-80' style={{ marginLeft: '20%' }}>
-                                                             
+
                                                                 <input onChange={(e) => setshortClean(e.target.value)} type="number" className='col-8 fs-1 mt-3 fw-bold' value={parseInt(shortClean)} />
                                                             </div>
                                                             <div className='mt-5 mb-4'>
@@ -665,7 +661,7 @@ export default function MultiCalendar() {
                                                                 <div className='fs-4 text-center mb-2 mt-3 me-5'>Phí thú cưng</div>
                                                                 <div className='fs-6 mb-5 text-center pe-5'>Mức phí cho mỗi kì ở</div>
                                                                 <div className='d-flex mb-5 pb-80' style={{ marginLeft: '20%' }}>
-                                                                  
+
                                                                     <input onChange={(e) => setPet(e.target.value)} type="number" className='col-8 fs-1 mt-3 fw-bold' value={parseInt(pet)} />
                                                                 </div>
                                                                 <div className='mt-5 mb-4'>
@@ -688,17 +684,17 @@ export default function MultiCalendar() {
                                                                 <div className='pt-5'>
                                                                     <div className='fs-4 text-center mb-2 mt-3 me-5'>Phí khách bổ sung</div>
                                                                     <div className='mb-3 pe-5 fs-6 text-center'>Mức phí cho mỗi đêm</div>
-                                                                  
+
                                                                     <div className='d-flex pb-80' style={{ marginLeft: '20%' }}>
-                                                                      
+
                                                                         <input onChange={(e) => setOtherPrice(e.target.value)} type="number" className='col-8 fs-1 mt-3 fw-bold' value={parseInt(otherPrice)} />
                                                                     </div>
                                                                     <div className='d-flex'>
                                                                         <div className='fs-5 me-3'>Cho mỗi khách sau</div>
                                                                         <div className='d-flex mb-3'>
-                                                                            <button onClick={() => setOther(other > 1 ? other - 1 : other)} style={{width:"30px",height:'30px',borderRadius:'50%',border:'solid 1px gray'}}>-</button>
+                                                                            <button onClick={() => setOther(other > 1 ? other - 1 : other)} style={{ width: "30px", height: '30px', borderRadius: '50%', border: 'solid 1px gray' }}>-</button>
                                                                             <div className='me-3 ms-3  fs-5 '>{other}</div>
-                                                                            <button onClick={() => setOther(other + 1)}style={{width:"30px",height:'30px',borderRadius:'50%',border:'solid 1px gray'}}>+</button>
+                                                                            <button onClick={() => setOther(other + 1)} style={{ width: "30px", height: '30px', borderRadius: '50%', border: 'solid 1px gray' }}>+</button>
                                                                         </div>
                                                                     </div>
                                                                     <div className='mt-5 mb-4'>
@@ -757,10 +753,10 @@ export default function MultiCalendar() {
                     }
                 </div>
             </div>
-            <div style={{marginBottom:"50px"}}>
+            <div style={{ marginBottom: "50px" }}>
                 .
             </div>
-            <FooterFormUser/>
+            <FooterFormUser />
         </>
 
     );

@@ -3,6 +3,7 @@ import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 import { format } from "date-fns";
+import { API_ADMIN } from "../../../Services/common";
 
 const useFetchProfitsForPreLastMonth = () => {
     const [profits, setProfits] = useState([])
@@ -12,7 +13,7 @@ const useFetchProfitsForPreLastMonth = () => {
 
     useEffect(() => {
         async function getData() {
-            const responses = await axios.get(`http://localhost:8080/api/admin/profits?date1=${startDate}&date2=${endDate}`);
+            const responses = await axios.get(API_ADMIN + `profits?date1=${startDate}&date2=${endDate}`);
 
             const result = new Map();
             

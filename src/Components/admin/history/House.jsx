@@ -9,6 +9,7 @@ import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import axios from "axios";
 import emailjs from '@emailjs/browser';
+import { API_ADMIN } from "../../../Services/common";
 
 const reloadPage = () => {
     window.location.reload();
@@ -44,7 +45,6 @@ const House = () => {
 
 
     const handlefilePDF = (item) => {
-        console.log(item);
         window.open(item.confirmPDF, "_blank");
     }
 
@@ -110,7 +110,7 @@ const House = () => {
 
         if (search) {
             timeout = setTimeout(async () => {
-                await axios.get(`http://localhost:8080/api/admin/houses/accepted?search=${search}&page=${page - 1}&size=${size}&sort=${nameField},${type}`, {
+                await axios.get(API_ADMIN + `houses/accepted?search=${search}&page=${page - 1}&size=${size}&sort=${nameField},${type}`, {
                     headers: {
                         'Content-Type': 'application/json'
                     }
@@ -149,10 +149,9 @@ const House = () => {
 
     useEffect(() => {
         const sendData = async () => {
-            console.log(houseBlock);
             if (houseBlock && houseBlock.id) {
                 const id = houseBlock.id;
-                await axios.patch(`http://localhost:8080/api/admin/houses/set-status/${id}`, houseBlock).then((response) => {
+                await axios.patch(API_ADMIN + `houses/set-status/${id}`, houseBlock).then((response) => {
                     console.log(response);
                 }).catch(error => {
                     console.log("Patch Error", error);

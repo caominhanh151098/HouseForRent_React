@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { API_ADMIN } from './../../../Services/common';
 
 const useFetchTotalReservationsLastMonth = () => {
     const [reservations , setReservations] = useState([])
@@ -7,7 +8,7 @@ const useFetchTotalReservationsLastMonth = () => {
     useEffect(() => {
         async function getData(){
 
-            const responses = await axios.get(`http://localhost:8080/api/admin/profits/reservationDate?month=${date.getMonth()}&year=${date.getFullYear()}`);
+            const responses = await axios.get(API_ADMIN + `profits/reservationDate?month=${date.getMonth()}&year=${date.getFullYear()}`);
 
             setReservations(responses.data)
         }

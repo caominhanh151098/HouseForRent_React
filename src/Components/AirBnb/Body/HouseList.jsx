@@ -32,9 +32,6 @@ const HouseList = () => {
         setHoveredIndex(index);
     };
 
-
-    console.log(houseList);
-
     const nextImage = () => {
         setActiveImageIndex((prevIndex) => (prevIndex + 1) % houseList[activeImageIndex].images.length);
     };
@@ -118,10 +115,6 @@ const HouseList = () => {
         handleSaveChanges();
     }, [userWishLists])
 
-    useEffect(() => {
-        console.log("userWishLists", userWishLists);
-    }, [userWishLists])
-
     const handleSaveChanges = async () => {
         try {
             const token = localStorage.getItem('jwt');
@@ -169,7 +162,7 @@ const HouseList = () => {
                 setText('');
             }
         } catch (err) {
-            console.log('Lỗi khi thêm', err);
+            console.error('Lỗi khi thêm', err);
         }
     }
 
@@ -212,10 +205,10 @@ const HouseList = () => {
                 })
                 setHouseLiked(resp.data);
             } catch (err) {
-                console.log('Lỗi khi lấy danh sách yêu thích:', err);
+                console.error('Lỗi khi lấy danh sách yêu thích:', err);
             }
         } else {
-            console.log('Token không tồn tại');
+            console.error('Token không tồn tại');
         }
     }
 
@@ -243,7 +236,7 @@ const HouseList = () => {
                 });
             }
         } catch (err) {
-            console.log(err);
+            console.error(err);
         }
     }
 
@@ -268,7 +261,7 @@ const HouseList = () => {
                     console.error(`Lỗi khi xóa nhà yêu thích - mã lỗi: ${response.status}`);
                 }
             } catch (err) {
-                console.log('Lỗi khi xoá');
+                console.error('Lỗi khi xoá');
             }
         }
     }
@@ -299,7 +292,7 @@ const HouseList = () => {
                     }
                 }
             } catch (err) {
-                console.log('Lỗi khi thêm');
+                console.error('Lỗi khi thêm');
             }
         }
     }
@@ -312,7 +305,7 @@ const HouseList = () => {
 
     const formatCurrency = (item) => {
         const formater = new Intl.NumberFormat('vi-VN', {
-            style:'currency',
+            style: 'currency',
             currency: 'VND'
         })
         return formater.format(item).replace('₫', 'VNĐ')
@@ -348,7 +341,7 @@ const HouseList = () => {
                                                             <div className='outer-div'
                                                                 onMouseEnter={() => toggleHover(index)} onMouseLeave={() => toggleHover(null)}>
                                                                 <i onClick={() => { handleRemoveFavorite(house.id) }}
-                                                                    class="fa-solid fa-heart" style={{ color: '#f21202' }}></i>
+                                                                    className="fa-solid fa-heart" style={{ color: '#f21202' }}></i>
                                                             </div>
                                                         ) : (
                                                             <div className='outer-div'
@@ -383,7 +376,7 @@ const HouseList = () => {
                                             <div className="listing-header">
                                                 <h3 className="hotel-name">{house?.location?.address}</h3>
                                                 <span className="review">
-                                                    <i class="fa-solid fa-star"></i>&nbsp;{house.review}</span>
+                                                    <i className="fa-solid fa-star"></i>&nbsp;{house.review}</span>
                                             </div>
                                             <span>{formattedToday} - {formattedFutureDate}</span>
                                             {/* <button onClick={() => {
@@ -408,7 +401,7 @@ const HouseList = () => {
                     <div className={`appearing-div ${isOverLayOpenFormWishList ? 'active' : ''}`}>
                         <div style={{ display: 'flex', alignItems: 'center' }}>
                             <i style={{ marginRight: '20%' }}
-                                onClick={toggleOpenFormWishList} class="fa-solid fa-chevron-left close-description" ></i>
+                                onClick={toggleOpenFormWishList} className="fa-solid fa-chevron-left close-description" ></i>
                             <h2>Thêm vào Danh sách yêu thích</h2>
                         </div>
                         <hr style={{ marginBottom: '4%' }} />
@@ -443,7 +436,7 @@ const HouseList = () => {
                     <div className={`appearing-div ${isOverLayOpenFormCreatNewWishList ? 'active' : ''}`} style={{ width: '555px' }}>
                         <div style={{ display: 'flex', alignItems: 'center' }}>
                             <i style={{ marginRight: '24%' }}
-                                onClick={toggleOpenFormCreatNewWishList} class="fa-solid fa-chevron-left close-description" ></i>
+                                onClick={toggleOpenFormCreatNewWishList} className="fa-solid fa-chevron-left close-description" ></i>
                             <h2>Tạo Danh sách yêu thích</h2>
                         </div>
                         <hr />

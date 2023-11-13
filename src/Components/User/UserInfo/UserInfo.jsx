@@ -19,7 +19,6 @@ import TabPanel from '@mui/lab/TabPanel';
 
 const UserInfo = () => {
     const userInfo = JSON.parse(localStorage.getItem('userInfo'))
-    console.log("userInfo userInfo", userInfo);
     const countHowManyDays = (day) => {
         const createDate = new Date(day);
         const today = new Date();
@@ -35,15 +34,14 @@ const UserInfo = () => {
                 if (resp.status === 200) {
                     setAllInformationUser(resp.data)
                 } else {
-                    console.log('Lỗi');
+                    console.error('Lỗi');
                 }
             } catch (err) {
-                console.log('Lỗi');
+                console.error('Lỗi');
             }
         }
         getUser()
     }, [])
-    console.log("allInformationUser", allInformationUser);
 
     const [isOverlayShowAllReviews, setIsOverlayShowAllReviews] = useState(false)
     const toggleShowAllReviews = () => {
@@ -67,15 +65,14 @@ const UserInfo = () => {
                 if (resp.status === 200) {
                     setReviewFromGuest(resp.data.content)
                 } else {
-                    console.log('Lỗi revies guest');
+                    console.error('Lỗi revies guest');
                 }
             } catch (err) {
-                console.log('Lỗi');
+                console.error('Lỗi');
             }
         }
         getReviewFromGuest()
     }, [])
-    console.log("reviewFromGuest", reviewFromGuest);
 
     useEffect(() => {
         const id = userInfo && userInfo.id
@@ -85,15 +82,14 @@ const UserInfo = () => {
                 if (resp.status === 200) {
                     setReviewFromHost(resp.data.content)
                 } else {
-                    console.log('Lỗi revies host');
+                    console.error('Lỗi revies host');
                 }
             } catch (err) {
-                console.log('Lỗi');
+                console.error('Lỗi');
             }
         }
         getReviewFromGuest()
     }, [])
-    console.log("reviewFromHost", reviewFromHost);
 
     const formatDate = (reviewDate) => {
         const year = reviewDate[0];

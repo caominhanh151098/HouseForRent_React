@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { toast } from "react-toastify";
 import UploadService from './../../../../Services/UploadService';
 import NavbarHosting from './../../LayoutHosting/NavbarHosting';
+import { API_HOST } from '../../../../Services/common';
 
 function HouseOfHostDetail() {
     const typeRoomList = ["ENTIRE_PLACE", "ROOM", "SHARED_ROOM"]
@@ -38,7 +39,7 @@ function HouseOfHostDetail() {
     const [uploading, setUploading] = useState(false);
     useEffect(() => {
         async function getData() {
-            let res = await axios.get(`http://localhost:8080/api/host/house/getImageListUrl/${houseID}`);
+            let res = await axios.get(API_HOST + `house/getImageListUrl/${houseID}`);
             let list = res.data.map((item, index) => (
                 {
                     id: index,
@@ -58,26 +59,26 @@ function HouseOfHostDetail() {
     }, [])
     useEffect(() => {
         async function getData() {
-            let res = await axios.get(`http://localhost:8080/api/host/categories`);
+            let res = await axios.get(API_HOST + `categories`);
             setCategoryList(res.data)
         }
         getData();
     }, [reder, updateHotelName, updateDescription, updateQuantityOfGuests])
     useEffect(() => {
         async function getData() {
-            let res = await axios.get(`http://localhost:8080/api/host/house/houseOfHostDetail/${houseID}`);
+            let res = await axios.get(API_HOST + `house/houseOfHostDetail/${houseID}`);
             sethouseOfHostDetail(res.data)
         }
         getData();
     }, [reder, updateHotelName, updateDescription, updateQuantityOfGuests, updateAddress, updateTypeRoom])
-   
-    
+
+
     const handleUpdateHotelName = () => {
         async function getData() {
             const formData = new FormData();
 
             formData.append("stringRequest", newHotelName);
-            let res = await axios.post(`http://localhost:8080/api/host/house/edit/title/${houseID}`, formData, {
+            let res = await axios.post(API_HOST + `house/edit/title/${houseID}`, formData, {
                 headers: { 'Content-Type': 'application/json' },
             });
             setUpdateHotlName(true)
@@ -89,7 +90,7 @@ function HouseOfHostDetail() {
             const formData = new FormData();
 
             formData.append("stringRequest", newDescription);
-            let res = await axios.post(`http://localhost:8080/api/host/house/edit/description/${houseID}`, formData, {
+            let res = await axios.post(API_HOST + `house/edit/description/${houseID}`, formData, {
                 headers: { 'Content-Type': 'application/json' },
             });
             setUpdatDescription(true)
@@ -100,7 +101,7 @@ function HouseOfHostDetail() {
 
         async function getData() {
 
-            let res = await axios.get(`http://localhost:8080/api/host/house/edit/quantityOfGuests/${houseID}/${type}`, newQuantityOfguests, {
+            let res = await axios.get(API_HOST + `house/edit/quantityOfGuests/${houseID}/${type}`, newQuantityOfguests, {
                 headers: { 'Content-Type': 'application/json' },
             });
             setUpdateQuantityOfGeusts(true)
@@ -125,7 +126,7 @@ function HouseOfHostDetail() {
 
         async function getData2() {
 
-            let res2 = await axios.post(`http://localhost:8080/api/host/house/edit/location/${houseID}`, newLocation, {
+            let res2 = await axios.post(API_HOST + `house/edit/location/${houseID}`, newLocation, {
                 headers: { 'Content-Type': 'application/json' },
             });
             setUpdateAddress(true);
@@ -135,7 +136,7 @@ function HouseOfHostDetail() {
     const handleUpdateTypeRoom = () => {
         async function getData2() {
 
-            let res2 = await axios.post(`http://localhost:8080/api/host/house/edit/typeRoomAndCategory/${houseID}`, newTypeRoom, {
+            let res2 = await axios.post(API_HOST + `house/edit/typeRoomAndCategory/${houseID}`, newTypeRoom, {
                 headers: { 'Content-Type': 'application/json' },
             });
             setUpdateTypeRoom(true);
@@ -154,7 +155,7 @@ function HouseOfHostDetail() {
 
             )
         }
-        console.log(temporaryAvatarUrlList);
+
         let newSelectedAvatar = []
         let check = false
         listImage.forEach(element => {
@@ -185,7 +186,7 @@ function HouseOfHostDetail() {
             }
 
         });
-        console.log(newSelectedAvatar);
+
         setListImage(newSelectedAvatar)
     }
     const handleUploadAvatar = async () => {
@@ -198,17 +199,10 @@ function HouseOfHostDetail() {
                 let uploadResult = await UploadService.uploadAvatar(element.file);
                 if (element.id == listImage.length - 2) { setUploading(false) }
                 if (uploadResult?.data.url) {
-                    list = ([...list, uploadResult?.data.url]
-
-                    );
+                    list = ([...list, uploadResult?.data.url]);
                     setUploadedAvatar([...list])
-
                     toast.info("Avatar uploaded success", { position: "top-right", autoClose: 2 * 1000 });
-
-
                 }
-
-
             } else if (element.id != listImage.length - 1) {
                 list = ([...list, element.fakeUrl])
                 setUploadedAvatar([...list])
@@ -216,24 +210,22 @@ function HouseOfHostDetail() {
             }
 
         });
-        console.log(list);
-
     }
     const handleUPDATEIMAGE = () => {
         async function getData() {
 
-            let res = await axios.post(`http://localhost:8080/api/host/house/edit/image/${houseID}`, uploadedAvatar, {
+            let res = await axios.post(API_HOST + `house/edit/image/${houseID}`, uploadedAvatar, {
                 headers: { 'Content-Type': 'application/json' },
             });
-            setRender(reder?false:true)
+            setRender(reder ? false : true)
 
         }
         getData();
     }
     return (
         <>
-        <NavbarHosting></NavbarHosting>
-        <div className='fs-5 text-decoration-underline ' style={{marginLeft:'1100px'}}><Link style={{color:'black'}} to={`/host/homeList`}> <i className="fa-solid fa-chevron-left fa-2xs"></i> Quay lại</Link></div>
+            <NavbarHosting></NavbarHosting>
+            <div className='fs-5 text-decoration-underline ' style={{ marginLeft: '1100px' }}><Link style={{ color: 'black' }} to={`/host/homeList`}> <i className="fa-solid fa-chevron-left fa-2xs"></i> Quay lại</Link></div>
             <div style={{ marginLeft: '120px' }} className=' col-10' >
                 <div className='fs-3 '>{houseOfHostDetail.hotelName}</div>
                 <div className='fs-4'>Ảnh</div>
@@ -246,7 +238,7 @@ function HouseOfHostDetail() {
                                 </div>
                             ))
                         }</div>
-                    <div className='fs-5 text-decoration-underline' data-bs-toggle="modal" data-bs-target="#exampleModal1" style={{width:'150px'}}>
+                    <div className='fs-5 text-decoration-underline' data-bs-toggle="modal" data-bs-target="#exampleModal1" style={{ width: '150px' }}>
                         Chỉnh sửa
 
                     </div>
@@ -329,10 +321,10 @@ function HouseOfHostDetail() {
                     </div>
                 </div>
                 <div className='border-bottom pb-3 pt-3 d-flex justify-content-between '>
-                 
-                                <div className='fs-4 '> Tiện nghi</div>
 
-                                <div className='fs-5 text-decoration-underline' ><Link style={{color:'black',textDecoration:'underline'}} to={`/host/editComfortable/${houseOfHostDetail.id}`}>Chỉnh sửa</Link> </div>
+                    <div className='fs-4 '> Tiện nghi</div>
+
+                    <div className='fs-5 text-decoration-underline' ><Link style={{ color: 'black', textDecoration: 'underline' }} to={`/host/editComfortable/${houseOfHostDetail.id}`}>Chỉnh sửa</Link> </div>
 
                 </div>
                 <div className='border-bottom pb-3 pt-3 d-flex justify-content-between'>
@@ -422,12 +414,12 @@ function HouseOfHostDetail() {
                         <div>Giường {houseOfHostDetail.quantityOfBeds}</div>
                         <div>Phòng tắm {houseOfHostDetail.quantityOfBathrooms}</div>
                     </div>
-                    <div className='fs-5 text-decoration-underline'><Link style={{color:'black',textDecoration:'underline'}} to={`/host/editRoom/${houseOfHostDetail.id}`}>Chỉnh sửa</Link> </div>
+                    <div className='fs-5 text-decoration-underline'><Link style={{ color: 'black', textDecoration: 'underline' }} to={`/host/editRoom/${houseOfHostDetail.id}`}>Chỉnh sửa</Link> </div>
                 </div>
                 <div className='border-bottom pb-3 pt-3 d-flex justify-content-between '>
-                    <div className='fs-4'>Chính sách và nội quy</div>    
-                    <div className='fs-5'><Link style={{color:'black',textDecoration:'underline'}} to={`/host/editRule/${houseOfHostDetail.id}`}>Chỉnh sửa</Link></div>
-                </div>    
+                    <div className='fs-4'>Chính sách và nội quy</div>
+                    <div className='fs-5'><Link style={{ color: 'black', textDecoration: 'underline' }} to={`/host/editRule/${houseOfHostDetail.id}`}>Chỉnh sửa</Link></div>
+                </div>
             </div>
 
 

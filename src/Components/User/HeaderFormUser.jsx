@@ -1,4 +1,4 @@
-import React, { useState , useRef} from 'react'
+import React, { useState, useRef } from 'react'
 import "./User.css"
 import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
@@ -27,19 +27,19 @@ const HeaderFormUser = () => {
   const imgRef = useRef(null);
 
   const handleClick = () => {
-    window.location.href = 'http://localhost:3000/';
+    window.location.href = 'https://house-for-rent-psi.vercel.app/';
   };
 
   return (
     <>
       <div className='div-header-form-user'>
-        
-          <img
-            className="img-header" ref={imgRef} onClick={handleClick}
-            src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Airbnb_Logo_B%C3%A9lo.svg/2560px-Airbnb_Logo_B%C3%A9lo.svg.png"
-            alt=""
-          />
-       
+
+        <img
+          className="img-header" ref={imgRef} onClick={handleClick}
+          src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Airbnb_Logo_B%C3%A9lo.svg/2560px-Airbnb_Logo_B%C3%A9lo.svg.png"
+          alt=""
+        />
+
         <div className="header-2">
           {
             jwtValue && jwtValue ? (
@@ -84,15 +84,15 @@ const HeaderFormUser = () => {
                 </Link>
                 <Link className="link-user-login"
                   to={'/wish-lists'}>
-                <div className="dropdown-menu-choice">Danh sách yêu thích</div>
+                  <div className="dropdown-menu-choice">Danh sách yêu thích</div>
                 </Link>
                 <hr />
                 {
-                  userInfo.role=="GUEST"?
-                  <><div className="dropdown-menu-choice">Bắt đầu cho thuê taij air-bnb</div></>:
-                  <><div className="dropdown-menu-choice">Quản lý nhà/phòng cho thuê</div></>
+                  userInfo.role == "GUEST" ?
+                    <><div className="dropdown-menu-choice">Bắt đầu cho thuê taij air-bnb</div></> :
+                    <><div className="dropdown-menu-choice">Quản lý nhà/phòng cho thuê</div></>
                 }
-                
+
                 <Link className="link-user-login"
                   to={'/account-settings'}>
                   <div className="dropdown-menu-choice">Tài khoản</div>

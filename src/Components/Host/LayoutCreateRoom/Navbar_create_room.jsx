@@ -2,11 +2,12 @@ import axios from 'axios';
 import React from 'react'
 import { Link, useNavigate } from "react-router-dom";
 import CreateRoom from './../../../Services/CreateRoom';
+import { API_HOST } from '../../../Services/common';
 
 
 function Navbar_create_room  (){
   const handleCreateHouse=()=>{
-    axios.post('http://localhost:8080/api/host/house', CreateRoom.getCreateRoom());
+    axios.post(API_HOST + 'house', CreateRoom.getCreateRoom());
   }
   return (
     <div><div className="d-flex flex-column flex-md-row align-items-center pb-3 mb-4 border-bottom">

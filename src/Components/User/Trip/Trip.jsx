@@ -48,11 +48,11 @@ const Trip = () => {
                     setLoadingReservation(false);
                     setTempReservation(sortedReservations)
                 } else {
-                    console.log('lỗi');
+                    console.error('lỗi');
                     setLoadingReservation(false);
                 }
             } catch (err) {
-                console.log('Lỗi lấy thông tin giao dịch');
+                console.error('Lỗi lấy thông tin giao dịch');
                 navigate('/')
             }
         }
@@ -76,10 +76,10 @@ const Trip = () => {
                     });
                     setReversation(sortedReservations)
                 } else {
-                    console.log('Dữ liệu trả về không hợp lệ');
+                    console.error('Dữ liệu trả về không hợp lệ');
                 }
             } else {
-                console.log('lỗi');
+                console.error('lỗi');
             }
         } catch (err) {
             navigate('/')
@@ -138,21 +138,17 @@ const Trip = () => {
                     });
                     setLoadingCancel(false)
                 } else {
-                    console.log('Lỗi');
+                    console.error('Lỗi');
                     setLoadingCancel(false)
                 }
                 setLoadingCancel(false)
             }, 700)
         } catch (err) {
-            console.log('Không thể huỷ');
+            console.error('Không thể huỷ');
         }
     }
 
     const [houseSelected, setHouseSelected] = useState();
-
-    useEffect(() => {
-        console.log("houseSelected", houseSelected);
-    }, [houseSelected])
 
     const [currentPage, setCurrentPage] = useState(1);
     const housesPerPage = 5;

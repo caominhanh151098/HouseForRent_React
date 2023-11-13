@@ -48,7 +48,7 @@ const RefundPolicyTable = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        
+
                     </tbody>
                 </Table>
             </div>

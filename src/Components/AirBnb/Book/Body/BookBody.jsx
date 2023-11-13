@@ -99,11 +99,8 @@ const BookBody = () => {
   }
 
   const goDay = GoDay ? new Date(GoDay) : null
-  console.log("goDay", goDay);
   const backDay = BackDay ? new Date(BackDay) : null
-  console.log("backDay", goDay);
   const timeDifference = goDay && backDay ? backDay.getTime() - goDay.getTime() : null;
-  console.log("timeDifference", timeDifference);
 
   useEffect(() => {
     async function checkTransaction() {
@@ -133,7 +130,6 @@ const BookBody = () => {
     getHouseDetail();
     document.querySelector('.MuiDateRangeCalendar-root div').style.display = 'none'
   }, [])
-  console.log(house);
 
   useEffect(() => {
     async function getHousePrice() {
@@ -143,7 +139,6 @@ const BookBody = () => {
     }
     getHousePrice();
   }, [])
-  console.log("Giá của nhà là:", housePrice);
 
   const handleClickDivPayment = (div) => {
     setIsSelectedDivPayment(div)
@@ -280,9 +275,9 @@ const BookBody = () => {
       .sort((a, b) => new Date(a) - new Date(b))[1];
 
     const maxDay = closestDate ? dayjs(closestDate) : null;
-    console.log("1111", newDates);
+
     setMaxDay(maxDay)
-    console.log('Ngày gần nhất sau ngày được chọn:', closestDate);
+
     if (tempBookDay[0] !== null && tempBookDay[1] != null) {
       setTempBookDay([null, null])
     } else if (tempBookDay[0] == null) {
@@ -307,10 +302,6 @@ const BookBody = () => {
     setTempBookDay([null, null]);
     setSaveDay(false);
   };
-
-  useEffect(() => {
-    console.log("Số ngày cuối tuần sau khi cập nhật:", countWeekendDay);
-  }, [countWeekendDay]);
 
   const countWeekendDays = (startDate, endDate) => {
     let currentDate = startDate.clone();
@@ -350,7 +341,6 @@ const BookBody = () => {
       const endDate = tempBookDay[1];
       const weekendDays = countWeekendDays(startDate, endDate);
       setCountWeekendDay(weekendDays > 0 ? weekendDays : 0);
-      console.log("bookDay", bookDay);
 
       // const newURL = `/book/${houseID}/${countOld}/${countYoung}/${tempBookDay[0].format('YYYY-MM-DD')}/${tempBookDay[1].format('YYYY-MM-DD')}`
       // history.push(newURL)
@@ -368,7 +358,6 @@ const BookBody = () => {
       BackDay === undefined ||
       dayjs(BackDay).isBefore(dayjs(GoDay))
     );
-    console.log("dayjs(BackDay)", dayjs(BackDay), "dayjs(GoDay", dayjs(GoDay), "isInvalid", isInvalid);
     if (isInvalid) {
       const errorURL = `/error/${houseID}/${CountOld}/${CountYoung}/${CountBaby}/${CountPet}/${tempBookDay[0].format('YYYY-MM-DD')}/${tempBookDay[1].format('YYYY-MM-DD')}`;
       window.location.href = errorURL;
@@ -391,16 +380,10 @@ const BookBody = () => {
 
   const numberOfNights = goDay && backDay ? Math.ceil(timeDifference / (1000 * 3600 * 24)) :
     bookDay[1] && bookDay[0] ? bookDay[1].diff(bookDay[0], 'day') : null;
-  console.log("convert dayjs", dayjs(bookDay[1]));
-
-  console.log("numberOfNights", numberOfNights);
-  console.log("BookDay", bookDay);
 
   const requestDetail = house?.requestDetail;
   const requestMaxGuest = requestDetail ? requestDetail.match(/\d+/) : null;
   const maxGuests = requestMaxGuest ? parseInt(requestMaxGuest[0]) : null;
-  console.log(maxGuests + " khách");
-
 
   const [tempCountOld, setTempCountOld] = useState(Number(CountOld))
   const [tempCountYoung, setTempCountYoung] = useState(Number(CountYoung))
@@ -535,7 +518,7 @@ const BookBody = () => {
   }
 
   const handleBackToHome = () => {
-    window.open("http://localhost:3000", '_self');
+    window.open("https://house-for-rent-psi.vercel.app/", '_self');
   }
 
   const handleConfirmPayment = async () => {
@@ -558,7 +541,6 @@ const BookBody = () => {
             'Authorization': `Bearer ${localStorage.getItem("jwt")}`
           }
         })
-      console.log('Đã tạo hóa đơn:', response.data);
       if (response.data.status == 'OK')
         window.open(response.data.url, '_self');
     } catch (error) {
@@ -702,7 +684,6 @@ const BookBody = () => {
     })
 
   }, [housePrice, countWeekendDay, navigate])
-  console.log("NHÀ THẬT GIÁ THẬT", priceDetails);
 
   const formatCurrency = (item) => {
     const formater = new Intl.NumberFormat('vi-VN', {
@@ -765,7 +746,7 @@ const BookBody = () => {
                             setTempBookDay(bookDay);
                           }
                           toggleOverlay()
-                        }} class="fa-solid fa-xmark close-description" ></i>
+                        }} className="fa-solid fa-xmark close-description" ></i>
                       </div>
                       <div className='container-description-details'>
                         {
@@ -820,7 +801,7 @@ const BookBody = () => {
                   <div className={`overlay2 ${isOverlayVisible2 ? '' : 'd-none'}`} >
                     <div className={`appearing-div ${isOverlayVisible2 ? 'active' : ''}`} style={{ width: '550px' }}>
                       <div>
-                        <i onClick={() => { toggleOverlayGuests() }} class="fa-solid fa-xmark close-description" ></i>
+                        <i onClick={() => { toggleOverlayGuests() }} className="fa-solid fa-xmark close-description" ></i>
                       </div>
                       <div className='container-description-details'>
                         {
@@ -1086,7 +1067,7 @@ const BookBody = () => {
                 <div className={`overlay2 ${isOverlayVisible3 ? '' : 'd-none'}`} >
                   <div className={`appearing-div ${isOverlayVisible3 ? 'active' : ''}`} style={{ width: '550px' }}>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
-                      <i onClick={toggleAddTelephone} class="fa-solid fa-xmark close-description" ></i>
+                      <i onClick={toggleAddTelephone} className="fa-solid fa-xmark close-description" ></i>
                       <h1 style={{ margin: '0px 103px' }}>Thêm số điện thoại</h1>
                     </div>
                     <hr />
@@ -1132,7 +1113,7 @@ const BookBody = () => {
               <div className={`appearing-div ${isOverlayConfirmPay ? 'active' : ''}`}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   <i style={{ marginRight: '29%' }}
-                    onClick={toggleOverlayConfirmPay} class="fa-solid fa-chevron-left close-description" ></i>
+                    onClick={toggleOverlayConfirmPay} className="fa-solid fa-chevron-left close-description" ></i>
                   <h2>Xác nhận thanh toán</h2>
                 </div>
                 <hr />
@@ -1158,7 +1139,7 @@ const BookBody = () => {
                         {
                           house && (
                             <p style={{ display: 'flex', alignItems: 'center', padding: '9px 0px' }}>
-                              <svg style={{ width: '20px', padding: '0px 5px' }} className='svg-tag-login-text-body' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" role="presentation" focusable="false" ><path fill-rule="evenodd" d="m15.1 1.58-4.13 8.88-9.86 1.27a1 1 0 0 0-.54 1.74l7.3 6.57-1.97 9.85a1 1 0 0 0 1.48 1.06l8.62-5 8.63 5a1 1 0 0 0 1.48-1.06l-1.97-9.85 7.3-6.57a1 1 0 0 0-.55-1.73l-9.86-1.28-4.12-8.88a1 1 0 0 0-1.82 0z"></path></svg>
+                              <svg style={{ width: '20px', padding: '0px 5px' }} className='svg-tag-login-text-body' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" role="presentation" focusable="false" ><path fillRule="evenodd" d="m15.1 1.58-4.13 8.88-9.86 1.27a1 1 0 0 0-.54 1.74l7.3 6.57-1.97 9.85a1 1 0 0 0 1.48 1.06l8.62-5 8.63 5a1 1 0 0 0 1.48-1.06l-1.97-9.85 7.3-6.57a1 1 0 0 0-.55-1.73l-9.86-1.28-4.12-8.88a1 1 0 0 0-1.82 0z"></path></svg>
                               {house?.reviewPoint} ({house?.numReview} đánh giá) </p>
                           )
                         }
@@ -1170,7 +1151,7 @@ const BookBody = () => {
                       <h2>Ngày đi - Ngày trả phòng</h2>
                       <div className='bookday-detail-confirm-pay'>
                         <p>{bookDay[0].format('D [tháng] M YYYY')}</p>
-                        <i class="fa-solid fa-arrow-right"></i>
+                        <i className="fa-solid fa-arrow-right"></i>
                         <p>{bookDay[1].format('D [tháng] M YYYY')}</p>
                       </div>
                     </div>
@@ -1196,7 +1177,7 @@ const BookBody = () => {
                                 <div className={`show-weekend-days-details ${isOpenAveragePriceDayDetail ? '' : 'hide-weekend-details'}`}>
                                   <div className='title-weekend-days-detail'>
                                     <i onClick={handleOpenAveragePriceDayDetail}
-                                      class="fa-solid fa-xmark"></i>
+                                      className="fa-solid fa-xmark"></i>
                                     <h3>Giá trung bình hàng đêm được làm tròn</h3>
                                     <p></p>
 
@@ -1227,7 +1208,7 @@ const BookBody = () => {
                                 <div className={`show-weekend-days-details ${isOpenWeekendDetail ? '' : 'hide-weekend-details'}`}>
                                   <div className='title-weekend-days-detail'>
                                     <i onClick={handleOpenWeekendDayDetail}
-                                      class="fa-solid fa-xmark"></i>
+                                      className="fa-solid fa-xmark"></i>
                                     <h2>Các ngày cuối tuần</h2>
                                     <p></p>
                                   </div>
@@ -1335,7 +1316,7 @@ const BookBody = () => {
             (
               <div className={`overlay2 ${formConfirm ? '' : 'd-none'}`} >
                 <div className={`appearing-div ${formConfirm ? 'active' : ''}`} style={{ width: '650px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent:'center' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <h2>Xác nhận thanh toán</h2>
                   </div>
                   <hr />
@@ -1361,7 +1342,7 @@ const BookBody = () => {
                           {
                             house && (
                               <p style={{ display: 'flex', alignItems: 'center', padding: '9px 0px' }}>
-                                <svg style={{ width: '20px', padding: '0px 5px' }} className='svg-tag-login-text-body' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" role="presentation" focusable="false" ><path fill-rule="evenodd" d="m15.1 1.58-4.13 8.88-9.86 1.27a1 1 0 0 0-.54 1.74l7.3 6.57-1.97 9.85a1 1 0 0 0 1.48 1.06l8.62-5 8.63 5a1 1 0 0 0 1.48-1.06l-1.97-9.85 7.3-6.57a1 1 0 0 0-.55-1.73l-9.86-1.28-4.12-8.88a1 1 0 0 0-1.82 0z"></path></svg>
+                                <svg style={{ width: '20px', padding: '0px 5px' }} className='svg-tag-login-text-body' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" role="presentation" focusable="false" ><path fillRule="evenodd" d="m15.1 1.58-4.13 8.88-9.86 1.27a1 1 0 0 0-.54 1.74l7.3 6.57-1.97 9.85a1 1 0 0 0 1.48 1.06l8.62-5 8.63 5a1 1 0 0 0 1.48-1.06l-1.97-9.85 7.3-6.57a1 1 0 0 0-.55-1.73l-9.86-1.28-4.12-8.88a1 1 0 0 0-1.82 0z"></path></svg>
                                 {house?.reviewPoint} ({house?.numReview} đánh giá) </p>
                             )
                           }
@@ -1373,7 +1354,7 @@ const BookBody = () => {
                         <h2>Ngày đi - Ngày trả phòng</h2>
                         <div className='bookday-detail-confirm-pay'>
                           <p>{bookDay[0].format('D [tháng] M YYYY')}</p>
-                          <i class="fa-solid fa-arrow-right"></i>
+                          <i className="fa-solid fa-arrow-right"></i>
                           <p>{bookDay[1].format('D [tháng] M YYYY')}</p>
                         </div>
                       </div>
@@ -1424,7 +1405,7 @@ const BookBody = () => {
                   {
                     house && (
                       <p style={{ display: 'flex', alignItems: 'center', padding: '9px 0px' }}>
-                        <svg style={{ width: '20px', padding: '0px 5px' }} className='svg-tag-login-text-body' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" role="presentation" focusable="false" ><path fill-rule="evenodd" d="m15.1 1.58-4.13 8.88-9.86 1.27a1 1 0 0 0-.54 1.74l7.3 6.57-1.97 9.85a1 1 0 0 0 1.48 1.06l8.62-5 8.63 5a1 1 0 0 0 1.48-1.06l-1.97-9.85 7.3-6.57a1 1 0 0 0-.55-1.73l-9.86-1.28-4.12-8.88a1 1 0 0 0-1.82 0z"></path></svg>
+                        <svg style={{ width: '20px', padding: '0px 5px' }} className='svg-tag-login-text-body' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" role="presentation" focusable="false" ><path fillRule="evenodd" d="m15.1 1.58-4.13 8.88-9.86 1.27a1 1 0 0 0-.54 1.74l7.3 6.57-1.97 9.85a1 1 0 0 0 1.48 1.06l8.62-5 8.63 5a1 1 0 0 0 1.48-1.06l-1.97-9.85 7.3-6.57a1 1 0 0 0-.55-1.73l-9.86-1.28-4.12-8.88a1 1 0 0 0-1.82 0z"></path></svg>
                         {house?.reviewPoint} ({house?.numReview} đánh giá) </p>
                     )
                   }
@@ -1453,7 +1434,7 @@ const BookBody = () => {
                           <div className={`show-weekend-days-details ${isOpenAveragePriceDayDetail ? '' : 'hide-weekend-details'}`}>
                             <div className='title-weekend-days-detail'>
                               <i onClick={handleOpenAveragePriceDayDetail}
-                                class="fa-solid fa-xmark"></i>
+                                className="fa-solid fa-xmark"></i>
                               <h3>Giá trung bình hàng đêm được làm tròn</h3>
                               <p></p>
 
@@ -1484,7 +1465,7 @@ const BookBody = () => {
                           <div className={`show-weekend-days-details ${isOpenWeekendDetail ? '' : 'hide-weekend-details'}`}>
                             <div className='title-weekend-days-detail'>
                               <i onClick={handleOpenWeekendDayDetail}
-                                class="fa-solid fa-xmark"></i>
+                                className="fa-solid fa-xmark"></i>
                               <h2>Các ngày cuối tuần</h2>
                               <p></p>
                             </div>

@@ -1,6 +1,7 @@
 import axios from "axios";
 import { format } from "date-fns";
 import React, { useEffect, useState } from "react";
+import { API_ADMIN } from "../../../../Services/common";
 
 const useFetchProfitsReportThisMonth = () => {
     const [profits, setProfits] = useState({})
@@ -10,7 +11,7 @@ const useFetchProfitsReportThisMonth = () => {
 
     useEffect(() => {
         async function getData() {
-            const responses = await axios.get(`http://localhost:8080/api/admin/profits?date1=${startDate}&date2=${endDate}`);
+            const responses = await axios.get(API_ADMIN + `profits?date1=${startDate}&date2=${endDate}`);
             const data = responses.data;
             const dateTotalMap = new Map();
 

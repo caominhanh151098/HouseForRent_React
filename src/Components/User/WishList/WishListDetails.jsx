@@ -25,7 +25,6 @@ const WishListDetails = () => {
             navigator.geolocation.getCurrentPosition((position) => {
                 const { latitude, longitude } = position.coords;
                 setUserLocation([latitude, longitude]);
-                console.log(userLocation);
             });
         } else {
             alert('Trình duyệt không hỗ trợ xác định vị trí.');
@@ -43,13 +42,12 @@ const WishListDetails = () => {
                 }
             })
             if (response.status === 200) {
-                console.log(response.data.content);
                 setHouse(response.data.content)
             } else {
                 alert('Lỗi khi lấy list house' + IdWishList);
             }
         } catch (err) {
-            console.log('Lỗi khi lấy list house' + IdWishList);
+            console.error('Lỗi khi lấy list house' + IdWishList);
             alert('Lỗi khi lấy list house' + IdWishList);
         }
     }
@@ -57,17 +55,11 @@ const WishListDetails = () => {
         handleGetListHouseByWish()
     }, [])
 
-    useEffect(() => {
-        console.log('house', house);
-    }, [house])
-
     const [showUserLocation, setShowUserLocation] = useState(false);
 
     const [roomLocationsByCity, setRoomLocationsByCity] = useState([]);
 
     useEffect(() => {
-        // console.log('house', houseList)
-
         if (house && house) {
 
             const locations = house && house?.map(item => {
@@ -132,9 +124,6 @@ const WishListDetails = () => {
     const displayedLocations = roomLocationsByCity && roomLocationsByCity.slice(startIdx, endIdx);
 
     const totalPages = Math.ceil(house && house.length / housesPerPage);
-    console.log("totalPages", totalPages);
-
-    console.log(house && house.length);
 
     const [isSelected, setIsSelected] = useState(false);
 
